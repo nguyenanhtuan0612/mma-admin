@@ -60,21 +60,11 @@ export default function RowItemUser({ color, data }) {
             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{isActive(active)}</td>
             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                 {data.enabled === true ? (
-                    <Popconfirm
-                        title="Bạn muốn vô hiệu thành viên này?"
-                        onConfirm={}
-                        okText="Đồng ý"
-                        cancelText="Hủy"
-                    >
+                    <Popconfirm title="Bạn muốn vô hiệu thành viên này?" okText="Đồng ý" cancelText="Hủy">
                         <span className="badge badge-danger badge-outline badge-lg">Vô hiệu</span>
                     </Popconfirm>
                 ) : (
-                    <Popconfirm
-                        title="Bạn muốn kích hoạt thành viên này?"
-                        onConfirm={}
-                        okText="Đồng ý"
-                        cancelText="Hủy"
-                    >
+                    <Popconfirm title="Bạn muốn kích hoạt thành viên này?" okText="Đồng ý" cancelText="Hủy">
                         <span className="badge badge-success badge-outline badge-lg">Kích hoạt</span>
                     </Popconfirm>
                 )}
