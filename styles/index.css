@@ -1,0 +1,47 @@
+@import 'antd/dist/antd.css';
+
+.w-11\/12 {
+    width: 91.67%;
+}
+
+.w-10\/12 {
+    width: 83.33%;
+}
+
+.w-9\/12 {
+    width: 75%;
+}
+
+.w-8\/12 {
+    width: 66.67%;
+}
+
+.w-7\/12 {
+    width: 58.33%;
+}
+
+.w-5\/12 {
+    width: 41.67%;
+}
+
+.w-4\/12 {
+    width: 33.33%;
+}
+
+.w-3\/12 {
+    width: 25%;
+}
+
+.w-2\/12 {
+    width: 16.67%;
+}
+
+.w-1\/12 {
+    width: 8.33%;
+}
+
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
