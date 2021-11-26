@@ -19,7 +19,10 @@ export default function Login() {
         e.preventDefault();
         const { data } = await userServices.login(phone, password);
         if (data.statusCode === 200) {
-            console.log(data.statusCode);
+            if (data.data.role == 'user') {
+                alert('Không đủ quyền truy cập');
+                return;
+            }
             const { accessToken } = data.data.JWT;
             window.localStorage.setItem('accessToken', `Bearer ${accessToken}`);
             const returnUrl = router.query.returnUrl || '/';

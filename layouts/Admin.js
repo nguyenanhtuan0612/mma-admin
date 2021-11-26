@@ -16,6 +16,10 @@ export default function Admin({ children }) {
             router.push('/auth/login');
             return <div></div>;
         }
+        if (data.data.role == 'user') {
+            router.push('/auth/login');
+            return <div></div>;
+        }
         setUser(data.data);
         setAuthorize(true);
     }, []);
