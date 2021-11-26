@@ -1,9 +1,9 @@
 import React from 'react';
-
 import UserDropdown from 'components/Dropdowns/UserDropdown.js';
 import { BreadCrumbs } from './BreadCrums';
+import PropTypes from 'prop-types';
 
-export default function Navbar() {
+export default function Navbar({ user }) {
     return (
         <>
             {/* Navbar */}
@@ -15,7 +15,7 @@ export default function Navbar() {
 
                     {/* User */}
                     <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
-                        <UserDropdown />
+                        <UserDropdown user={user} />
                     </ul>
                 </div>
             </nav>
@@ -23,3 +23,7 @@ export default function Navbar() {
         </>
     );
 }
+
+Navbar.propTypes = {
+    user: PropTypes.any,
+};

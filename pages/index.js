@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // components
 
@@ -6,10 +6,9 @@ import CardLineChart from 'components/Cards/CardLineChart.js';
 import CardBarChart from 'components/Cards/CardBarChart.js';
 import CardPageVisits from 'components/Cards/CardPageVisits.js';
 import CardSocialTraffic from 'components/Cards/CardSocialTraffic.js';
-
-// layout for page
-
+import { userServices } from 'services';
 import Admin from 'layouts/Admin.js';
+import { useRouter } from 'next/router';
 
 export default function Dashboard() {
     return (

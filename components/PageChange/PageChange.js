@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 // reactstrap components
 // import { Spinner } from "reactstrap";
@@ -24,3 +25,7 @@ export default function PageChange(props) {
         </div>
     );
 }
+
+PageChange.propTypes = {
+    path: PropTypes.any,
+};

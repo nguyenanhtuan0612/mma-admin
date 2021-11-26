@@ -3,7 +3,7 @@ import Chart from 'chart.js';
 
 export default function CardBarChart() {
     React.useEffect(() => {
-        let config = {
+        const config = {
             type: 'bar',
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -87,7 +87,7 @@ export default function CardBarChart() {
                 },
             },
         };
-        let ctx = document.getElementById('bar-chart').getContext('2d');
+        const ctx = document.getElementById('bar-chart').getContext('2d');
         window.myBar = new Chart(ctx, config);
     }, []);
     return (

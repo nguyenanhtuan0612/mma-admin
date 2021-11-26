@@ -3,7 +3,7 @@ import Chart from 'chart.js';
 
 export default function CardLineChart() {
     React.useEffect(() => {
-        var config = {
+        const config = {
             type: 'line',
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -95,7 +95,7 @@ export default function CardLineChart() {
                 },
             },
         };
-        var ctx = document.getElementById('line-chart').getContext('2d');
+        const ctx = document.getElementById('line-chart').getContext('2d');
         window.myLine = new Chart(ctx, config);
     }, []);
     return (

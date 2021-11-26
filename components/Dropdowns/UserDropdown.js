@@ -1,20 +1,45 @@
-import React from 'react';
+import React, { createRef, useState } from 'react';
 import { createPopper } from '@popperjs/core';
+import router from 'next/router';
+import PropTypes from 'prop-types';
+import { useEffect } from 'react/cjs/react.development';
 
-const UserDropdown = () => {
+export default function UserDropdown({ user }) {
+    const [avatar, setAvatar] = useState('/img/avatar.jpeg');
+
     // dropdown props
-    const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
-    const btnDropdownRef = React.createRef();
-    const popoverDropdownRef = React.createRef();
+    const [isShow, setIsShow] = useState(false);
+    const btnDropdownRef = createRef();
+    const popoverDropdownRef = createRef();
     const openDropdownPopover = () => {
         createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
             placement: 'bottom-start',
         });
-        setDropdownPopoverShow(true);
+        setIsShow(true);
     };
     const closeDropdownPopover = () => {
-        setDropdownPopoverShow(false);
+        setIsShow(false);
     };
+
+    function logout(e) {
+        e.preventDefault();
+        window.localStorage.removeItem('accessToken');
+        router.push('/auth/login');
+    }
+
+    function avatarUser(avatarImage) {
+        if (avatarImage) {
+            return avatarImage;
+        }
+        return '/img/avatar.jpeg';
+    }
+
+    useEffect(() => {
+        if (user) {
+            setAvatar(user.avatarImage);
+        }
+    }, [user]);
+
     return (
         <>
             <a
@@ -23,54 +48,39 @@ const UserDropdown = () => {
                 ref={btnDropdownRef}
                 onClick={e => {
                     e.preventDefault();
-                    dropdownPopoverShow ? closeDropdownPopover() : openDropdownPopover();
+                    isShow ? closeDropdownPopover() : openDropdownPopover();
                 }}
             >
                 <div className="items-center flex">
                     <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-                        <img alt="..." className="w-full rounded-full align-middle border-none shadow-lg" src="/img/team-1-800x800.jpg" />
+                        <img alt="..." className="w-full rounded-full align-middle border-none shadow-lg" src={avatarUser(avatar)} />
                     </span>
                 </div>
             </a>
             <div
                 ref={popoverDropdownRef}
-                className={
-                    (dropdownPopoverShow ? 'block ' : 'hidden ') +
-                    'bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48'
-                }
+                className={(isShow ? 'block ' : 'hidden ') + 'bg-white text-base z-50 py-2 list-none text-left rounded shadow-lg min-w-48'}
             >
                 <a
                     href="#pablo"
                     className={'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'}
                     onClick={e => e.preventDefault()}
                 >
-                    Action
-                </a>
-                <a
-                    href="#pablo"
-                    className={'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'}
-                    onClick={e => e.preventDefault()}
-                >
-                    Another action
-                </a>
-                <a
-                    href="#pablo"
-                    className={'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'}
-                    onClick={e => e.preventDefault()}
-                >
-                    Something else here
+                    Tài khoản
                 </a>
                 <div className="h-0 my-2 border border-solid border-blueGray-100" />
                 <a
                     href="#pablo"
                     className={'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'}
-                    onClick={e => e.preventDefault()}
+                    onClick={logout}
                 >
-                    Seprated link
+                    Đăng xuất
                 </a>
             </div>
         </>
     );
-};
+}
 
-export default UserDropdown;
+UserDropdown.propTypes = {
+    user: PropTypes.any,
+};

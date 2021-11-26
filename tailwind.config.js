@@ -45,6 +45,7 @@ module.exports = {
                 '260-px': '260px',
             },
             height: {
+                '32-px': '32px',
                 '95-px': '95px',
                 '70-px': '70px',
                 '350-px': '350px',
@@ -117,6 +118,13 @@ module.exports = {
                     },
                 },
             ]);
+        }),
+        plugin(function ({ addVariant, e }) {
+            addVariant('required', ({ modifySelectors, separator }) => {
+                modifySelectors(({ className }) => {
+                    return `.${e(`required${separator}${className}`)}:required`;
+                });
+            });
         }),
     ],
 };

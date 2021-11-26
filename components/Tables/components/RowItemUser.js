@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Popconfirm from 'antd';
+import { Popconfirm } from 'antd';
 
 export default function RowItemUser({ color, data }) {
     function isActive(active) {
@@ -15,16 +15,6 @@ export default function RowItemUser({ color, data }) {
                 <i className={className}></i> {status}
             </>
         );
-    }
-
-    function loginWith(googleId, facebookId) {
-        if (facebookId) {
-            return 'Facebook';
-        }
-        if (googleId) {
-            return 'Google';
-        }
-        return 'Email + Password';
     }
 
     function getDate(createdAt) {
@@ -47,28 +37,59 @@ export default function RowItemUser({ color, data }) {
         }
     }
 
-    const { googleId, facebookId, active, avatarImage, role, fullName, createdAt } = data;
+    function activeUser(active) {
+        if (active == true) {
+            return (
+                <Popconfirm title="Bạn muốn vô hiệu thành viên này?" okText="Đồng ý" cancelText="Hủy">
+                    <button
+                        className="border bg-white hover:bg-red-500 text-red-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                        type="button"
+                    >
+                        <span className="fas fa-user"></span>
+                    </button>
+                </Popconfirm>
+            );
+        }
+        return (
+            <Popconfirm title="Bạn muốn kích hoạt thành viên này?" okText="Đồng ý" cancelText="Hủy">
+                <button
+                    className="border bg-white hover:bg-emerald-500 text-emerald-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                    type="button"
+                >
+                    <span className="fas fa-user"></span>
+                </button>
+            </Popconfirm>
+        );
+    }
+
+    function avatarUser(avatarImage) {
+        if (avatarImage) {
+            return avatarImage;
+        }
+        return '/img/avatar.jpeg';
+    }
+
+    function checkNull(string) {
+        if (string) {
+            return string;
+        }
+        return '...';
+    }
+
+    const { id, email, active, phone, avatarImage, role, fullName, createdAt } = data;
     return (
         <tr>
-            <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
-                <img src={avatarImage} className="h-12 w-12 bg-white rounded-full border" alt="..."></img>{' '}
-                <span className={'ml-3 font-bold ' + (color === 'light' ? 'text-blueGray-600' : 'text-white')}>{fullName}</span>
+            <td className="px-6 align-middle text-sm text-center whitespace-nowrap p-4">{id}</td>
+            <th className="px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center">
+                <img src={avatarUser(avatarImage)} className="h-12 w-12 bg-white rounded-full border" alt="..."></img>{' '}
+                <span className={'ml-3 font-bold ' + (color === 'light' ? 'text-blueGray-600' : 'text-white')}>{checkNull(fullName)}</span>
             </th>
-            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{loginWith(googleId, facebookId)}</td>
-            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{getDate(createdAt)}</td>
-            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{isRole(role)}</td>
-            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">{isActive(active)}</td>
-            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                {data.enabled === true ? (
-                    <Popconfirm title="Bạn muốn vô hiệu thành viên này?" okText="Đồng ý" cancelText="Hủy">
-                        <span className="badge badge-danger badge-outline badge-lg">Vô hiệu</span>
-                    </Popconfirm>
-                ) : (
-                    <Popconfirm title="Bạn muốn kích hoạt thành viên này?" okText="Đồng ý" cancelText="Hủy">
-                        <span className="badge badge-success badge-outline badge-lg">Kích hoạt</span>
-                    </Popconfirm>
-                )}
-            </td>
+            <td className="px-6 align-middle text-sm text-center whitespace-nowrap p-4">{checkNull(phone)}</td>
+            <td className="px-6 align-middle text-sm text-center whitespace-nowrap p-4">{checkNull(email)}</td>
+            <td className="px-6 align-middle text-sm text-center whitespace-nowrap p-4">{getDate(createdAt)}</td>
+            <td className="px-6 align-middle text-sm text-center whitespace-nowrap p-4">{isRole(role)}</td>
+            <td className="px-6 align-middle text-sm text-center whitespace-nowrap p-4">{isActive(active)}</td>
+            <td className="px-6 align-middle text-xl text-center whitespace-nowrap p-4">{activeUser(active)}</td>
         </tr>
     );
 }

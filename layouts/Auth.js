@@ -1,15 +1,19 @@
-import React from 'react';
-
-// components
-
-import Navbar from 'components/Navbars/AuthNavbar.js';
+import React, { useEffect } from 'react';
 import FooterSmall from 'components/Footers/FooterSmall.js';
 import PropTypes from 'prop-types';
-
+import { userServices } from 'services';
+import router from 'next/router';
 export default function Auth({ children }) {
+    useEffect(async () => {
+        const { data } = await userServices.checkToken();
+        if (data.statusCode == 200) {
+            router.push('/');
+            return <div></div>;
+        }
+    }, []);
+
     return (
         <>
-            <Navbar transparent />
             <main>
                 <section className="relative w-full h-full py-40 min-h-screen">
                     <div

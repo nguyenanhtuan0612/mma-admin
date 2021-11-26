@@ -80,7 +80,7 @@ export default function Register() {
                                             />
                                             <span className="ml-2 text-sm font-semibold text-blueGray-600">
                                                 I agree with the{' '}
-                                                <a href="#pablo" className="text-lightBlue-500" onClick={e => e.preventDefault()}>
+                                                <a href="#pablo" className="text-sky-500" onClick={e => e.preventDefault()}>
                                                     Privacy Policy
                                                 </a>
                                             </span>

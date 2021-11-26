@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function FooterSmall(props) {
     return (
@@ -14,7 +15,7 @@ export default function FooterSmall(props) {
                                     href="https://www.creative-tim.com?ref=nnjs-footer-small"
                                     className="text-white hover:text-blueGray-300 text-sm font-semibold py-1"
                                 >
-                                    Creative Tim
+                                    MathMap Academy
                                 </a>
                             </div>
                         </div>
@@ -25,7 +26,7 @@ export default function FooterSmall(props) {
                                         href="https://www.creative-tim.com?ref=nnjs-footer-small"
                                         className="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
                                     >
-                                        Creative Tim
+                                        MathMap Academy
                                     </a>
                                 </li>
                                 <li>
@@ -60,3 +61,7 @@ export default function FooterSmall(props) {
         </>
     );
 }
+
+FooterSmall.propTypes = {
+    absolute: PropTypes.any,
+};

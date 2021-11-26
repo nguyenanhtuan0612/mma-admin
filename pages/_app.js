@@ -10,6 +10,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'styles/tailwind.css';
 
 Router.events.on('routeChangeStart', url => {
+    if (url == '/auth/login') {
+        return;
+    }
     console.log(`Loading: ${url}`);
     document.body.classList.add('body-page-transition');
     ReactDOM.render(<PageChange path={url} />, document.getElementById('page-transition'));
@@ -25,7 +28,7 @@ Router.events.on('routeChangeError', () => {
 
 export default class MyApp extends App {
     componentDidMount() {
-        let comment = document.createComment(`
+        const comment = document.createComment(`
 
 =========================================================
 * Notus NextJS - v1.1.0 based on Tailwind Starter Kit by Creative Tim
