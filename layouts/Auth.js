@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import FooterSmall from 'components/Footers/FooterSmall.js';
 import PropTypes from 'prop-types';
-import { userServices } from 'services';
+import { serviceHelpers } from 'helpers';
 import router from 'next/router';
 export default function Auth({ children }) {
     useEffect(async () => {
-        const { data } = await userServices.checkToken();
+        const { data } = await serviceHelpers.checkToken();
         if (data.statusCode == 200) {
             router.push('/');
             return <div></div>;

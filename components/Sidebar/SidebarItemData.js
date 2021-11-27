@@ -10,7 +10,7 @@ export default [
         icon: 'fas fa-users',
     },
     {
-        path: '/test',
+        path: '/users/abc',
         title: 'Testing',
         icon: 'fas fa-cog',
     },

@@ -89,3 +89,8 @@
 .w-1\/24 {
     width: 4.67%;
 }
+
+.py-4px {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { userServices } from 'services';
+import { serviceHelpers, openNotification, notiType } from 'helpers';
 import Auth from 'layouts/Auth.js';
 import router from 'next/router';
 
@@ -17,7 +17,7 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        const { data } = await userServices.login(phone, password);
+        const { data } = await serviceHelpers.login(phone, password);
         if (data.statusCode === 200) {
             if (data.data.role == 'user') {
                 alert('Không đủ quyền truy cập');
@@ -29,6 +29,7 @@ export default function Login() {
             router.push(returnUrl);
             return;
         }
+        openNotification(notiType.error, 'Đăng nhập thất bại', data.message);
     }
 
     return (

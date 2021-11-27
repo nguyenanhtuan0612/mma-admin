@@ -13,6 +13,7 @@ interface BreadCrumb {
 const Route2LabelMap = {
     '/': 'Trang Chủ',
     '/users': 'Quản lý người dùng',
+    '/users/[id]': 'Chi tiết người dùng',
 };
 
 export function BreadCrumbs() {
