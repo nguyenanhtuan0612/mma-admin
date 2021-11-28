@@ -6,7 +6,7 @@ export default function HeaderCell({ content, width }) {
         <th
             className={
                 width +
-                ' px-6 align-middle py-3 text-md uppercase whitespace-nowrap font-semibold text-center bg-blueGray-200 text-blueGray-500 border-blueGray-100'
+                ' xl:px-1 px-6 align-middle py-3 xl:text-xs 2xl:text-md text-xs uppercase whitespace-nowrap font-semibold text-center bg-blueGray-200 text-blueGray-500 border-blueGray-100'
             }
         >
             {content}

@@ -14,7 +14,7 @@ async function checkToken() {
         return {
             data: {
                 statusCode: 400,
-                message: 'Invalid Token',
+                message: 'Token not found',
             },
         };
     }
@@ -34,7 +34,7 @@ async function getListData(path, filter = null, sort = null, start = 0, limit = 
     if (!token) {
         return {
             data: {
-                statusCode: 400,
+                statusCode: 404,
                 message: 'Invalid Token',
             },
         };
@@ -56,7 +56,7 @@ async function updateData(path, id, body) {
     if (!token) {
         return {
             data: {
-                statusCode: 400,
+                statusCode: 404,
                 message: 'Invalid Token',
             },
         };

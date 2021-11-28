@@ -1,9 +1,9 @@
 import React, { createRef, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Pagination } from 'antd';
 import HeaderCell from './components/HeaderCell';
 import RowItemUser from './components/RowItemUser';
 import { serviceHelpers, openNotification, notiType } from 'helpers';
+import { useRouter } from 'next/router';
 
 export default function UsersTable() {
     const [listUser, setListUser] = useState([]);
@@ -13,6 +13,7 @@ export default function UsersTable() {
     const [searchPhone, setSearchPhone] = useState('');
     const [page, setPage] = useState(1);
     const inputSearchPhoneRef = createRef();
+    const router = useRouter();
 
     useEffect(async () => {
         const data = await getData();
@@ -21,6 +22,10 @@ export default function UsersTable() {
         }
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
         }
         setListUser(data.data.rows);
         setCount(data.data.count);
@@ -69,6 +74,10 @@ export default function UsersTable() {
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
         setListUser(data.data.rows);
         setCount(data.data.count);
     }
@@ -85,6 +94,10 @@ export default function UsersTable() {
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
         openNotification(notiType.success, 'Cập nhật thành công !');
         setListUser(data.data.rows);
         setCount(data.data.count);
@@ -97,6 +110,10 @@ export default function UsersTable() {
         }
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
         }
         setPage(current);
         setListUser(data.data.rows);
@@ -136,13 +153,13 @@ export default function UsersTable() {
         <>
             <div>
                 <button
-                    className="lg:w-2/12 md:w-2/12 mb-2 float-right bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="2xl:w-2/12 xl:w-3/12 w-2/12 mb-2 float-right bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
                 >
                     <span className="fas fa-user-plus mr-2"></span> Thêm Người dùng
                 </button>
                 <button
-                    className="lg:w-2/12 md:w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
                 >
                     <span className="fas fa-table mr-2"></span> Xuất File Excel
@@ -152,25 +169,25 @@ export default function UsersTable() {
             <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'}>
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
-                        <div className="2xl:w-6/12 lg:w-4/12 px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3">QUẢN LÝ NGƯỜI DÙNG</h3>
+                        <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ NGƯỜI DÙNG</h3>
                         </div>
-                        <div className="2xl:w-6/12 lg:w-8/12 px-4">
-                            <div className="relative w-full mb-3 flex items-center justify-end">
+                        <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
+                            <div className="relative w-full mb-3 flex items-center 2xl:justify-end">
                                 <input
                                     ref={inputSearchPhoneRef}
                                     value={searchPhone}
                                     type="text"
-                                    className="px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded text-xs font-bold shadow focus:border-1 w-6/24 ease-linear transition-all duration-150"
+                                    className="2xl:w-3/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded text-xs font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                     placeholder="Số điện thoại"
                                     onChange={changeSearchPhone}
                                 />
                                 <select
                                     value={role}
                                     onChange={changeRole}
-                                    className="border ml-2 w-6/24 bg-white text-blueGray-700 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear"
+                                    className="border ml-2 2xl:w-4/12 xl:w-3/12 bg-white text-blueGray-700 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear"
                                 >
-                                    <option value="">-- Loại Thành viên --</option>
+                                    <option value="">Loại Thành viên</option>
                                     <option value="root">Root Admin</option>
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
@@ -178,22 +195,22 @@ export default function UsersTable() {
                                 <select
                                     value={active}
                                     onChange={changeActive}
-                                    className="border mx-2 w-5/24 bg-white text-blueGray-700 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear"
+                                    className="border mx-2 2xl:w-3/12 bg-white text-blueGray-700 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear"
                                 >
-                                    <option value="">-- Trạng thái --</option>
+                                    <option value="">Trạng thái</option>
                                     <option value="true">Hoạt động</option>
                                     <option value="false">Đã vô hiệu</option>
                                 </select>
-                                <div className="w-3/12">
+                                <div className="2xl:w-3/12 xl:w-3/12 2xl:flex 2xl:justify-end max-w-180-px">
                                     <button
-                                        className="mx-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 md:px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        className="2xl:px-4 px-4 mx-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs  py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                         type="button"
                                         onClick={handleSubmitFilter}
                                     >
                                         Lọc
                                     </button>
                                     <button
-                                        className="bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 md:px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        className="2xl:px-2 px-4 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                         type="button"
                                         onClick={handleClearFilter}
                                     >

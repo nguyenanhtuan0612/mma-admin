@@ -7,9 +7,10 @@
         "start": "next start",
         "lint": "next lint",
         "format": "prettier --write \"**/**/*.js\"",
-        "tailwind": "tailwindcss -i styles/index.css -o styles/tailwind.css",
-        "tailwind:watch": "tailwind build -i styles/index.css -o styles/tailwind.css --watch",
-        "postcss:watch": "postcss styles/index.css -o styles/tailwind.css -w"
+        "tailwind": "tailwindcss -i styles/index.css -o public/css/tailwind.css",
+        "tailwind:w": "tailwind build -i styles/index.css -o public/css/tailwind.css --watch",
+        "postcss": "postcss styles/index.css -o public/css/tailwind.css",
+        "postcss:w": "postcss styles/index.css -o public/css/tailwind.css -w"
     },
     "dependencies": {
         "@ant-design/icons": "^4.7.0",

@@ -6,7 +6,7 @@ export default [
     },
     {
         path: '/users',
-        title: 'QUẢN LÝ NGỪOI DÙNG',
+        title: 'QUẢN LÝ NGƯỜI DÙNG',
         icon: 'fas fa-users',
     },
     {

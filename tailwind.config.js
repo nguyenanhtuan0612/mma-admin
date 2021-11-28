@@ -3,15 +3,18 @@ const colors = require('tailwindcss/colors');
 
 module.exports = {
     purge: {
-        enabled: false,
+        enabled: true,
         content: ['./**/*.html', './*.html', './**/*.js', './*.js'],
         options: {
-            safelist: [],
+            safelist: ['xl:text-sm', 'xl:px-2', '2xl:text-sm'],
         },
     },
     theme: {
         colors: {
             ...colors,
+        },
+        fontFamily: {
+            sans: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'],
         },
         extend: {
             minHeight: {

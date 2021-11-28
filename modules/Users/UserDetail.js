@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Tabs } from 'antd';
+import DetailUser from './components/DetailUser';
 
 const { TabPane } = Tabs;
 
@@ -20,16 +21,10 @@ export default function UserDetail() {
                         <h3 className="text-4xl font-semibold leading-normal text-blueGray-700">{fullName}</h3>
                     </div>
                 </div>
-                <div className={'relative flex flex-col min-w-0 break-words  w-full mb-6 shadow-lg bg-white px-6'}>
-                    <Tabs defaultActiveKey="1" onChange={callback} className="text-xl" size="large" tabBarStyle={{ fontWeight: 500 }}>
+                <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6'}>
+                    <Tabs defaultActiveKey="1" onChange={callback} className="text-xl" size="middle" tabBarStyle={{ fontWeight: 500 }}>
                         <TabPane tab="Thông tin cá nhân" key="1">
-                            Content of Tab Pane 1
-                        </TabPane>
-                        <TabPane tab="Tab 2" key="2">
-                            Content of Tab Pane 2
-                        </TabPane>
-                        <TabPane tab="Tab 3" key="3">
-                            Content of Tab Pane 3
+                            <DetailUser />
                         </TabPane>
                     </Tabs>
                 </div>

@@ -6,6 +6,7 @@ import router from 'next/router';
 export default function Login() {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [showPass, setShowPass] = useState(false);
 
     function handleChangePhone(e) {
         setPhone(e.target.value);
@@ -15,9 +16,17 @@ export default function Login() {
         setPassword(e.target.value);
     }
 
+    function handleShowPassClick(e) {
+        setShowPass(e.target.checked);
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
         const { data } = await serviceHelpers.login(phone, password);
+        if (!data) {
+            openNotification(notiType.error, 'Đăng nhập thất bại', data.message);
+            return;
+        }
         if (data.statusCode === 200) {
             if (data.data.role == 'user') {
                 alert('Không đủ quyền truy cập');
@@ -30,6 +39,7 @@ export default function Login() {
             return;
         }
         openNotification(notiType.error, 'Đăng nhập thất bại', data.message);
+        return;
     }
 
     return (
@@ -60,7 +70,7 @@ export default function Login() {
                                     <div className="relative w-full mb-3">
                                         <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">Mật khẩu</label>
                                         <input
-                                            type="password"
+                                            type={showPass ? 'text' : 'password'}
                                             className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                             placeholder="Mật khẩu"
                                             id="password"
@@ -73,9 +83,10 @@ export default function Login() {
                                             <input
                                                 id="customCheckLogin"
                                                 type="checkbox"
+                                                onClick={handleShowPassClick}
                                                 className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
                                             />
-                                            <span className="ml-2 text-sm font-semibold text-blueGray-600">Tự động đăng nhâp</span>
+                                            <span className="ml-2 text-sm font-semibold text-blueGray-600">Hiện mật khẩu</span>
                                         </label>
                                     </div>
 
