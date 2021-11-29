@@ -27,46 +27,101 @@ async function checkToken() {
 }
 
 async function getListData(path, filter = null, sort = null, start = 0, limit = 10) {
-    const token = window.localStorage.getItem('accessToken');
-    if (!sort) {
-        sort = `[{"property":"createdAt","direction":"DESC"}]`;
-    }
-    if (!token) {
-        return {
-            data: {
-                statusCode: 404,
-                message: 'Invalid Token',
+    try {
+        const token = window.localStorage.getItem('accessToken');
+        if (!sort) {
+            sort = `[{"property":"createdAt","direction":"DESC"}]`;
+        }
+        if (!token) {
+            return {
+                data: {
+                    statusCode: 404,
+                    message: 'Invalid Token',
+                },
+            };
+        }
+        let url = `${process.env.BACKEND_URL}/${path}?start=${start}&limit=${limit}&sort=${sort}`;
+        if (filter) {
+            url = `${process.env.BACKEND_URL}/${path}?start=${start}&limit=${limit}&filter=${filter}&sort=${sort}`;
+            console.log(url);
+        }
+        return axios.get(url, {
+            headers: {
+                Authorization: token,
             },
-        };
+        });
+    } catch (error) {
+        return error;
     }
-    let url = `${process.env.BACKEND_URL}/${path}?start=${start}&limit=${limit}&sort=${sort}`;
-    if (filter) {
-        url = `${process.env.BACKEND_URL}/${path}?start=${start}&limit=${limit}&filter=${filter}&sort=${sort}`;
-        console.log(url);
+}
+
+async function detailData(path, id) {
+    try {
+        const token = window.localStorage.getItem('accessToken');
+        if (!token) {
+            return {
+                data: {
+                    statusCode: 404,
+                    message: 'Invalid Token',
+                },
+            };
+        }
+        const url = `${process.env.BACKEND_URL}/${path}/${id}`;
+        const data = await axios.get(url, {
+            headers: {
+                Authorization: token,
+            },
+        });
+        return data;
+    } catch (error) {
+        return error;
     }
-    return axios.get(url, {
-        headers: {
-            Authorization: token,
-        },
-    });
 }
 
 async function updateData(path, id, body) {
-    const token = window.localStorage.getItem('accessToken');
-    if (!token) {
-        return {
-            data: {
-                statusCode: 404,
-                message: 'Invalid Token',
+    try {
+        const token = window.localStorage.getItem('accessToken');
+        if (!token) {
+            return {
+                data: {
+                    statusCode: 404,
+                    message: 'Invalid Token',
+                },
+            };
+        }
+        const url = `${process.env.BACKEND_URL}/${path}/${id}`;
+        return axios.patch(url, body, {
+            headers: {
+                Authorization: token,
             },
-        };
+        });
+    } catch (error) {
+        return error;
     }
-    const url = `${process.env.BACKEND_URL}/${path}/${id}`;
-    return axios.patch(url, body, {
-        headers: {
-            Authorization: token,
-        },
-    });
 }
 
-export default { login, checkToken, getListData, updateData };
+async function deleteData(path, id) {
+    try {
+        const token = window.localStorage.getItem('accessToken');
+        if (!token) {
+            return {
+                data: {
+                    statusCode: 404,
+                    message: 'Invalid Token',
+                },
+            };
+        }
+        const url = `${process.env.BACKEND_URL}/${path}/${id}`;
+        const data = await axios.delete(url, {
+            headers: {
+                Authorization: token,
+            },
+        });
+        return data;
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
+
+export default { login, checkToken, getListData, updateData, detailData, deleteData };

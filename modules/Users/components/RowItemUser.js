@@ -59,9 +59,9 @@ export default function RowItemUser({ data, updateActive }) {
         <tr>
             <td className="px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
             <th>
-                <Link href="/users/[id]" as={`/users/${id}`}>
+                <Link href={`/users/${id}`} as={`/users/${id}`}>
                     <a
-                        href="#pablo"
+                        href={`/users/${id}`}
                         className=" px-6 align-middle 2xl:text-sm xl:text-xs text-xs whitespace-nowrap p-4 text-center flex items-center"
                     >
                         <img src={avatarUser(avatarImage)} className="2xl:h-12 2xl:w-12 xl:w-8 xl:h-8 bg-white rounded-full border" alt="..."></img>{' '}

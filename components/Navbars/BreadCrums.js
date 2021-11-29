@@ -11,9 +11,9 @@ interface BreadCrumb {
 */
 
 const Route2LabelMap = {
-    '/': 'Trang Chủ',
-    '/users': 'Quản lý người dùng',
-    '/users/[id]': 'Chi tiết người dùng',
+    '': 'Trang Chủ',
+    users: 'Quản lý người dùng',
+    edit: 'Chỉnh sửa',
 };
 
 export function BreadCrumbs() {
@@ -33,7 +33,7 @@ export function BreadCrumbs() {
         }
 
         const crumbs = crumbLinks.map((link, index) => {
-            const route = crumbLabels[index];
+            const route = segmentsPath[index];
             const crumb = {
                 link: link,
                 route: route,
@@ -58,7 +58,7 @@ export function BreadCrumbs() {
             {crumbs.map((c, i) => {
                 return (
                     <div className="flex items-center gap-1 font-semibold text-white text-sm uppercase" key={i}>
-                        {i > 0 ? <div>{'>'}</div> : null}
+                        {i > 0 ? <div className="mb-0.5">{'>'}</div> : null}
                         <div className=" px-2 py-1 rounded-xl">
                             <Link href={c.link} className="text-white">
                                 {c.label}

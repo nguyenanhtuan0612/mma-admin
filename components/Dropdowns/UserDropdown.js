@@ -24,6 +24,7 @@ export default function UserDropdown({ user }) {
     function logout(e) {
         e.preventDefault();
         window.localStorage.removeItem('accessToken');
+        window.localStorage.removeItem('role');
         router.push('/auth/login');
     }
 

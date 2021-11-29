@@ -16,10 +16,15 @@ export default function Admin({ children }) {
             router.push('/auth/login');
             return <div></div>;
         }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
         if (data.data.role == 'user') {
             router.push('/auth/login');
             return <div></div>;
         }
+        window.localStorage.setItem('role', data.data.role);
         setUser(data.data);
         setAuthorize(true);
     }, []);

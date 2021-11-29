@@ -18,7 +18,7 @@ export default function UsersTable() {
     useEffect(async () => {
         const data = await getData();
         if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống', 'Không thể kết nối máy chủ');
+            return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -50,7 +50,7 @@ export default function UsersTable() {
         e.preventDefault();
         const data = await getData(role, active, searchPhone);
         if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống', 'Không thể kết nối máy chủ');
+            return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -69,7 +69,7 @@ export default function UsersTable() {
         inputSearchPhoneRef.current.focus();
         const data = await getData();
         if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống', 'Không thể kết nối máy chủ');
+            return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -89,7 +89,7 @@ export default function UsersTable() {
         }
         const data = await getData(role, active, searchPhone, (page - 1) * 10);
         if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống', 'Không thể kết nối máy chủ');
+            return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -106,7 +106,7 @@ export default function UsersTable() {
     async function handlePaginationChange(current) {
         const data = await getData(role, active, searchPhone, (current - 1) * 10);
         if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống', 'Không thể kết nối máy chủ');
+            return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);

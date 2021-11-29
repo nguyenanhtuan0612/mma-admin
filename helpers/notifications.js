@@ -12,6 +12,9 @@ function fomartError(string) {
         case 'Phone or password is incorrect': {
             return 'Số điện thoại hoặc mật khẩu không đúng !!';
         }
+        case `Cannot read property 'id' of null`: {
+            return 'Người dùng không tồn tại !!';
+        }
         default: {
             return string;
         }
