@@ -3,7 +3,7 @@ import UserDropdown from 'components/Dropdowns/UserDropdown.js';
 import { BreadCrumbs } from './BreadCrums';
 import PropTypes from 'prop-types';
 
-export default function Navbar({ user }) {
+export default function Navbar() {
     return (
         <>
             {/* Navbar */}
@@ -15,7 +15,7 @@ export default function Navbar({ user }) {
 
                     {/* User */}
                     <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
-                        <UserDropdown user={user} />
+                        <UserDropdown />
                     </ul>
                 </div>
             </nav>

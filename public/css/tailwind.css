@@ -1028,6 +1028,10 @@ video {
   isolation: auto;
 }
 
+.z-2 {
+  z-index: 2;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -1301,6 +1305,10 @@ video {
 
 .mb-12 {
   margin-bottom: 3rem;
+}
+
+.mb-20 {
+  margin-bottom: 5rem;
 }
 
 .mb-24 {
@@ -1725,6 +1733,10 @@ video {
 
 .translate-y-6 {
   --tw-translate-y: 1.5rem;
+}
+
+.translate-y-full {
+  --tw-translate-y: 100%;
 }
 
 .rotate-3 {

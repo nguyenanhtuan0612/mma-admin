@@ -1,28 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { Tabs } from 'antd';
-import Detail from './components/Detail';
+import React, { useContext, useEffect, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
+import { AuthContext } from 'layouts/Admin';
 
-const { checkNull, avatarUser, isActive, getDate } = displayHelpers;
+const { checkNull, avatarUser, dateFormat, checkSelect } = displayHelpers;
 
 export default function EditUser() {
     const router = useRouter();
+
     const { id } = router.query;
-
-    const [user, setUser] = useState({});
-
-    function callback(key) {
-        console.log(key);
-    }
+    const auth = useContext(AuthContext);
+    const [user, setUser] = useState({
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
+        gender: '',
+        birthday: '',
+        role: '',
+        active: true,
+        avartarImage: '',
+    });
+    const [isRoot, setIsRoot] = useState(false);
 
     useEffect(async () => {
         const data = await getDetail(id);
         if (!data) {
             return;
         }
+
+        setIsRoot(auth.role == 'root' ? true : false);
         setUser(data.data);
-    }, []);
+    }, [auth]);
 
     async function getDetail(id) {
         const { data } = await serviceHelpers.detailData('users', id);
@@ -40,37 +49,6 @@ export default function EditUser() {
         return data;
     }
 
-    function isRole(role) {
-        switch (role) {
-            case 'root': {
-                return 'Root Admin';
-            }
-            case 'admin': {
-                return 'Admin';
-            }
-            default: {
-                return 'Người dùng';
-            }
-        }
-    }
-
-    function isGender(gender) {
-        switch (gender) {
-            case 'male': {
-                return 'Nam';
-            }
-            case 'female': {
-                return 'Nữ';
-            }
-            case 'orther': {
-                return 'Khác';
-            }
-            default: {
-                return '...';
-            }
-        }
-    }
-
     async function getDetail(id) {
         const { data } = await serviceHelpers.detailData('users', id);
         if (!data) {
@@ -85,6 +63,95 @@ export default function EditUser() {
             return <div></div>;
         }
         return data;
+    }
+
+    async function onUpdate(e) {
+        e.preventDefault();
+        const data = await updateUser(id, user);
+        if (!data) {
+            return;
+        }
+        setUser(data.data);
+        openNotification(notiType.success, 'Cập nhật thành công !');
+    }
+
+    async function updateUser(id, body) {
+        const { data } = await serviceHelpers.updateData('users', id, body);
+        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+
+        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        return data;
+    }
+
+    async function handleChangeFirstName(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            firstName: e.target.value,
+            fullName: `${e.target.value} ${user.lastName}`,
+        });
+    }
+
+    async function handleChangeLastName(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            lastName: e.target.value,
+            fullName: `${user.firstName} ${e.target.value}`,
+        });
+    }
+
+    async function handleChangePhone(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            lastName: e.target.value,
+        });
+    }
+
+    async function handleChangeEmail(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            email: e.target.value,
+        });
+    }
+
+    async function handleChangeGender(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            gender: e.target.value,
+        });
+    }
+
+    async function handleChangeBirthDay(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            birthday: e.target.value,
+        });
+    }
+
+    async function handleChangeRole(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            role: e.target.value,
+        });
+    }
+
+    async function handleChangeActive(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            active: e.target.value === 'true' ? true : false,
+        });
     }
 
     return (
@@ -97,7 +164,7 @@ export default function EditUser() {
                     </div>
                 </div>
                 <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
-                    <div className="w-full px-4 flex items-center mt-4 mb-6">
+                    <div className="w-full px-4 flex mt-4 mb-6 h-full">
                         <div className="2xl:w-9/12 w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                             <div className="flex flex-wrap ">
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
@@ -106,9 +173,11 @@ export default function EditUser() {
                                             Họ và tên đệm:
                                         </label>
                                         <input
+                                            value={checkNull(user.firstName, '')}
+                                            onChange={handleChangeFirstName}
                                             type="text"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
+                                            placeholder="Nguyễn Bá"
                                         />
                                     </div>
                                 </div>
@@ -116,9 +185,11 @@ export default function EditUser() {
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Tên:</label>
                                         <input
+                                            value={checkNull(user.lastName, '')}
+                                            onChange={handleChangeLastName}
                                             type="text"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
+                                            placeholder="Sơn"
                                         />
                                     </div>
                                 </div>
@@ -128,9 +199,11 @@ export default function EditUser() {
                                             Số điện thoại:
                                         </label>
                                         <input
+                                            value={checkNull(user.phone, '')}
+                                            onChange={handleChangePhone}
                                             type="text"
+                                            placeholder="0123456789"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
                                         />
                                     </div>
                                 </div>
@@ -138,29 +211,39 @@ export default function EditUser() {
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Email:</label>
                                         <input
+                                            value={checkNull(user.email, '')}
+                                            onChange={handleChangeEmail}
                                             type="text"
+                                            placeholder="example@email.com"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
                                         />
                                     </div>
                                 </div>
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Giới tính:</label>
-                                        <input
-                                            type="text"
+                                        <select
+                                            value={checkSelect(user.gender)}
+                                            onChange={handleChangeGender}
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
-                                        />
+                                        >
+                                            <option value="" hidden>
+                                                Chưa chọn
+                                            </option>
+                                            <option value="male">Nam</option>
+                                            <option value="female">Nữ</option>
+                                            <option value="orther">Khác</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Sinh nhật:</label>
                                         <input
-                                            type="text"
+                                            onChange={handleChangeBirthDay}
+                                            value={dateFormat(user.birthday)}
+                                            type="date"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
                                         />
                                     </div>
                                 </div>
@@ -169,49 +252,61 @@ export default function EditUser() {
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Loại thành viên:
                                         </label>
-                                        <input
-                                            type="text"
+                                        <select
+                                            disabled={!isRoot}
+                                            value={checkSelect(user.role)}
+                                            onChange={handleChangeRole}
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
-                                        />
+                                        >
+                                            <option value="" hidden>
+                                                Chưa chọn
+                                            </option>
+                                            <option value="root">Root Admin</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="user">Người dùng</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Trạng thái:</label>
-                                        <input
-                                            type="text"
+                                        <select
+                                            value={checkSelect(user.active)}
+                                            onChange={handleChangeActive}
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
-                                        />
+                                        >
+                                            <option value="true">Hoạt động</option>
+                                            <option value="false">Vô hiệu</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                            <div className="w-full px-6 flex items-center mt-10 justify-center">
+                            <div className="w-full px-6 flex items-center mt-2 justify-center">
                                 <button
                                     className="mx-2 mb-2 bg-yellow-500 hover:bg-yellow-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                     type="button"
                                     onClick={() => router.back()}
                                 >
-                                    Huỷ bỏ
+                                    Trở về
                                 </button>
                                 <button
                                     className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                     type="button"
-                                    onClick={() => router.push(`/users/${user.id}/edit`)}
+                                    onClick={onUpdate}
                                 >
                                     Lưu
                                 </button>
                             </div>
                         </div>
-                        <div className="2xl:w-3/12 w-full px-4 flex items-start justify-center">
-                            <div className="relative">
+                        <div className="2xl:w-3/12 w-full px-4 h-full mt-4">
+                            <div className="w-full flex justify-center">
                                 <img
                                     alt="..."
-                                    src="/img/team-2-800x800.jpg"
-                                    className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
+                                    src={avatarUser(user.avartarImage)}
+                                    className="shadow-xl rounded-full h-auto border-none max-w-150-px"
                                 />
                             </div>
+                            <input id="file-input" type="file" />
                         </div>
                     </div>
                 </div>

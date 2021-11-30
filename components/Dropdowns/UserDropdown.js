@@ -1,10 +1,11 @@
-import React, { createRef, useState } from 'react';
+import React, { createRef, useContext, useEffect, useState } from 'react';
 import { createPopper } from '@popperjs/core';
 import router from 'next/router';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react/cjs/react.development';
+import { AuthContext } from 'layouts/Admin';
 
-export default function UserDropdown({ user }) {
+export default function UserDropdown() {
+    const user = useContext(AuthContext);
     const [avatar, setAvatar] = useState('/img/avatar.jpeg');
 
     // dropdown props
@@ -24,7 +25,6 @@ export default function UserDropdown({ user }) {
     function logout(e) {
         e.preventDefault();
         window.localStorage.removeItem('accessToken');
-        window.localStorage.removeItem('role');
         router.push('/auth/login');
     }
 

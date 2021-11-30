@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext } from 'react';
 import AdminNavbar from 'components/Navbars/AdminNavbar.js';
 import Sidebar from 'components/Sidebar/Sidebar.js';
 import FooterAdmin from 'components/Footers/FooterAdmin.js';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { serviceHelpers } from 'helpers';
+
+export const AuthContext = createContext();
 
 export default function Admin({ children }) {
     const [user, setUser] = useState({});
@@ -24,22 +26,23 @@ export default function Admin({ children }) {
             router.push('/auth/login');
             return <div></div>;
         }
-        window.localStorage.setItem('role', data.data.role);
         setUser(data.data);
         setAuthorize(true);
     }, []);
 
     return (
-        <div className={authorize == false ? 'hidden' : ''}>
-            <Sidebar />
-            <div className="relative md:ml-64 bg-blueGray-200 min-h-screen">
-                <AdminNavbar user={user} />
-                <div className="px-4 md:px-10 mx-auto mt-6 w-full h-full ">
-                    {children}
-                    <FooterAdmin />
+        <AuthContext.Provider value={user}>
+            <div className={authorize == false ? 'hidden' : ''}>
+                <Sidebar />
+                <div className="relative md:ml-64 bg-blueGray-200 min-h-screen">
+                    <AdminNavbar />
+                    <div className="px-4 md:px-10 mx-auto mt-6 w-full h-full ">
+                        {children}
+                        <FooterAdmin />
+                    </div>
                 </div>
             </div>
-        </div>
+        </AuthContext.Provider>
     );
 }
 

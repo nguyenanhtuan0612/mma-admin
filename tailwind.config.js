@@ -6,7 +6,7 @@ module.exports = {
         enabled: true,
         content: ['./**/*.html', './*.html', './**/*.js', './*.js'],
         options: {
-            safelist: ['xl:text-sm', 'xl:px-2', '2xl:text-sm'],
+            safelist: ['xl:text-sm', 'xl:px-2', '2xl:text-sm', 'mb-20'],
         },
     },
     theme: {

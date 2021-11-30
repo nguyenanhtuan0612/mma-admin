@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import Detail from './components/Detail';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { Modal } from 'antd';
+import { AuthContext } from 'layouts/Admin';
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;
@@ -13,6 +14,7 @@ export default function UserDetail() {
     const router = useRouter();
     const { id } = router.query;
 
+    const auth = useContext(AuthContext);
     const [user, setUser] = useState({});
 
     function callback(key) {
@@ -44,8 +46,7 @@ export default function UserDetail() {
     }
 
     function onDelete(id) {
-        const role = window.localStorage.getItem('role');
-        console.log(role);
+        const role = auth.role;
         confirm({
             title: 'Bạn muốn xóa người dùng này?',
             content: 'Lưu ý nếu bạn xóa thì mọi thông tin, khóa học, bài học liên quan đến người dùng sẽ bị mất.',

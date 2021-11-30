@@ -43,7 +43,6 @@ async function getListData(path, filter = null, sort = null, start = 0, limit = 
         let url = `${process.env.BACKEND_URL}/${path}?start=${start}&limit=${limit}&sort=${sort}`;
         if (filter) {
             url = `${process.env.BACKEND_URL}/${path}?start=${start}&limit=${limit}&filter=${filter}&sort=${sort}`;
-            console.log(url);
         }
         return axios.get(url, {
             headers: {

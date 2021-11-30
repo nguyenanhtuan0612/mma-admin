@@ -1,8 +1,8 @@
-function checkNull(string) {
+function checkNull(string, nullReturn = '...') {
     if (string) {
         return string;
     }
-    return '...';
+    return nullReturn;
 }
 
 function avatarUser(avatarImage) {
@@ -19,6 +19,22 @@ function getDate(createdAt) {
         return spiltDash[2] + '/' + spiltDash[1] + '/' + spiltDash[0];
     }
     return '...';
+}
+
+function dateFormat(createdAt) {
+    if (createdAt && createdAt != '') {
+        console.log('cas', createdAt);
+        const splitT = createdAt.toString().split('T');
+        return splitT[0];
+    }
+    return '';
+}
+
+function checkSelect(value) {
+    if (value) {
+        return value;
+    }
+    return '';
 }
 
 function isActive(active, reverse = false) {
@@ -47,4 +63,6 @@ export default {
     getDate,
     avatarUser,
     checkNull,
+    dateFormat,
+    checkSelect,
 };
