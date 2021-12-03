@@ -8,8 +8,8 @@ import PageChange from 'components/PageChange/PageChange.js';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'antd/dist/antd.css';
-import 'public/css/customs.css';
 import 'public/css/tailwind.css';
+import 'public/css/customs.css';
 
 Router.events.on('routeChangeStart', url => {
     if (url == '/auth/login') {

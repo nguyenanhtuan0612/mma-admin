@@ -97,3 +97,7 @@
     padding-top: 4px;
     padding-bottom: 4px;
 }
+
+.upload {
+    display: none;
+}

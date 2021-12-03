@@ -32,8 +32,8 @@ export default function Login() {
                 alert('Không đủ quyền truy cập');
                 return;
             }
-            const { accessToken } = data.data.JWT;
-            window.localStorage.setItem('accessToken', `Bearer ${accessToken}`);
+            const { accessToken } = data.data.data.JWT;
+            localStorage.setItem('accessToken', `Bearer ${accessToken}`);
             const returnUrl = router.query.returnUrl || '/';
             router.push(returnUrl);
             return;

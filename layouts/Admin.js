@@ -14,6 +14,11 @@ export default function Admin({ children }) {
     const router = useRouter();
     useEffect(async () => {
         const { data } = await serviceHelpers.checkToken();
+        if (!data) {
+            window.localStorage.removeItem('accessToken');
+            router.push('/auth/login');
+            return <div></div>;
+        }
         if (data.statusCode == 400) {
             router.push('/auth/login');
             return <div></div>;

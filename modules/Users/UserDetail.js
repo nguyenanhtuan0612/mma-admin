@@ -106,7 +106,11 @@ export default function UserDetail() {
             <div className="border-2">
                 <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <img src={avatarUser(user.avartarImage)} className="h-16 w-16 bg-white rounded-full border mr-4" alt="..."></img>{' '}
+                        <img
+                            src={avatarUser(user.avatarImage)}
+                            className="object-contain h-16 w-16 bg-white rounded-full border mr-4"
+                            alt="..."
+                        ></img>{' '}
                         <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(user.fullName)}</b>
                     </div>
                 </div>

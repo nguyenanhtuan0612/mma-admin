@@ -59,7 +59,7 @@ export default function Detail({ user, onDelete }) {
                     </ul>
                     <ul className="mb-2 flex w-full">
                         <span className="w-3/12">Giới tính:</span>
-                        <b className="w-9/12">{isGender(user.role)}</b>
+                        <b className="w-9/12">{isGender(user.gender)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
                         <span className="w-3/12">Sinh nhật:</span>

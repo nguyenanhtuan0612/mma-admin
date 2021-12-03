@@ -2,8 +2,11 @@ import React, { createRef, useEffect, useState } from 'react';
 import { Pagination } from 'antd';
 import HeaderCell from './components/HeaderCell';
 import RowItemUser from './components/RowItemUser';
-import { serviceHelpers, openNotification, notiType } from 'helpers';
+import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
 import { useRouter } from 'next/router';
+import FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+const { getDate } = displayHelpers;
 
 export default function UsersTable() {
     const [listUser, setListUser] = useState([]);
@@ -60,6 +63,82 @@ export default function UsersTable() {
         setCount(data.data.count);
     }
 
+    async function handleExportExcel(e) {
+        e.preventDefault();
+        const data = await exportData(role, active, searchPhone);
+        if (!data) {
+            return openNotification(notiType.error, 'Lỗi hệ thống');
+        }
+        if (data.statusCode === 400) {
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
+
+        const excelData = data.data.rows.map(user => {
+            user.createdAt = getDate(user.createdAt);
+            switch (user.gender) {
+                case 'male': {
+                    user.gender = 'Nam';
+                    break;
+                }
+                case 'female': {
+                    user.gender = 'Nữ';
+                    break;
+                }
+                case 'orther': {
+                    user.gender = 'Khác';
+                    break;
+                }
+                default: {
+                    user.gender = null;
+                    break;
+                }
+            }
+            switch (user.role) {
+                case 'root': {
+                    user.role = 'Root Admin';
+                    break;
+                }
+                case 'admin': {
+                    user.role = 'Admin';
+                    break;
+                }
+                default: {
+                    user.role = 'Người dùng';
+                    break;
+                }
+            }
+            switch (user.active) {
+                case true: {
+                    user.active = 'Kích hoạt';
+                    break;
+                }
+                default: {
+                    user.active = 'Vô hiệu';
+                    break;
+                }
+            }
+
+            return {
+                Id: user.id,
+                'Họ và tên': user.fullName,
+                'Số điện thoại': user.phone,
+                Email: user.email,
+                'Sinh nhật': user.birthday,
+                'Giới tính': user.gender,
+                'Ngày tạo': user.createdAt,
+                'Loại thành viên': user.role,
+                'Trạng thái': user.active,
+            };
+        });
+        const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const fileExtension = '.xlsx';
+        const ws = XLSX.utils.json_to_sheet(excelData);
+        const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const rs = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(rs, 'users' + fileExtension);
+    }
+
     async function handleClearFilter(e) {
         e.preventDefault();
         setSearchPhone('');
@@ -80,6 +159,11 @@ export default function UsersTable() {
         }
         setListUser(data.data.rows);
         setCount(data.data.count);
+    }
+
+    async function onClickCreateUser(e) {
+        e.preventDefault();
+        router.push('/users/create');
     }
 
     async function updateActive(id, body) {
@@ -144,8 +228,35 @@ export default function UsersTable() {
             });
         }
         const strFilter = JSON.stringify(filter);
-        console.log(strFilter);
         const { data } = await serviceHelpers.getListData('users', strFilter, sort, start, 10);
+        return data;
+    }
+
+    async function exportData(role = '', active = '', searchPhone = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+        const filter = [];
+        if (role != '') {
+            filter.push({
+                operator: `eq`,
+                value: `${role}`,
+                property: `role`,
+            });
+        }
+        if (active != '') {
+            filter.push({
+                operator: `eq`,
+                value: `${active}`,
+                property: `active`,
+            });
+        }
+        if (searchPhone != '') {
+            filter.push({
+                operator: 'iLike',
+                value: `${searchPhone}`,
+                property: `phone`,
+            });
+        }
+        const strFilter = JSON.stringify(filter);
+        const { data } = await serviceHelpers.exportData('users', strFilter, sort, start, 10);
         return data;
     }
 
@@ -155,12 +266,14 @@ export default function UsersTable() {
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mb-2 float-right bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
+                    onClick={onClickCreateUser}
                 >
                     <span className="fas fa-user-plus mr-2"></span> Thêm Người dùng
                 </button>
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
+                    onClick={handleExportExcel}
                 >
                     <span className="fas fa-table mr-2"></span> Xuất File Excel
                 </button>

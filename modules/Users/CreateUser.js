@@ -2,10 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { AuthContext } from 'layouts/Admin';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup/dist/yup.umd';
+import * as Yup from 'yup';
 
 const { checkNull, avatarUser, dateFormat, checkSelect } = displayHelpers;
 
-export default function EditUser() {
+export default function CreateU() {
     const router = useRouter();
 
     const { id } = router.query;
@@ -17,64 +20,59 @@ export default function EditUser() {
         email: '',
         gender: '',
         birthday: '',
-        role: '',
+        role: 'user',
         active: true,
         avatarImage: '',
+        password: '',
+        confirmPassword: '',
     });
+
+    const validationSchema = Yup.object().shape({
+        phone: Yup.string()
+            .matches(/[0]{1}[0-9]+/, 'Số điện thoại không đúng')
+            .min(10, 'Số điện thoại phải có 10-11 kí tự')
+            .min(11, 'Số điện thoại phải có 10-11 kí tự')
+            .required('Số điện thoại là bắt buộc'),
+        firstName: Yup.string().required('Họ là bắt buộc'),
+        lastName: Yup.string().required('Tên là bắt buộc'),
+        password: Yup.string().min(6, 'Mật khẩu phải nhiều hơn 6 kí tự').required('Mật khẩu là bắt buộc'),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp')
+            .required('Xác nhận mật khẩu là bắt buộc'),
+    });
+
+    const formOptions = { resolver: yupResolver(validationSchema) };
+
+    // get functions to build form with useForm() hook
+    const { handleSubmit, formState, register } = useForm(formOptions);
+    const { errors } = formState;
+
     const [isRoot, setIsRoot] = useState(false);
     const [createObjectURL, setCreateObjectURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
 
     useEffect(async () => {
-        const data = await getDetail(id);
-        if (!data) {
-            return;
-        }
-
         setIsRoot(auth.role == 'root' ? true : false);
-        setUser(data.data);
-        setCreateObjectURL(data.data.avatarImage);
     }, [auth]);
 
-    async function getDetail(id) {
-        const { data } = await serviceHelpers.detailData('users', id);
-        if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống');
-        }
-        if (data.statusCode === 400) {
-            console.log(data.message);
-            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-        }
-        if (data.statusCode === 404) {
-            router.push('/auth/login');
-            return <div></div>;
-        }
-        return data;
-    }
-
-    async function onUpdate(e) {
-        e.preventDefault();
+    async function onCreate() {
         let dataUser = user;
+        console.log(dataUser);
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
             dataUser = { ...user, avatarImage: img.data.streamPath };
         }
-        const data = await updateUser(id, dataUser);
+        const data = await createUser(dataUser);
         if (!data) {
             return;
         }
         openNotification(notiType.success, 'Cập nhật thành công !');
-        const detail = await getDetail(id);
-        if (!detail) {
-            return;
-        }
-        setUser(detail.data);
-        setCreateObjectURL(detail.data.avatarImage);
+        router.push('/users');
     }
 
-    async function updateUser(id, body) {
-        const { data } = await serviceHelpers.updateData('users', id, body);
+    async function createUser(body) {
+        const { data } = await serviceHelpers.createData('users', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -119,9 +117,10 @@ export default function EditUser() {
 
     async function handleChangePhone(e) {
         e.preventDefault();
+
         setUser({
             ...user,
-            phone: e.target.value,
+            phone: e.target.value.toString(),
         });
     }
 
@@ -162,6 +161,22 @@ export default function EditUser() {
         setUser({
             ...user,
             active: e.target.value === 'true' ? true : false,
+        });
+    }
+
+    async function handleChangePassword(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            password: e.target.value,
+        });
+    }
+
+    async function handleChangeCfPassword(e) {
+        e.preventDefault();
+        setUser({
+            ...user,
+            confirmPassword: e.target.value,
         });
     }
 
@@ -207,35 +222,10 @@ export default function EditUser() {
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Họ và tên đệm:
+                                            Số điện thoại: <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            value={checkNull(user.firstName, '')}
-                                            onChange={handleChangeFirstName}
-                                            type="text"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Nguyễn Bá"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Tên:</label>
-                                        <input
-                                            value={checkNull(user.lastName, '')}
-                                            onChange={handleChangeLastName}
-                                            type="text"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Sơn"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Số điện thoại:
-                                        </label>
-                                        <input
+                                            {...register('phone')}
                                             value={checkNull(user.phone, '')}
                                             onChange={handleChangePhone}
                                             type="text"
@@ -243,6 +233,23 @@ export default function EditUser() {
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.phone?.message}</div>
+                                </div>
+                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Mật khẩu: <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            {...register('password')}
+                                            value={checkNull(user.password, '')}
+                                            onChange={handleChangePassword}
+                                            type="password"
+                                            placeholder="password"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.password?.message}</div>
                                 </div>
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
@@ -256,6 +263,55 @@ export default function EditUser() {
                                         />
                                     </div>
                                 </div>
+                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Nhập lại mật khẩu: <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            {...register('confirmPassword')}
+                                            value={checkNull(user.confirmPassword, '')}
+                                            onChange={handleChangeCfPassword}
+                                            type="password"
+                                            placeholder="confirm password"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.confirmPassword?.message}</div>
+                                </div>
+                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                    <div className="relative w-full mb-4 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Họ và tên đệm: <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            {...register('firstName')}
+                                            value={checkNull(user.firstName, '')}
+                                            onChange={handleChangeFirstName}
+                                            type="text"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            placeholder="Nguyễn Bá"
+                                        />
+                                    </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.firstName?.message}</div>
+                                </div>
+                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                    <div className="relative w-full mb-4 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Tên: <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            {...register('lastName')}
+                                            value={checkNull(user.lastName, '')}
+                                            onChange={handleChangeLastName}
+                                            type="text"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            placeholder="Sơn"
+                                        />
+                                    </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.lastName?.message}</div>
+                                </div>
+
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Giới tính:</label>
@@ -329,7 +385,7 @@ export default function EditUser() {
                                 <button
                                     className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                     type="button"
-                                    onClick={onUpdate}
+                                    onClick={handleSubmit(onCreate)}
                                 >
                                     Lưu
                                 </button>

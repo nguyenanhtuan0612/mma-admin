@@ -14,6 +14,7 @@ const Route2LabelMap = {
     '': 'Trang Chủ',
     users: 'Quản lý người dùng',
     edit: 'Chỉnh sửa',
+    create: 'Tạo mới',
 };
 
 export function BreadCrumbs() {

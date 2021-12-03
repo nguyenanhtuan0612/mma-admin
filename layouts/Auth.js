@@ -6,6 +6,7 @@ import router from 'next/router';
 export default function Auth({ children }) {
     useEffect(async () => {
         const { data } = await serviceHelpers.checkToken();
+        if (!data) return;
         if (data.statusCode == 200) {
             router.push('/');
             return <div></div>;

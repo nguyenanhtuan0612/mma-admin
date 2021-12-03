@@ -23,7 +23,6 @@ function getDate(createdAt) {
 
 function dateFormat(createdAt) {
     if (createdAt && createdAt != '') {
-        console.log('cas', createdAt);
         const splitT = createdAt.toString().split('T');
         return splitT[0];
     }
