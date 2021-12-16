@@ -2,19 +2,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-/*
-interface BreadCrumb {
-  route: string;
-  label: string;
-  link: string;
-}
-*/
-
 const Route2LabelMap = {
     '': 'Trang Chủ',
     users: 'Quản lý người dùng',
     edit: 'Chỉnh sửa',
     create: 'Tạo mới',
+    teachers: 'Quản lý giáo viên',
+    courses: 'Quản lý khoá học',
 };
 
 export function BreadCrumbs() {

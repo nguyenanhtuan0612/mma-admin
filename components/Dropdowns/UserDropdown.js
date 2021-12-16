@@ -28,7 +28,7 @@ export default function UserDropdown() {
         router.push('/auth/login');
     }
 
-    function avatarUser(avatarImage) {
+    function avatarImg(avatarImage) {
         if (avatarImage) {
             return avatarImage;
         }
@@ -54,7 +54,7 @@ export default function UserDropdown() {
             >
                 <div className="items-center flex">
                     <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-                        <img alt="..." className="w-full rounded-full align-middle border-none shadow-lg" src={avatarUser(avatar)} />
+                        <img alt="..." className="w-full rounded-full align-middle border-none shadow-lg" src={avatarImg(avatar)} />
                     </span>
                 </div>
             </a>

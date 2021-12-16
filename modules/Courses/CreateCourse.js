@@ -1,68 +1,60 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { AuthContext } from 'layouts/Admin';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup/dist/yup.umd';
 import * as Yup from 'yup';
+import { Select } from 'antd';
 
-const { checkNull, avatarImg, dateFormat, checkSelect } = displayHelpers;
+const { Option } = Select;
+const { checkNull, avatarImg, dateFormat, checkSelect, formatCurrency, localStringToNumber } = displayHelpers;
 
-export default function CreateU() {
+export default function CreateCourse() {
     const router = useRouter();
-
-    const { id } = router.query;
-    const auth = useContext(AuthContext);
-    const [user, setUser] = useState({
-        firstName: '',
-        lastName: '',
-        phone: '',
-        email: '',
-        gender: '',
-        birthday: '',
-        role: 'user',
-        active: true,
-        avatarImage: '',
-        password: '',
-        confirmPassword: '',
-    });
-
-    const validationSchema = Yup.object().shape({
-        phone: Yup.string()
-            .matches(/[0]{1}[0-9]+/, 'Số điện thoại không đúng')
-            .min(10, 'Số điện thoại phải có 10-11 kí tự')
-            .max(11, 'Số điện thoại phải có 10-11 kí tự')
-            .required('Số điện thoại là bắt buộc'),
-        firstName: Yup.string().required('Họ là bắt buộc'),
-        lastName: Yup.string().required('Tên là bắt buộc'),
-        password: Yup.string().min(6, 'Mật khẩu phải nhiều hơn 6 kí tự').required('Mật khẩu là bắt buộc'),
-        confirmPassword: Yup.string()
-            .oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp')
-            .required('Xác nhận mật khẩu là bắt buộc'),
-    });
-
-    const formOptions = { resolver: yupResolver(validationSchema) };
-
-    // get functions to build form with useForm() hook
-    const { handleSubmit, formState, register } = useForm(formOptions);
-    const { errors } = formState;
 
     const [isRoot, setIsRoot] = useState(false);
     const [createObjectURL, setCreateObjectURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
+
+    const auth = useContext(AuthContext);
+    const [state, setState] = useState({
+        firstName: '',
+        lastName: '',
+        name: '',
+        amount: null,
+        amountStr: '',
+        class: '',
+        birthday: '',
+        active: true,
+        avatarImage: '',
+        description: '',
+        teacherIds: [],
+    });
+
+    const validationSchema = Yup.object().shape({
+        amount: Yup.string()
+            .matches(/[0]{1}[0-9]+/, 'Số điện thoại không đúng')
+            .required('Giá là bắt buộc'),
+        name: Yup.string().required('Tên khoá học là bắt buộc'),
+    });
+    const formOptions = { resolver: yupResolver(validationSchema) };
+    // get functions to build form with useForm() hook
+    const { handleSubmit, formState, register } = useForm(formOptions);
+    const { errors } = formState;
 
     useEffect(async () => {
         setIsRoot(auth.role == 'root' ? true : false);
     }, [auth]);
 
     async function onCreate() {
-        let dataUser = user;
+        let dataUser = state;
+        console.log(dataUser);
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
-            dataUser = { ...user, avatarImage: img.data.streamPath };
+            dataUser = { ...state, avatarImage: img.data.streamPath };
         }
-        console.log(dataUser);
         const data = await createUser(dataUser);
         if (!data) {
             return;
@@ -72,7 +64,6 @@ export default function CreateU() {
     }
 
     async function createUser(body) {
-        console.log('body', body);
         const { data } = await serviceHelpers.createData('users', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
@@ -100,84 +91,85 @@ export default function CreateU() {
 
     async function handleChangeFirstName(e) {
         e.preventDefault();
-        setUser({
-            ...user,
+        setState({
+            ...state,
             firstName: e.target.value,
-            fullName: `${e.target.value} ${user.lastName}`,
+            fullName: `${e.target.value} ${state.lastName}`,
         });
     }
 
     async function handleChangeLastName(e) {
         e.preventDefault();
-        setUser({
-            ...user,
+        setState({
+            ...state,
             lastName: e.target.value,
-            fullName: `${user.firstName} ${e.target.value}`,
+            fullName: `${state.firstName} ${e.target.value}`,
         });
     }
 
-    async function handleChangePhone(e) {
+    async function handleChangeName(e) {
         e.preventDefault();
 
-        setUser({
-            ...user,
-            phone: e.target.value.toString(),
+        setState({
+            ...state,
+            name: e.target.value,
         });
     }
 
-    async function handleChangeEmail(e) {
+    async function handleChangeAmount(e) {
         e.preventDefault();
-        setUser({
-            ...user,
-            email: e.target.value,
+        setState({
+            ...state,
+            amount: e.target.value,
+            amountStr: formatCurrency(parseInt(e.target.value)),
         });
     }
 
-    async function handleChangeGender(e) {
+    async function handleChangeClass(e) {
         e.preventDefault();
-        setUser({
-            ...user,
-            gender: e.target.value,
+        setState({
+            ...state,
+            class: e.target.value,
         });
     }
 
     async function handleChangeBirthDay(e) {
         e.preventDefault();
-        setUser({
-            ...user,
+        setState({
+            ...state,
             birthday: e.target.value,
         });
     }
 
     async function handleChangeRole(e) {
         e.preventDefault();
-        setUser({
-            ...user,
+        setState({
+            ...state,
             role: e.target.value,
         });
     }
 
     async function handleChangeActive(e) {
         e.preventDefault();
-        setUser({
-            ...user,
+        setState({
+            ...state,
             active: e.target.value === 'true' ? true : false,
         });
     }
 
-    async function handleChangePassword(e) {
+    async function handleChangeDescription(e) {
         e.preventDefault();
-        setUser({
-            ...user,
-            password: e.target.value,
+        setState({
+            ...state,
+            description: e.target.value,
         });
     }
 
-    async function handleChangeCfPassword(e) {
+    async function handleChangeTeacherIds(e) {
         e.preventDefault();
-        setUser({
-            ...user,
-            confirmPassword: e.target.value,
+        setState({
+            ...state,
+            teacherIds: e.target.value,
         });
     }
 
@@ -189,13 +181,28 @@ export default function CreateU() {
         }
     }
 
+    async function onFocusAmount(e) {
+        e.target.value = state.amount;
+    }
+
+    async function onBlurAmount(e) {
+        e.target.value = checkNull(state.amountStr, '');
+    }
+
+    const children = [];
+    for (let i = 10; i < 36; i++) {
+        children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+    }
+    function handleChange(value) {
+        console.log(`selected ${value}`);
+    }
+
     return (
         <>
             <div className="border-2">
                 <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <img src={avatarImg(createObjectURL)} className="object-contain h-16 w-16 bg-white rounded-full border mr-4" alt="..."></img>{' '}
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(user.fullName)}</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(state.name)}</b>
                     </div>
                 </div>
                 <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
@@ -204,8 +211,8 @@ export default function CreateU() {
                             <div className="w-full flex justify-center">
                                 <img
                                     alt="..."
-                                    src={avatarImg(createObjectURL)}
-                                    className=" object-contain shadow-xl rounded-full border 2xl:w-40 2xl:h-40 w-40 h-40"
+                                    src={avatarImg(createObjectURL, '/img/empty.jpeg')}
+                                    className=" object-contain shadow-xl border 2xl:w-40 2xl:h-40 w-40 h-40"
                                 />
                             </div>
                             <div className="w-full flex justify-center mt-4">
@@ -218,76 +225,111 @@ export default function CreateU() {
                             </div>
                             <input name="upload" id="upload" className="upload" type="file" onChange={uploadToClient} />
                         </div>
-                        <div className="2xl:w-9/12 w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
+                        <div className="2xl:w-6/12 w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                             <div className="flex flex-wrap ">
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Số điện thoại: <span className="text-red-500">*</span>
+                                            Tên khoá học: <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            {...register('phone')}
-                                            value={checkNull(user.phone, '')}
-                                            onChange={handleChangePhone}
+                                            {...register('name')}
+                                            value={checkNull(state.name, '')}
+                                            onChange={handleChangeName}
                                             type="text"
-                                            placeholder="0123456789"
+                                            placeholder="Tên khoá học"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.phone?.message}</div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.name?.message}</div>
                                 </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Mật khẩu: <span className="text-red-500">*</span>
+                                            Mô tả khoá học:{' '}
                                         </label>
-                                        <input
-                                            {...register('password')}
-                                            value={checkNull(user.password, '')}
-                                            onChange={handleChangePassword}
-                                            type="password"
-                                            placeholder="password"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                        />
-                                    </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.password?.message}</div>
-                                </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Email:</label>
-                                        <input
-                                            value={checkNull(user.email, '')}
-                                            onChange={handleChangeEmail}
+                                        <textarea
+                                            value={checkNull(state.description, '')}
+                                            onChange={handleChangeDescription}
                                             type="text"
-                                            placeholder="example@email.com"
+                                            placeholder="Tên khoá học"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
                                 </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Nhập lại mật khẩu: <span className="text-red-500">*</span>
+                                            Giá khoá học: <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            {...register('confirmPassword')}
-                                            value={checkNull(user.confirmPassword, '')}
-                                            onChange={handleChangeCfPassword}
-                                            type="password"
-                                            placeholder="confirm password"
+                                            {...register('amount')}
+                                            onFocus={onFocusAmount}
+                                            onBlur={onBlurAmount}
+                                            onChange={handleChangeAmount}
+                                            type="text"
+                                            placeholder=""
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.confirmPassword?.message}</div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.amount?.message}</div>
                                 </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Lớp: <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            value={checkSelect(state.class)}
+                                            onChange={handleChangeClass}
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        >
+                                            <option value="" hidden>
+                                                Chưa chọn
+                                            </option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="1">4</option>
+                                            <option value="2">5</option>
+                                            <option value="3">6</option>
+                                            <option value="1">7</option>
+                                            <option value="2">8</option>
+                                            <option value="3">9</option>
+                                            <option value="1">10</option>
+                                            <option value="2">11</option>
+                                            <option value="3">12</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Giáo viên: <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="w-8/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
+                                            <Select
+                                                mode="multiple"
+                                                allowClear
+                                                style={{ width: '100%' }}
+                                                placeholder="Please select"
+                                                defaultValue={['a10', 'c12']}
+                                                onChange={handleChange}
+                                            >
+                                                {children}
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.teacherIds?.message}</div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-4 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Họ và tên đệm: <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             {...register('firstName')}
-                                            value={checkNull(user.firstName, '')}
+                                            value={checkNull(state.firstName, '')}
                                             onChange={handleChangeFirstName}
                                             type="text"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
@@ -296,14 +338,14 @@ export default function CreateU() {
                                     </div>
                                     <div className="w-full justify-center items-center flex text-red-500">{errors.firstName?.message}</div>
                                 </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-4 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Tên: <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             {...register('lastName')}
-                                            value={checkNull(user.lastName, '')}
+                                            value={checkNull(state.lastName, '')}
                                             onChange={handleChangeLastName}
                                             type="text"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
@@ -312,43 +354,25 @@ export default function CreateU() {
                                     </div>
                                     <div className="w-full justify-center items-center flex text-red-500">{errors.lastName?.message}</div>
                                 </div>
-
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Giới tính:</label>
-                                        <select
-                                            value={checkSelect(user.gender)}
-                                            onChange={handleChangeGender}
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                        >
-                                            <option value="" hidden>
-                                                Chưa chọn
-                                            </option>
-                                            <option value="male">Nam</option>
-                                            <option value="female">Nữ</option>
-                                            <option value="orther">Khác</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Sinh nhật:</label>
                                         <input
                                             onChange={handleChangeBirthDay}
-                                            value={dateFormat(user.birthday)}
+                                            value={dateFormat(state.birthday)}
                                             type="date"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
                                 </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Loại thành viên:
                                         </label>
                                         <select
                                             disabled={!isRoot}
-                                            value={checkSelect(user.role)}
+                                            value={checkSelect(state.role)}
                                             onChange={handleChangeRole}
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         >
@@ -357,15 +381,15 @@ export default function CreateU() {
                                             </option>
                                             <option value="root">Root Admin</option>
                                             <option value="admin">Admin</option>
-                                            <option value="user">Người dùng</option>
+                                            <option value="state">Người dùng</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Trạng thái:</label>
                                         <select
-                                            value={checkSelect(user.active)}
+                                            value={checkSelect(state.active)}
                                             onChange={handleChangeActive}
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         >

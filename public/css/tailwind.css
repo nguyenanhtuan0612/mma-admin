@@ -5352,6 +5352,10 @@ video {
     width: 41.666667%;
   }
 
+  .\32xl\:w-6\/12 {
+    width: 50%;
+  }
+
   .\32xl\:w-7\/12 {
     width: 58.333333%;
   }
@@ -5377,6 +5381,11 @@ video {
   .\32xl\:px-4 {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  .\32xl\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   .\32xl\:py-2 {

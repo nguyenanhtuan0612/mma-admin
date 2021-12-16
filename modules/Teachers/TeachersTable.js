@@ -1,6 +1,6 @@
 import React, { createRef, useEffect, useState } from 'react';
 import { Pagination } from 'antd';
-import RowItemUser from './components/RowItemUser';
+import RowItemTeacher from './components/RowItemTeacher';
 import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
 import { useRouter } from 'next/router';
 import FileSaver from 'file-saver';
@@ -8,12 +8,11 @@ import * as XLSX from 'xlsx';
 import HeaderCell from 'components/Tables/HeaderCell';
 const { getDate } = displayHelpers;
 
-export default function UsersTable() {
-    const [listUser, setListUser] = useState([]);
+export default function TeachersTable() {
+    const [list, setList] = useState([]);
     const [count, setCount] = useState(0);
-    const [role, setRole] = useState('');
     const [active, setActive] = useState('');
-    const [searchPhone, setSearchPhone] = useState('');
+    const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const inputSearchPhoneRef = createRef();
     const router = useRouter();
@@ -30,18 +29,13 @@ export default function UsersTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListUser(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }, []);
 
-    function changeSearchPhone(e) {
+    function changeSearchName(e) {
         e.preventDefault();
-        return setSearchPhone(e.target.value);
-    }
-
-    function changeRole(e) {
-        e.preventDefault();
-        return setRole(e.target.value);
+        return setSearch(e.target.value);
     }
 
     function changeActive(e) {
@@ -51,7 +45,7 @@ export default function UsersTable() {
 
     async function handleSubmitFilter(e) {
         e.preventDefault();
-        const data = await getData(role, active, searchPhone);
+        const data = await getData(active, search);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -59,13 +53,13 @@ export default function UsersTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         setPage(1);
-        setListUser(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
     async function handleExportExcel(e) {
         e.preventDefault();
-        const data = await exportData(role, active, searchPhone);
+        const data = await exportData(active, search);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -73,61 +67,25 @@ export default function UsersTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
 
-        const excelData = data.data.rows.map(user => {
-            user.createdAt = getDate(user.createdAt);
-            switch (user.gender) {
-                case 'male': {
-                    user.gender = 'Nam';
-                    break;
-                }
-                case 'female': {
-                    user.gender = 'Nữ';
-                    break;
-                }
-                case 'orther': {
-                    user.gender = 'Khác';
-                    break;
-                }
-                default: {
-                    user.gender = null;
-                    break;
-                }
-            }
-            switch (user.role) {
-                case 'root': {
-                    user.role = 'Root Admin';
-                    break;
-                }
-                case 'admin': {
-                    user.role = 'Admin';
-                    break;
-                }
-                default: {
-                    user.role = 'Người dùng';
-                    break;
-                }
-            }
-            switch (user.active) {
+        const excelData = data.data.rows.map(teacher => {
+            teacher.createdAt = getDate(teacher.createdAt);
+            switch (teacher.active) {
                 case true: {
-                    user.active = 'Kích hoạt';
+                    teacher.active = 'Kích hoạt';
                     break;
                 }
                 default: {
-                    user.active = 'Vô hiệu';
+                    teacher.active = 'Vô hiệu';
                     break;
                 }
             }
 
             return {
-                Id: user.id,
-                'Họ và tên': user.fullName,
-                'Số điện thoại': user.phone,
-                Email: user.email,
-                'Sinh nhật': user.birthday,
-                'Giới tính': user.gender,
-                'Ngày tạo': user.createdAt,
-                'Loại thành viên': user.role,
-                'Trạng thái': user.active,
+                Id: teacher.id,
+                'Họ và tên': teacher.name,
+                'Nơi công tác': teacher.workPlace,
+                'Ngày tạo': teacher.createdAt,
+                'Trạng thái': teacher.active,
             };
         });
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -136,13 +94,12 @@ export default function UsersTable() {
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const rs = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(rs, 'users' + fileExtension);
+        FileSaver.saveAs(rs, 'teachers' + fileExtension);
     }
 
     async function handleClearFilter(e) {
         e.preventDefault();
-        setSearchPhone('');
-        setRole('');
+        setSearch('');
         setActive('');
         setPage(1);
         inputSearchPhoneRef.current.focus();
@@ -157,21 +114,21 @@ export default function UsersTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListUser(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
     async function onClickCreateUser(e) {
         e.preventDefault();
-        router.push('/users/create');
+        router.push('/teachers/create');
     }
 
     async function updateActive(id, body) {
-        const update = await serviceHelpers.updateData('users', id, body);
+        const update = await serviceHelpers.updateData('teachers', id, body);
         if (update.data.statusCode === 400) {
             return;
         }
-        const data = await getData(role, active, searchPhone, (page - 1) * 10);
+        const data = await getData(active, search, (page - 1) * 10);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -183,12 +140,12 @@ export default function UsersTable() {
             return <div></div>;
         }
         openNotification(notiType.success, 'Cập nhật thành công !');
-        setListUser(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
     async function handlePaginationChange(current) {
-        const data = await getData(role, active, searchPhone, (current - 1) * 10);
+        const data = await getData(active, search, (current - 1) * 10);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -200,19 +157,12 @@ export default function UsersTable() {
             return <div></div>;
         }
         setPage(current);
-        setListUser(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
-    async function getData(role = '', active = '', searchPhone = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+    async function getData(active = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
         const filter = [];
-        if (role != '') {
-            filter.push({
-                operator: `eq`,
-                value: `${role}`,
-                property: `role`,
-            });
-        }
         if (active != '') {
             filter.push({
                 operator: `eq`,
@@ -220,27 +170,20 @@ export default function UsersTable() {
                 property: `active`,
             });
         }
-        if (searchPhone != '') {
+        if (search != '') {
             filter.push({
                 operator: 'iLike',
-                value: `${searchPhone}`,
+                value: `${search}`,
                 property: `phone`,
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.getListData('users', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.getListData('teachers', strFilter, sort, start, 10);
         return data;
     }
 
-    async function exportData(role = '', active = '', searchPhone = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+    async function exportData(active = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
         const filter = [];
-        if (role != '') {
-            filter.push({
-                operator: `eq`,
-                value: `${role}`,
-                property: `role`,
-            });
-        }
         if (active != '') {
             filter.push({
                 operator: `eq`,
@@ -248,15 +191,15 @@ export default function UsersTable() {
                 property: `active`,
             });
         }
-        if (searchPhone != '') {
+        if (search != '') {
             filter.push({
                 operator: 'iLike',
-                value: `${searchPhone}`,
-                property: `phone`,
+                value: `${search}`,
+                property: `name`,
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.exportData('users', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.exportData('teachers', strFilter, sort, start, 10);
         return data;
     }
 
@@ -268,7 +211,7 @@ export default function UsersTable() {
                     type="button"
                     onClick={onClickCreateUser}
                 >
-                    <span className="fas fa-user-plus mr-2"></span> Thêm Người dùng
+                    <span className="fas fa-user-plus mr-2"></span> Thêm giáo viên
                 </button>
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -283,28 +226,18 @@ export default function UsersTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ NGƯỜI DÙNG</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ GIÁO VIÊN</h3>
                         </div>
                         <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
                             <div className="relative w-full mb-3 flex items-center 2xl:justify-end">
                                 <input
                                     ref={inputSearchPhoneRef}
-                                    value={searchPhone}
+                                    value={search}
                                     type="text"
                                     className="2xl:w-3/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded text-xs font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                    placeholder="Số điện thoại"
-                                    onChange={changeSearchPhone}
+                                    placeholder="Tên giáo viên"
+                                    onChange={changeSearchName}
                                 />
-                                <select
-                                    value={role}
-                                    onChange={changeRole}
-                                    className="border ml-2 2xl:w-4/12 xl:w-3/12 bg-white text-blueGray-700 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear"
-                                >
-                                    <option value="">Loại Thành viên</option>
-                                    <option value="root">Root Admin</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="user">User</option>
-                                </select>
                                 <select
                                     value={active}
                                     onChange={changeActive}
@@ -339,19 +272,17 @@ export default function UsersTable() {
                     <table className="items-center w-full bg-transparent border-collapse">
                         <thead>
                             <tr>
-                                <HeaderCell content="ID" width="w-1/24" />
-                                <HeaderCell content="HỌ TÊN" width="w-5/24" />
-                                <HeaderCell content="SỐ ĐIỆN THOẠI" width="2/24" />
-                                <HeaderCell content="EMAIL" width="w-5/24" />
-                                <HeaderCell content="NGÀY TẠO" width="w-2/24" />
-                                <HeaderCell content="LOẠI THÀNH VIÊN" width="4/24" />
+                                <HeaderCell content="ID" width="w-2/24" />
+                                <HeaderCell content="HỌ TÊN" width="w-6/24" />
+                                <HeaderCell content="NƠI LÀM VIỆC" width="6/24" />
+                                <HeaderCell content="NGÀY TẠO" width="w-5/24" />
                                 <HeaderCell content="TRẠNG THÁI" width="w-3/24" />
                                 <HeaderCell content="HOẠT ĐỘNG" width="w-2/24" />
                             </tr>
                         </thead>
                         <tbody>
-                            {listUser && listUser.length > 0 ? (
-                                listUser.map((user, index) => <RowItemUser data={user} key={index} updateActive={updateActive} />)
+                            {list && list.length > 0 ? (
+                                list.map((teacher, index) => <RowItemTeacher data={teacher} key={index} updateActive={updateActive} />)
                             ) : (
                                 <tr>
                                     <td colSpan="8">Không có dữ liệu</td>

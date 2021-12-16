@@ -6,7 +6,7 @@ module.exports = {
         enabled: true,
         content: ['./**/*.html', './*.html', './**/*.js', './*.js'],
         options: {
-            safelist: ['xl:text-sm', 'xl:px-2', '2xl:text-sm', 'mb-20', '2xl:h-36', '2xl:w-36', 'xl:px-0'],
+            safelist: ['xl:text-sm', 'xl:px-2', '2xl:text-sm', 'mb-20', '2xl:h-36', '2xl:w-36', 'xl:px-0', '2xl:w-6/12'],
         },
     },
     theme: {
@@ -15,6 +15,7 @@ module.exports = {
         },
         fontFamily: {
             sans: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+            body: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'],
         },
         extend: {
             minHeight: {

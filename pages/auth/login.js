@@ -24,7 +24,7 @@ export default function Login() {
         e.preventDefault();
         const { data } = await serviceHelpers.login(phone, password);
         if (!data) {
-            openNotification(notiType.error, 'Đăng nhập thất bại', data.message);
+            openNotification(notiType.error, 'Đăng nhập thất bại', 'Lỗi hệ thống');
             return;
         }
         if (data.statusCode === 200) {
@@ -32,7 +32,7 @@ export default function Login() {
                 alert('Không đủ quyền truy cập');
                 return;
             }
-            const { accessToken } = data.data.data.JWT;
+            const { accessToken } = data.data.JWT;
             localStorage.setItem('accessToken', `Bearer ${accessToken}`);
             const returnUrl = router.query.returnUrl || '/';
             router.push(returnUrl);

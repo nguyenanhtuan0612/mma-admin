@@ -1,11 +1,17 @@
 import axios from 'axios';
 
-function login(phone, password) {
-    const url = `${process.env.BACKEND_URL}/auth`;
-    return axios.post(url, {
-        phone,
-        password,
-    });
+async function login(phone, password) {
+    try {
+        const url = `${process.env.BACKEND_URL}/auth`;
+        const data = await axios.post(url, {
+            phone,
+            password,
+        });
+        if (!data) return;
+        return data;
+    } catch (error) {
+        return error.response;
+    }
 }
 
 async function checkToken() {
@@ -28,8 +34,7 @@ async function checkToken() {
         if (!data) return;
         return data;
     } catch (error) {
-        console.log(1);
-        return error;
+        return error.response;
     }
 }
 
@@ -57,7 +62,7 @@ async function getListData(path, filter = null, sort = null, start = 0, limit = 
             },
         });
     } catch (error) {
-        return error;
+        return error.response;
     }
 }
 
@@ -85,7 +90,7 @@ async function exportData(path, filter = null, sort = null, start = 0, limit = 1
             },
         });
     } catch (error) {
-        return error;
+        return error.response;
     }
 }
 
@@ -108,7 +113,7 @@ async function detailData(path, id) {
         });
         return data;
     } catch (error) {
-        return error;
+        return error.response;
     }
 }
 
@@ -130,7 +135,7 @@ async function updateData(path, id, body) {
             },
         });
     } catch (error) {
-        return error;
+        return error.response;
     }
 }
 
@@ -146,13 +151,14 @@ async function createData(path, body) {
             };
         }
         const url = `${process.env.BACKEND_URL}/${path}`;
-        return axios.post(url, body, {
+        const data = await axios.post(url, body, {
             headers: {
                 Authorization: token,
             },
         });
+        return data;
     } catch (error) {
-        return error;
+        return error.response;
     }
 }
 
@@ -170,7 +176,7 @@ async function uploadFile(path, file) {
         return data;
     } catch (error) {
         console.log(error);
-        return error;
+        return error.response;
     }
 }
 
@@ -194,7 +200,7 @@ async function deleteData(path, id) {
         return data;
     } catch (error) {
         console.log(error);
-        return error;
+        return error.response;
     }
 }
 

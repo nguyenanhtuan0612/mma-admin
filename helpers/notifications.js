@@ -15,6 +15,9 @@ function fomartError(string) {
         case `Cannot read property 'id' of null`: {
             return 'Người dùng không tồn tại !!';
         }
+        case `phone must be unique`: {
+            return 'Số điện thoại đã tồn tại !!';
+        }
         default: {
             return string;
         }

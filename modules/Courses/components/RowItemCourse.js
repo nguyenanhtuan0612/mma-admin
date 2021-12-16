@@ -3,22 +3,8 @@ import { Popconfirm } from 'antd';
 import { displayHelpers } from 'helpers';
 import Link from 'next/link';
 
-export default function RowItemUser({ data, updateActive }) {
-    function isRole(role) {
-        switch (role) {
-            case 'root': {
-                return 'Root Admin';
-            }
-            case 'admin': {
-                return 'Admin';
-            }
-            default: {
-                return 'Người dùng';
-            }
-        }
-    }
-
-    function activeUser(active) {
+export default function RowItemCourse({ data, updateActive }) {
+    function activeCourse(active) {
         if (active == true) {
             return (
                 <Popconfirm
@@ -53,32 +39,36 @@ export default function RowItemUser({ data, updateActive }) {
         );
     }
 
-    const { checkNull, avatarImg, getDate, isActive } = displayHelpers;
-    const { id, email, phone, active, avatarImage, role, fullName, createdAt } = data;
+    const { checkNull, avatarImg, getDate, isActive, formatCurrency } = displayHelpers;
+    const { id, numLesson, amount, active, avatar, class: classStr, name, createdAt } = data;
     return (
         <tr>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
             <th>
-                <Link href={`/users/${id}`} as={`/users/${id}`}>
+                <Link href={`/courses/${id}`} as={`/courses/${id}`}>
                     <a
-                        href={`/users/${id}`}
+                        href={`/courses/${id}`}
                         className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs whitespace-nowrap p-4 text-center flex items-center"
                     >
                         <img
-                            src={avatarImg(avatarImage)}
+                            src={avatarImg(avatar)}
                             className="object-contain 2xl:h-12 2xl:w-12 2xl:flex xl:hidden xl:w-8 xl:h-8 bg-white rounded-full border"
                             alt="..."
                         ></img>{' '}
-                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(fullName)}</span>
+                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(name)}</span>
                     </a>
                 </Link>
             </th>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{checkNull(phone)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{checkNull(email)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{checkNull(classStr)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">
+                {checkNull(formatCurrency(amount))}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {checkNull(numLesson.toString())}
+            </td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{getDate(createdAt)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isRole(role)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isActive(active)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{activeUser(active)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{activeCourse(active)}</td>
         </tr>
     );
 }

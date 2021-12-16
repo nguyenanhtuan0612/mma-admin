@@ -5,11 +5,18 @@ function checkNull(string, nullReturn = '...') {
     return nullReturn;
 }
 
-function avatarUser(avatarImage) {
+function avatarImg(avatarImage, nullReturn = '/img/avatar.jpeg') {
     if (avatarImage) {
         return avatarImage;
     }
-    return '/img/avatar.jpeg';
+    return nullReturn;
+}
+
+function formatCurrency(money) {
+    if (money) {
+        return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+    }
+    return null;
 }
 
 function getDate(createdAt) {
@@ -60,8 +67,9 @@ function isActive(active, reverse = false) {
 export default {
     isActive,
     getDate,
-    avatarUser,
+    avatarImg,
     checkNull,
     dateFormat,
     checkSelect,
+    formatCurrency,
 };
