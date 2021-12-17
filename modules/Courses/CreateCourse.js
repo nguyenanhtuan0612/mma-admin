@@ -16,6 +16,7 @@ export default function CreateCourse() {
     const [isRoot, setIsRoot] = useState(false);
     const [createObjectURL, setCreateObjectURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
+    const [teacherList, SetTeacherList] = useState([]);
 
     const auth = useContext(AuthContext);
     const [state, setState] = useState({
@@ -46,6 +47,35 @@ export default function CreateCourse() {
     useEffect(async () => {
         setIsRoot(auth.role == 'root' ? true : false);
     }, [auth]);
+
+    useEffect(async () => {
+        const data = await getData();
+        SetTeacherList(
+            data.data.rows.map(teacher => {
+                return <Option key={teacher.id}>{teacher.name}</Option>;
+            }),
+        );
+    }, []);
+
+    async function getData(search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+        const filter = [
+            {
+                operator: `eq`,
+                value: 'true',
+                property: `active`,
+            },
+        ];
+        if (search != '') {
+            filter.push({
+                operator: 'iLike',
+                value: `${search}`,
+                property: `name`,
+            });
+        }
+        const strFilter = JSON.stringify(filter);
+        const { data } = await serviceHelpers.getListData('teachers', strFilter, sort, start, 10);
+        return data;
+    }
 
     async function onCreate() {
         let dataUser = state;
@@ -189,12 +219,11 @@ export default function CreateCourse() {
         e.target.value = checkNull(state.amountStr, '');
     }
 
-    const children = [];
-    for (let i = 10; i < 36; i++) {
-        children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-    }
-    function handleChange(value) {
-        console.log(`selected ${value}`);
+    function handleTeacherIdsChange(value) {
+        setState({
+            ...state,
+            teacherIds: [...value],
+        });
     }
 
     return (
@@ -313,10 +342,10 @@ export default function CreateCourse() {
                                                 allowClear
                                                 style={{ width: '100%' }}
                                                 placeholder="Please select"
-                                                defaultValue={['a10', 'c12']}
-                                                onChange={handleChange}
+                                                defaultValue={[]}
+                                                onChange={handleTeacherIdsChange}
                                             >
-                                                {children}
+                                                {teacherList}
                                             </Select>
                                         </div>
                                     </div>
