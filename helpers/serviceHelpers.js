@@ -2,6 +2,7 @@ import axios from 'axios';
 
 async function login(phone, password) {
     try {
+        console.log(process.env.BACKEND_URL);
         const url = `${process.env.BACKEND_URL}/auth`;
         const data = await axios.post(url, {
             phone,

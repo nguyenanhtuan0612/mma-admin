@@ -27,7 +27,11 @@ export default function Admin({ children }) {
             router.push('/auth/login');
             return <div></div>;
         }
-        if (data.data.role == 'user') {
+        if (data.statusCode === 401) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        if (data.data && data.data.role == 'user') {
             router.push('/auth/login');
             return <div></div>;
         }
