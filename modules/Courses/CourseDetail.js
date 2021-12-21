@@ -10,12 +10,12 @@ const { confirm } = Modal;
 const { TabPane } = Tabs;
 const { checkNull, avatarImg } = displayHelpers;
 
-export default function UserDetail() {
+export default function CourseDetail() {
     const router = useRouter();
     const { id } = router.query;
 
     const auth = useContext(AuthContext);
-    const [user, setUser] = useState({});
+    const [state, setState] = useState({});
 
     function callback(key) {
         console.log(key);
@@ -26,24 +26,8 @@ export default function UserDetail() {
         if (!data) {
             return;
         }
-        setUser(data.data);
+        setState(data.data);
     }, []);
-
-    async function getDetail(id) {
-        const { data } = await serviceHelpers.detailData('users', id);
-        if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống');
-        }
-        if (data.statusCode === 400) {
-            console.log(data.message);
-            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-        }
-        if (data.statusCode === 404) {
-            router.push('/auth/login');
-            return <div></div>;
-        }
-        return data;
-    }
 
     function onDelete(id) {
         const role = auth.role;
@@ -60,7 +44,7 @@ export default function UserDetail() {
                         return;
                     }
                     openNotification(notiType.success, 'Thành công', 'Xoá người dùng thành công');
-                    router.push('/users');
+                    router.push('/courses');
                 } else {
                     return openNotification(notiType.warning, 'Không thành công', 'Bạn không có quyền xoá người dùng');
                 }
@@ -70,7 +54,7 @@ export default function UserDetail() {
     }
 
     async function deleteData(id) {
-        const { data } = await serviceHelpers.deleteData('users', id);
+        const { data } = await serviceHelpers.deleteData('courses', id);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -86,7 +70,8 @@ export default function UserDetail() {
     }
 
     async function getDetail(id) {
-        const { data } = await serviceHelpers.detailData('users', id);
+        const { data } = await serviceHelpers.detailData('courses', id);
+        console.log(data);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -106,14 +91,14 @@ export default function UserDetail() {
             <div className="border-2">
                 <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <img src={avatarImg(user.avatarImage)} className="object-contain h-16 w-16 bg-white rounded-full border mr-4" alt="..."></img>{' '}
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(user.fullName)}</b>
+                        <img src={avatarImg(state.avatar)} className="object-contain h-16 w-16 bg-white rounded-full border mr-4" alt="..."></img>{' '}
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(state.name)}</b>
                     </div>
                 </div>
                 <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
                     <Tabs defaultActiveKey="1" onChange={callback} size="large" tabBarStyle={{ fontWeight: 500 }}>
-                        <TabPane tab="Thông tin cá nhân" key="1">
-                            <Detail user={user} onDelete={onDelete} />
+                        <TabPane tab="Thông tin khoá học" key="1">
+                            <Detail state={state} onDelete={onDelete} />
                         </TabPane>
                     </Tabs>
                 </div>

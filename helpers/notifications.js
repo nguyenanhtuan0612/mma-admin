@@ -7,8 +7,8 @@ export const notiType = {
     error: 'error',
 };
 
-function fomartError(string) {
-    switch (string) {
+function fomartError(message) {
+    switch (message) {
         case 'Phone or password is incorrect': {
             return 'Số điện thoại hoặc mật khẩu không đúng !!';
         }
@@ -18,16 +18,47 @@ function fomartError(string) {
         case `phone must be unique`: {
             return 'Số điện thoại đã tồn tại !!';
         }
+        case `name must be a string`: {
+            return 'Tên không hợp lệ !!';
+        }
+        case `description must be a string`: {
+            return 'Mô tả không hợp lệ !!';
+        }
+        case `detail must be a string`: {
+            return 'Chi tiết không hợp lệ !!';
+        }
+        case `condition must be a string`: {
+            return 'Điều kiện học không hợp lệ !!';
+        }
+        case `targetStudent must be a string`: {
+            return 'Đối tượng học sinh không hợp lệ !!';
+        }
+        case `result must be a string`: {
+            return 'Kết quả kì vọng không hợp lệ !!';
+        }
+        case `amount must be a number conforming to the specified constraints`: {
+            return 'Giá không hợp lệ';
+        }
+        case `class must be a number conforming to the specified constraints`: {
+            return 'Lớp không hợp lệ';
+        }
         default: {
-            return string;
+            return message;
         }
     }
+}
+
+function fomartMessage(message) {
+    if (Array.isArray(message)) {
+        return fomartError(message[0]);
+    }
+    return fomartError(message);
 }
 
 export function openNotification(type, title, message) {
     return notification[type]({
         message: title,
-        description: fomartError(message),
+        description: fomartMessage(message),
         duration: 2,
     });
 }

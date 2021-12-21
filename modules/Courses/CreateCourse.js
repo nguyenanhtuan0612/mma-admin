@@ -1,52 +1,34 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { AuthContext } from 'layouts/Admin';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup/dist/yup.umd';
-import * as Yup from 'yup';
 import { Select } from 'antd';
 
 const { Option } = Select;
-const { checkNull, avatarImg, dateFormat, checkSelect, formatCurrency, localStringToNumber } = displayHelpers;
+const { checkNull, avatarImg, checkSelect, formatCurrency } = displayHelpers;
 
 export default function CreateCourse() {
     const router = useRouter();
 
-    const [isRoot, setIsRoot] = useState(false);
     const [createObjectURL, setCreateObjectURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
     const [teacherList, SetTeacherList] = useState([]);
 
     const auth = useContext(AuthContext);
     const [state, setState] = useState({
-        firstName: '',
-        lastName: '',
-        name: '',
+        name: null,
         amount: null,
-        amountStr: '',
-        class: '',
-        birthday: '',
+        amountStr: null,
+        class: null,
         active: true,
-        avatarImage: '',
-        description: '',
+        avatarImage: null,
+        description: null,
+        condition: null,
+        detail: null,
+        targetStudent: null,
+        result: null,
         teacherIds: [],
     });
-
-    const validationSchema = Yup.object().shape({
-        amount: Yup.string()
-            .matches(/[0]{1}[0-9]+/, 'Số điện thoại không đúng')
-            .required('Giá là bắt buộc'),
-        name: Yup.string().required('Tên khoá học là bắt buộc'),
-    });
-    const formOptions = { resolver: yupResolver(validationSchema) };
-    // get functions to build form with useForm() hook
-    const { handleSubmit, formState, register } = useForm(formOptions);
-    const { errors } = formState;
-
-    useEffect(async () => {
-        setIsRoot(auth.role == 'root' ? true : false);
-    }, [auth]);
 
     useEffect(async () => {
         const data = await getData();
@@ -80,21 +62,22 @@ export default function CreateCourse() {
     async function onCreate() {
         let dataUser = state;
         console.log(dataUser);
+        if (dataUser.teacherIds.length == 0) return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
             dataUser = { ...state, avatarImage: img.data.streamPath };
         }
-        const data = await createUser(dataUser);
+        const data = await createCourse(dataUser);
         if (!data) {
             return;
         }
         openNotification(notiType.success, 'Tạo mới thành công !');
-        router.push('/users');
+        router.push('/courses');
     }
 
-    async function createUser(body) {
-        const { data } = await serviceHelpers.createData('users', body);
+    async function createCourse(body) {
+        const { data } = await serviceHelpers.createData('courses', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -107,7 +90,7 @@ export default function CreateCourse() {
     }
 
     async function uploadAvatar(image) {
-        const { data } = await serviceHelpers.uploadFile('users', image);
+        const { data } = await serviceHelpers.uploadFile('courses', image);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -119,30 +102,11 @@ export default function CreateCourse() {
         return data;
     }
 
-    async function handleChangeFirstName(e) {
-        e.preventDefault();
-        setState({
-            ...state,
-            firstName: e.target.value,
-            fullName: `${e.target.value} ${state.lastName}`,
-        });
-    }
-
-    async function handleChangeLastName(e) {
-        e.preventDefault();
-        setState({
-            ...state,
-            lastName: e.target.value,
-            fullName: `${state.firstName} ${e.target.value}`,
-        });
-    }
-
     async function handleChangeName(e) {
         e.preventDefault();
-
         setState({
             ...state,
-            name: e.target.value,
+            name: e.target.value == '' ? null : e.target.value,
         });
     }
 
@@ -150,8 +114,8 @@ export default function CreateCourse() {
         e.preventDefault();
         setState({
             ...state,
-            amount: e.target.value,
-            amountStr: formatCurrency(parseInt(e.target.value)),
+            amount: e.target.value == '' ? null : parseInt(e.target.value),
+            amountStr: e.target.value == '' ? null : formatCurrency(parseInt(e.target.value)),
         });
     }
 
@@ -159,31 +123,7 @@ export default function CreateCourse() {
         e.preventDefault();
         setState({
             ...state,
-            class: e.target.value,
-        });
-    }
-
-    async function handleChangeBirthDay(e) {
-        e.preventDefault();
-        setState({
-            ...state,
-            birthday: e.target.value,
-        });
-    }
-
-    async function handleChangeRole(e) {
-        e.preventDefault();
-        setState({
-            ...state,
-            role: e.target.value,
-        });
-    }
-
-    async function handleChangeActive(e) {
-        e.preventDefault();
-        setState({
-            ...state,
-            active: e.target.value === 'true' ? true : false,
+            class: e.target.value == '' ? null : parseInt(e.target.value),
         });
     }
 
@@ -191,15 +131,39 @@ export default function CreateCourse() {
         e.preventDefault();
         setState({
             ...state,
-            description: e.target.value,
+            description: e.target.value == '' ? null : e.target.value,
         });
     }
 
-    async function handleChangeTeacherIds(e) {
+    async function handleChangeDetail(e) {
         e.preventDefault();
         setState({
             ...state,
-            teacherIds: e.target.value,
+            detail: e.target.value == '' ? null : e.target.value,
+        });
+    }
+
+    async function handleChangeCondition(e) {
+        e.preventDefault();
+        setState({
+            ...state,
+            condition: e.target.value == '' ? null : e.target.value,
+        });
+    }
+
+    async function handleChangeTarget(e) {
+        e.preventDefault();
+        setState({
+            ...state,
+            targetStudent: e.target.value == '' ? null : e.target.value,
+        });
+    }
+
+    async function handleChangeResult(e) {
+        e.preventDefault();
+        setState({
+            ...state,
+            result: e.target.value == '' ? null : e.target.value,
         });
     }
 
@@ -262,7 +226,6 @@ export default function CreateCourse() {
                                             Tên khoá học: <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            {...register('name')}
                                             value={checkNull(state.name, '')}
                                             onChange={handleChangeName}
                                             type="text"
@@ -270,18 +233,73 @@ export default function CreateCourse() {
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.name?.message}</div>
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Mô tả khoá học:{' '}
+                                            Về khoá học: <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={checkNull(state.detail, '')}
+                                            onChange={handleChangeDetail}
+                                            type="text"
+                                            placeholder="Chi tiết khoá học"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Mô tả khoá học: <span className="text-red-500">*</span>
                                         </label>
                                         <textarea
                                             value={checkNull(state.description, '')}
                                             onChange={handleChangeDescription}
                                             type="text"
-                                            placeholder="Tên khoá học"
+                                            placeholder="Mô tả khoá học"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Điều kiện học: <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={checkNull(state.condition, '')}
+                                            onChange={handleChangeCondition}
+                                            type="text"
+                                            placeholder="Điều kiện học"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Đối tượng học sinh: <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={checkNull(state.targetStudent, '')}
+                                            onChange={handleChangeTarget}
+                                            type="text"
+                                            placeholder="Đối tượng học sinh"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Két quả kì vọng: <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={checkNull(state.result, '')}
+                                            onChange={handleChangeResult}
+                                            type="text"
+                                            placeholder="Két quả kì vọng"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
@@ -292,7 +310,6 @@ export default function CreateCourse() {
                                             Giá khoá học: <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            {...register('amount')}
                                             onFocus={onFocusAmount}
                                             onBlur={onBlurAmount}
                                             onChange={handleChangeAmount}
@@ -301,7 +318,6 @@ export default function CreateCourse() {
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.amount?.message}</div>
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
@@ -313,7 +329,7 @@ export default function CreateCourse() {
                                             onChange={handleChangeClass}
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         >
-                                            <option value="" hidden>
+                                            <option value={null} hidden>
                                                 Chưa chọn
                                             </option>
                                             <option value="1">1</option>
@@ -349,83 +365,6 @@ export default function CreateCourse() {
                                             </Select>
                                         </div>
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.teacherIds?.message}</div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-4 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Họ và tên đệm: <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            {...register('firstName')}
-                                            value={checkNull(state.firstName, '')}
-                                            onChange={handleChangeFirstName}
-                                            type="text"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Nguyễn Bá"
-                                        />
-                                    </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.firstName?.message}</div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-4 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Tên: <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            {...register('lastName')}
-                                            value={checkNull(state.lastName, '')}
-                                            onChange={handleChangeLastName}
-                                            type="text"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            placeholder="Sơn"
-                                        />
-                                    </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.lastName?.message}</div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Sinh nhật:</label>
-                                        <input
-                                            onChange={handleChangeBirthDay}
-                                            value={dateFormat(state.birthday)}
-                                            type="date"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Loại thành viên:
-                                        </label>
-                                        <select
-                                            disabled={!isRoot}
-                                            value={checkSelect(state.role)}
-                                            onChange={handleChangeRole}
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                        >
-                                            <option value="" hidden>
-                                                Chưa chọn
-                                            </option>
-                                            <option value="root">Root Admin</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="state">Người dùng</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Trạng thái:</label>
-                                        <select
-                                            value={checkSelect(state.active)}
-                                            onChange={handleChangeActive}
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                        >
-                                            <option value="true">Hoạt động</option>
-                                            <option value="false">Vô hiệu</option>
-                                        </select>
-                                    </div>
                                 </div>
                             </div>
                             <div className="w-full px-6 flex items-center mt-2 justify-center">
@@ -439,7 +378,7 @@ export default function CreateCourse() {
                                 <button
                                     className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                     type="button"
-                                    onClick={handleSubmit(onCreate)}
+                                    onClick={onCreate}
                                 >
                                     Lưu
                                 </button>
