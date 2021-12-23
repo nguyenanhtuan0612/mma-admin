@@ -11,7 +11,6 @@ const { checkNull, avatarImg, dateFormat, checkSelect } = displayHelpers;
 export default function CreateU() {
     const router = useRouter();
 
-    const { id } = router.query;
     const auth = useContext(AuthContext);
     const [user, setUser] = useState({
         firstName: '',

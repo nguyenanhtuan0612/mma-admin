@@ -19,7 +19,7 @@ export default function Admin({ children }) {
             router.push('/auth/login');
             return <div></div>;
         }
-        if (data.statusCode == 400) {
+        if (data.statusCode === 400) {
             router.push('/auth/login');
             return <div></div>;
         }

@@ -4,12 +4,12 @@ import Auth from 'layouts/Auth.js';
 import router from 'next/router';
 
 export default function Login() {
-    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPass, setShowPass] = useState(false);
 
-    function handleChangePhone(e) {
-        setPhone(e.target.value);
+    function handleChangeEmail(e) {
+        setEmail(e.target.value);
     }
 
     function handleChangePassword(e) {
@@ -22,14 +22,14 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        const { data } = await serviceHelpers.login(phone, password);
+        const { data } = await serviceHelpers.login(email, password);
         if (!data) {
             openNotification(notiType.error, 'Đăng nhập thất bại', 'Lỗi hệ thống');
             return;
         }
         if (data.statusCode === 200) {
             if (data.data.role == 'user') {
-                alert('Không đủ quyền truy cập');
+                openNotification(notiType.error,'Đăng nhập thất bại','Không đủ quyền truy cập');
                 return;
             }
             const { accessToken } = data.data.JWT;
@@ -54,16 +54,16 @@ export default function Login() {
                                 </div>
                                 <form onSubmit={handleSubmit}>
                                     <div className="relative w-full mb-3">
-                                        <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2" htmlFor="phone">
-                                            Số điện thoại
+                                        <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2" htmlFor="email">
+                                            Email
                                         </label>
                                         <input
                                             type="string"
                                             className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                                            placeholder="Số điện thoại"
-                                            id="phone"
-                                            name="phone"
-                                            onChange={handleChangePhone}
+                                            placeholder="Email"
+                                            id="email"
+                                            name="email"
+                                            onChange={handleChangeEmail}
                                         />
                                     </div>
 
