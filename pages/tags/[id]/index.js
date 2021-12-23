@@ -1,12 +1,12 @@
 import Admin from 'layouts/Admin';
-import EditUser from 'modules/Users/EditUser';
+import EditTag from 'modules/Tags/EditTag';
 
 export default function Edit() {
     return (
         <>
             <div className="flex flex-wrap">
                 <div className="w-full px-4">
-                    <EditUser />
+                    <EditTag />
                 </div>
             </div>
         </>

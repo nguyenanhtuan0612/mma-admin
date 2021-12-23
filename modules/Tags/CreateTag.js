@@ -1,105 +1,56 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
-import { Modal } from 'antd';
+import { AuthContext } from 'layouts/Admin';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup/dist/yup.umd';
+import * as Yup from 'yup';
+import { Input } from 'antd';
 
-const { confirm } = Modal;
-const { checkNull, avatarImg, checkSelect } = displayHelpers;
+const { TextArea } = Input;
+const { checkNull, avatarImg, dateFormat, checkSelect } = displayHelpers;
 
-export default function EditTeacher() {
+export default function CreateTeacher() {
     const router = useRouter();
-    const { id } = router.query;
 
     const [data, setData] = useState({
         name: '',
-        workPlace: '',
+        slug: '',
         avatar: '',
         active: true,
     });
 
-    useEffect(async () => {
-        const data = await getDetail(id);
-        if (!data) {
-            return;
-        }
+    const validationSchema = Yup.object().shape({
+        name: Yup.string().required('Họ tên là bắt buộc'),
+        workPlace: Yup.string().required('Nơi làm việc là bắt buộc'),
+    });
 
-        setData(data.data);
-        setCreateObjectURL(data.data.avatar);
-    }, []);
+    const formOptions = { resolver: yupResolver(validationSchema) };
 
-    async function getDetail(id) {
-        const { data } = await serviceHelpers.detailData('teachers', id);
-        if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống');
-        }
-        if (data.statusCode === 400) {
-            console.log(data.message);
-            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-        }
-        if (data.statusCode === 404) {
-            router.push('/auth/login');
-            return <div></div>;
-        }
-        return data;
-    }
+    // get functions to build form with useForm() hook
+    const { handleSubmit, formState, register } = useForm(formOptions);
+    const { errors } = formState;
 
     const [createObjectURL, setCreateObjectURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
 
-    async function onUpdate() {
+    async function onCreate() {
         let uploadData = data;
-        console.log(data);
-        console.log(uploadData);
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
             uploadData = { ...data, avatarImage: img.data.streamPath };
         }
-        const rs = await update(uploadData);
+        const rs = await create(uploadData);
         if (!rs) {
             return;
         }
         openNotification(notiType.success, 'Tạo mới thành công !');
-        router.push('/teachers');
+        router.push('/tags');
     }
 
-    function onDelete() {
-        confirm({
-            title: 'Bạn muốn xóa giáo viên này?',
-            content: 'Lưu ý nếu bạn xóa thì mọi thông tin của giáo viên sẽ bị mất.',
-            okText: 'Xóa',
-            okType: 'danger',
-            cancelText: 'Hủy',
-            async onOk() {
-                const data = await deleteData(id);
-                if (!data) {
-                    return;
-                }
-                openNotification(notiType.success, 'Thành công', 'Xoá giáo viên thành công');
-                router.push('/teachers');
-            },
-            onCancel() {},
-        });
-    }
-
-    async function deleteData(id) {
-        const { data } = await serviceHelpers.deleteData('teachers', id);
-        if (!data) {
-            return openNotification(notiType.error, 'Lỗi hệ thống');
-        }
-        if (data.statusCode === 400) {
-            console.log(data.message);
-            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-        }
-        if (data.statusCode === 404) {
-            router.push('/auth/login');
-            return <div></div>;
-        }
-        return data;
-    }
-
-    async function update(body) {
-        const { data } = await serviceHelpers.updateData('teachers', id, body);
+    async function create(body) {
+        const { data } = await serviceHelpers.createData('tags', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -112,7 +63,7 @@ export default function EditTeacher() {
     }
 
     async function uploadAvatar(image) {
-        const { data } = await serviceHelpers.uploadFile('teachers', image);
+        const { data } = await serviceHelpers.uploadFile('tags', image);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -194,6 +145,7 @@ export default function EditTeacher() {
                                             Họ và tên: <span className="text-red-500">*</span>
                                         </label>
                                         <input
+                                            {...register('name')}
                                             value={checkNull(data.name, '')}
                                             onChange={handleChangeName}
                                             type="text"
@@ -201,9 +153,7 @@ export default function EditTeacher() {
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">
-                                        {data.name === '' ? 'Họ tên là bắt buộc' : null}
-                                    </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.name?.message}</div>
                                 </div>
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
@@ -211,6 +161,7 @@ export default function EditTeacher() {
                                             Nơi làm việc: <span className="text-red-500">*</span>
                                         </label>
                                         <input
+                                            {...register('workPlace')}
                                             value={checkNull(data.workPlace, '')}
                                             onChange={handleChangeWP}
                                             type="text"
@@ -218,9 +169,7 @@ export default function EditTeacher() {
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">
-                                        {data.workPlace === '' ? 'Họ tên là bắt buộc' : null}
-                                    </div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.workPlace?.message}</div>
                                 </div>
                                 <div className="w-full lg:w-6/12 px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
@@ -247,16 +196,9 @@ export default function EditTeacher() {
                                 <button
                                     className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                     type="button"
-                                    onClick={onUpdate}
+                                    onClick={handleSubmit(onCreate)}
                                 >
-                                    Lưu
-                                </button>
-                                <button
-                                    className="mx-2 mb-2 bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                    type="button"
-                                    onClick={onDelete}
-                                >
-                                    Xoá giáo viên
+                                    Tạo mới
                                 </button>
                             </div>
                         </div>

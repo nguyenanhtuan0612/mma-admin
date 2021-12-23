@@ -222,9 +222,9 @@ export default function UsersTable() {
         }
         if (searchPhone != '') {
             filter.push({
-                operator: 'iLike',
+                operator: 'search',
                 value: `${searchPhone}`,
-                property: `phone`,
+                property: `email,fullName`,
             });
         }
         const strFilter = JSON.stringify(filter);
@@ -339,7 +339,7 @@ export default function UsersTable() {
                     <table className="items-center w-full bg-transparent border-collapse">
                         <thead>
                             <tr>
-                                <HeaderCell content="ID" width="w-1/24" />
+                                {/* <HeaderCell content="ID" width="w-1/24" /> */}
                                 <HeaderCell content="HỌ TÊN" width="w-5/24" />
                                 <HeaderCell content="SỐ ĐIỆN THOẠI" width="2/24" />
                                 <HeaderCell content="EMAIL" width="w-5/24" />

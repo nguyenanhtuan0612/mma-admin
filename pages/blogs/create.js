@@ -1,12 +1,13 @@
-import Admin from 'layouts/Admin';
-import UserDetail from 'modules/Users/UserDetail';
+import React from 'react';
+import Admin from 'layouts/Admin.js';
+import CreateBlog from 'modules/Blogs/CreateBlog';
 
 export default function index() {
     return (
         <>
             <div className="flex flex-wrap">
                 <div className="w-full px-4">
-                    <UserDetail />
+                    <CreateBlog />
                 </div>
             </div>
         </>

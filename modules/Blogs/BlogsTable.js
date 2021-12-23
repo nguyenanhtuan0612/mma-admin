@@ -5,11 +5,11 @@ import { serviceHelpers, openNotification, notiType, displayHelpers } from 'help
 import { useRouter } from 'next/router';
 import FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
-import RowItemCourse from './components/RowItemCourse';
+import RowItemBlog from './components/RowItemBlog';
 const { getDate } = displayHelpers;
 
-export default function CoursesTable() {
-    const [listUser, setListUser] = useState([]);
+export default function BlogsTable() {
+    const [listBlogs, setListBlogs] = useState([]);
     const [count, setCount] = useState(0);
     const [active, setActive] = useState('');
     const [search, setSearch] = useState('');
@@ -29,7 +29,7 @@ export default function CoursesTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListUser(data.data.rows);
+        setListBlogs(data.data.rows);
         setCount(data.data.count);
     }, []);
 
@@ -53,7 +53,7 @@ export default function CoursesTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         setPage(1);
-        setListUser(data.data.rows);
+        setListBlogs(data.data.rows);
         setCount(data.data.count);
     }
 
@@ -67,27 +67,27 @@ export default function CoursesTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
 
-        const excelData = data.data.rows.map(course => {
-            course.createdAt = getDate(course.createdAt);
-            switch (course.active) {
+        const excelData = data.data.rows.map(blog => {
+            blog.createdAt = getDate(blog.createdAt);
+            switch (blog.active) {
                 case true: {
-                    course.active = 'Kích hoạt';
+                    blog.active = 'Kích hoạt';
                     break;
                 }
                 default: {
-                    course.active = 'Vô hiệu';
+                    blog.active = 'Vô hiệu';
                     break;
                 }
             }
 
             return {
-                Id: course.id,
-                'Tên khoá học': course.name,
-                Lớp: course.class,
-                'Giá tiền': course.amount,
-                'Số bài học': course.numLesson,
-                'Ngày tạo': course.createdAt,
-                'Trạng thái': course.active,
+                Id: blog.id,
+                'Tên khoá học': blog.name,
+                Lớp: blog.class,
+                'Giá tiền': blog.amount,
+                'Số bài học': blog.numLesson,
+                'Ngày tạo': blog.createdAt,
+                'Trạng thái': blog.active,
             };
         });
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -96,7 +96,7 @@ export default function CoursesTable() {
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const rs = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(rs, 'courses' + fileExtension);
+        FileSaver.saveAs(rs, 'blogs' + fileExtension);
     }
 
     async function handleClearFilter(e) {
@@ -116,17 +116,17 @@ export default function CoursesTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListUser(data.data.rows);
+        setListBlogs(data.data.rows);
         setCount(data.data.count);
     }
 
-    async function onClickCreateUser(e) {
+    async function onclickCreateBlog(e) {
         e.preventDefault();
-        router.push('/courses/create');
+        router.push('/blogs/create');
     }
 
     async function updateActive(id, body) {
-        const update = await serviceHelpers.updateData('courses', id, body);
+        const update = await serviceHelpers.updateData('blogs', id, body);
         if (update.data.statusCode === 400) {
             return;
         }
@@ -142,7 +142,7 @@ export default function CoursesTable() {
             return <div></div>;
         }
         openNotification(notiType.success, 'Cập nhật thành công !');
-        setListUser(data.data.rows);
+        setListBlogs(data.data.rows);
         setCount(data.data.count);
     }
 
@@ -159,7 +159,7 @@ export default function CoursesTable() {
             return <div></div>;
         }
         setPage(current);
-        setListUser(data.data.rows);
+        setListBlogs(data.data.rows);
         setCount(data.data.count);
     }
 
@@ -180,7 +180,7 @@ export default function CoursesTable() {
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.getListData('courses', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.getListData('blogs', strFilter, sort, start, 10);
         return data;
     }
 
@@ -201,7 +201,7 @@ export default function CoursesTable() {
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.exportData('courses', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.exportData('blogs', strFilter, sort, start, 10);
         return data;
     }
 
@@ -211,9 +211,9 @@ export default function CoursesTable() {
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mb-2 float-right bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={onClickCreateUser}
+                    onClick={onclickCreateBlog}
                 >
-                    <span className="fas fa-plus mr-2"></span> Thêm Khoá học
+                    <span className="fas fa-plus mr-2"></span> Thêm Blog
                 </button>
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -228,7 +228,7 @@ export default function CoursesTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ NGƯỜI DÙNG</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ BLOG</h3>
                         </div>
                         <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
                             <div className="relative w-full mb-3 flex items-center 2xl:justify-end">
@@ -237,7 +237,7 @@ export default function CoursesTable() {
                                     value={search}
                                     type="text"
                                     className="2xl:w-3/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded text-xs font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                    placeholder="Tên khoá học"
+                                    placeholder="Tên Blog"
                                     onChange={changeSearchPhone}
                                 />
                                 <select
@@ -275,18 +275,16 @@ export default function CoursesTable() {
                         <thead>
                             <tr>
                                 <HeaderCell content="ID" width="w-1/24" />
-                                <HeaderCell content="TÊN KHOÁ HỌC" width="w-6/24" />
-                                <HeaderCell content="LỚP" width="2/24" />
-                                <HeaderCell content="GIÁ TIỀN" width="3/24" />
-                                <HeaderCell content="SỐ BÀI HỌC" width="w-3/24" />
+                                <HeaderCell content="TÊN BLOG" width="w-6/24" />
+                                <HeaderCell content="LIKE" width="2/24" />
+                                <HeaderCell content="PAGE" width="2/24" />
                                 <HeaderCell content="NGÀY TẠO" width="w-3/24" />
-                                <HeaderCell content="TRẠNG THÁI" width="w-3/24" />
                                 <HeaderCell content="HOẠT ĐỘNG" width="w-3/24" />
                             </tr>
                         </thead>
                         <tbody>
-                            {listUser && listUser.length > 0 ? (
-                                listUser.map((user, index) => <RowItemCourse data={user} key={index} updateActive={updateActive} />)
+                            {listBlogs && listBlogs.length > 0 ? (
+                                listBlogs.map((blog, index) => <RowItemBlog data={blog} key={index} updateActive={updateActive} />)
                             ) : (
                                 <tr>
                                     <td colSpan="8">Không có dữ liệu</td>

@@ -10,13 +10,13 @@ export default [
         icon: 'fas fa-users',
     },
     {
-        path: '/teachers',
-        title: 'QUẢN LÝ GIÁO VIÊN',
+        path: '/tags',
+        title: 'QUẢN LÝ TAGS',
         icon: 'fas fa-id-card',
     },
     {
-        path: '/courses',
-        title: 'QUẢN LÝ KHOÁ HỌC',
+        path: '/blogs',
+        title: 'QUẢN LÝ BLOG',
         icon: 'fas fa-paper-plane',
     },
     {

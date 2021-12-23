@@ -26,7 +26,7 @@ async function checkToken() {
                 },
             };
         }
-        const url = `${process.env.BACKEND_URL}/users/jwt`;
+        const url = `${process.env.BACKEND_URL}/auth/jwt`;
         const data = await axios.get(url, {
             headers: {
                 Authorization: token,

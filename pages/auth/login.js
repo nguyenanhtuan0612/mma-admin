@@ -50,7 +50,7 @@ export default function Login() {
                         <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0">
                             <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                                 <div className="text-blueGray-400 text-center mt-6 justify-center flex mb-3 text-xl font-bold h-6">
-                                    <img src="/img/mma-logo.png" className="" alt="logo" />
+                                    {/* <img src="/img/mma-logo.png" className="" alt="logo" /> */}
                                 </div>
                                 <form onSubmit={handleSubmit}>
                                     <div className="relative w-full mb-3">

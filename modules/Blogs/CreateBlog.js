@@ -10,7 +10,7 @@ import { Select } from 'antd';
 const { Option } = Select;
 const { checkNull, avatarImg, dateFormat, checkSelect, formatCurrency, localStringToNumber } = displayHelpers;
 
-export default function CreateCourse() {
+export default function CreateBlog() {
     const router = useRouter();
 
     const [isRoot, setIsRoot] = useState(false);
@@ -20,17 +20,10 @@ export default function CreateCourse() {
 
     const auth = useContext(AuthContext);
     const [state, setState] = useState({
-        firstName: '',
-        lastName: '',
-        name: '',
-        amount: null,
-        amountStr: '',
         class: '',
         birthday: '',
         active: true,
-        avatarImage: '',
         description: '',
-        teacherIds: [],
     });
 
     const validationSchema = Yup.object().shape({
@@ -73,13 +66,12 @@ export default function CreateCourse() {
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.getListData('teachers', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.getListData('tags', strFilter, sort, start, 10);
         return data;
     }
 
     async function onCreate() {
         let dataUser = state;
-        console.log(dataUser);
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
@@ -90,11 +82,11 @@ export default function CreateCourse() {
             return;
         }
         openNotification(notiType.success, 'Tạo mới thành công !');
-        router.push('/users');
+        router.push('/blogs');
     }
 
     async function createUser(body) {
-        const { data } = await serviceHelpers.createData('users', body);
+        const { data } = await serviceHelpers.createData('blogs', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -107,7 +99,7 @@ export default function CreateCourse() {
     }
 
     async function uploadAvatar(image) {
-        const { data } = await serviceHelpers.uploadFile('users', image);
+        const { data } = await serviceHelpers.uploadFile('blogs', image);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);

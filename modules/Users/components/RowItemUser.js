@@ -57,7 +57,6 @@ export default function RowItemUser({ data, updateActive }) {
     const { id, email, phone, active, avatarImage, role, fullName, createdAt } = data;
     return (
         <tr>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
             <th>
                 <Link href={`/users/${id}`} as={`/users/${id}`}>
                     <a

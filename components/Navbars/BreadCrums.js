@@ -7,8 +7,8 @@ const Route2LabelMap = {
     users: 'Quản lý người dùng',
     edit: 'Chỉnh sửa',
     create: 'Tạo mới',
-    teachers: 'Quản lý giáo viên',
-    courses: 'Quản lý khoá học',
+    tags: 'Quản Lý Tag',
+    blogs: 'Quản lý Blog',
 };
 
 export function BreadCrumbs() {

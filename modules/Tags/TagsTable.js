@@ -1,6 +1,6 @@
 import React, { createRef, useEffect, useState } from 'react';
 import { Pagination } from 'antd';
-import RowItemTeacher from './components/RowItemTeacher';
+import RowItemTag from './components/RowItemTag';
 import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
 import { useRouter } from 'next/router';
 import FileSaver from 'file-saver';
@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx';
 import HeaderCell from 'components/Tables/HeaderCell';
 const { getDate } = displayHelpers;
 
-export default function TeachersTable() {
+export default function TagsTable() {
     const [list, setList] = useState([]);
     const [count, setCount] = useState(0);
     const [active, setActive] = useState('');
@@ -94,7 +94,7 @@ export default function TeachersTable() {
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const rs = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(rs, 'teachers' + fileExtension);
+        FileSaver.saveAs(rs, 'tags' + fileExtension);
     }
 
     async function handleClearFilter(e) {
@@ -118,13 +118,13 @@ export default function TeachersTable() {
         setCount(data.data.count);
     }
 
-    async function onClickCreateUser(e) {
+    async function onClickCreateTag(e) {
         e.preventDefault();
-        router.push('/teachers/create');
+        router.push('/tags/create');
     }
 
     async function updateActive(id, body) {
-        const update = await serviceHelpers.updateData('teachers', id, body);
+        const update = await serviceHelpers.updateData('tags', id, body);
         if (update.data.statusCode === 400) {
             return;
         }
@@ -178,7 +178,7 @@ export default function TeachersTable() {
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.getListData('teachers', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.getListData('tags', strFilter, sort, start, 10);
         return data;
     }
 
@@ -193,13 +193,13 @@ export default function TeachersTable() {
         }
         if (search != '') {
             filter.push({
-                operator: 'iLike',
+                operator: 'search',
                 value: `${search}`,
-                property: `name`,
+                property: `name,slug`,
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.exportData('teachers', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.exportData('tags', strFilter, sort, start, 10);
         return data;
     }
 
@@ -209,9 +209,9 @@ export default function TeachersTable() {
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mb-2 float-right bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={onClickCreateUser}
+                    onClick={onClickCreateTag}
                 >
-                    <span className="fas fa-user-plus mr-2"></span> Thêm giáo viên
+                    <span className="fas fa-user-plus mr-2"></span> Thêm Tag
                 </button>
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -226,7 +226,7 @@ export default function TeachersTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ GIÁO VIÊN</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ TAG</h3>
                         </div>
                         <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
                             <div className="relative w-full mb-3 flex items-center 2xl:justify-end">
@@ -273,16 +273,13 @@ export default function TeachersTable() {
                         <thead>
                             <tr>
                                 <HeaderCell content="ID" width="w-2/24" />
-                                <HeaderCell content="HỌ TÊN" width="w-6/24" />
-                                <HeaderCell content="NƠI LÀM VIỆC" width="6/24" />
-                                <HeaderCell content="NGÀY TẠO" width="w-5/24" />
-                                <HeaderCell content="TRẠNG THÁI" width="w-3/24" />
-                                <HeaderCell content="HOẠT ĐỘNG" width="w-2/24" />
+                                <HeaderCell content="TÊN TAG" width="w-6/24" />
+                                <HeaderCell content="SLUG" width="6/24" />
                             </tr>
                         </thead>
                         <tbody>
                             {list && list.length > 0 ? (
-                                list.map((teacher, index) => <RowItemTeacher data={teacher} key={index} updateActive={updateActive} />)
+                                list.map((teacher, index) => <RowItemTag data={teacher} key={index} updateActive={updateActive} />)
                             ) : (
                                 <tr>
                                     <td colSpan="8">Không có dữ liệu</td>

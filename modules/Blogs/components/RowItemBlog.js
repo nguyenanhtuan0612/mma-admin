@@ -3,7 +3,7 @@ import { Popconfirm } from 'antd';
 import { displayHelpers } from 'helpers';
 import Link from 'next/link';
 
-export default function RowItemTeacher({ data, updateActive }) {
+export default function RowItemBlog({ data, updateActive }) {
     function activeUser(active) {
         if (active == true) {
             return (
@@ -40,28 +40,23 @@ export default function RowItemTeacher({ data, updateActive }) {
     }
 
     const { checkNull, avatarImg, getDate, isActive } = displayHelpers;
-    const { id, workPlace, active, avatar, name, createdAt } = data;
+    const { id,title, like, page, createdAt, active } = data;
     return (
         <tr>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
             <th>
-                <Link href={`/teachers/${id}`} as={`/teachers/${id}`}>
+                <Link href={`/blogs/${id}`} as={`/blogs/${id}`}>
                     <a
-                        href={`/teachers/${id}`}
+                        href={`/blogs/${id}`}
                         className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs whitespace-nowrap p-4 text-center flex items-center"
                     >
-                        <img
-                            src={avatarImg(avatar)}
-                            className="object-contain 2xl:h-12 2xl:w-12 2xl:flex xl:hidden xl:w-8 xl:h-8 bg-white rounded-full border"
-                            alt="..."
-                        ></img>{' '}
-                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(name)}</span>
+                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(title)}</span>
                     </a>
                 </Link>
             </th>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{checkNull(workPlace)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{checkNull(like)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{checkNull(page.name)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{getDate(createdAt)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isActive(active)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{activeUser(active)}</td>
         </tr>
     );
