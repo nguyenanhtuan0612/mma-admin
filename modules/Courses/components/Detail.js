@@ -7,34 +7,23 @@ import { Select } from 'antd';
 const { Option } = Select;
 const { checkNull, avatarImg, checkSelect, formatCurrency } = displayHelpers;
 
-export default function CreateCourse() {
+export default function DetailCourse({ onDelete, state, setState, onUpdate, createObjectURL, imageUpload, uploadToClient }) {
     const router = useRouter();
-
-    const [createObjectURL, setCreateObjectURL] = useState(null);
-    const [imageUpload, setImageUpload] = useState(null);
     const [teacherList, SetTeacherList] = useState([]);
-
-    const auth = useContext(AuthContext);
-    const [state, setState] = useState({
-        name: null,
-        amount: null,
-        amountStr: null,
-        class: null,
-        active: true,
-        avatarImage: null,
-        description: null,
-        condition: null,
-        detail: null,
-        targetStudent: null,
-        result: null,
-        teacherIds: [],
-    });
 
     useEffect(async () => {
         const data = await getData();
+        if (!data) {
+            return;
+        }
+
         SetTeacherList(
             data.data.rows.map(teacher => {
-                return <Option key={teacher.id}>{teacher.name}</Option>;
+                return (
+                    <Option key={teacher.id} value={teacher.id}>
+                        {teacher.name}
+                    </Option>
+                );
             }),
         );
     }, []);
@@ -56,49 +45,6 @@ export default function CreateCourse() {
         }
         const strFilter = JSON.stringify(filter);
         const { data } = await serviceHelpers.getListData('teachers', strFilter, sort, start, 10);
-        return data;
-    }
-
-    async function onCreate() {
-        let dataUser = state;
-        console.log(dataUser);
-        if (dataUser.teacherIds.length == 0) return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
-        if (imageUpload) {
-            const img = await uploadAvatar(imageUpload);
-            if (!img) return;
-            dataUser = { ...state, avatarImage: img.data.streamPath };
-        }
-        const data = await createCourse(dataUser);
-        if (!data) {
-            return;
-        }
-        openNotification(notiType.success, 'Tạo mới thành công !');
-        router.push('/courses');
-    }
-
-    async function createCourse(body) {
-        const { data } = await serviceHelpers.createData('courses', body);
-        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
-
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-
-        if (data.statusCode === 404) {
-            router.push('/auth/login');
-            return <div></div>;
-        }
-        return data;
-    }
-
-    async function uploadAvatar(image) {
-        const { data } = await serviceHelpers.uploadFile('courses', image);
-        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
-
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-
-        if (data.statusCode === 404) {
-            router.push('/auth/login');
-            return <div></div>;
-        }
         return data;
     }
 
@@ -167,14 +113,6 @@ export default function CreateCourse() {
         });
     }
 
-    async function uploadToClient(e) {
-        if (e.target.files && e.target.files[0]) {
-            const i = e.target.files[0];
-            setCreateObjectURL(URL.createObjectURL(i));
-            setImageUpload(i);
-        }
-    }
-
     async function onFocusAmount(e) {
         e.target.value = state.amount;
     }
@@ -231,20 +169,6 @@ export default function CreateCourse() {
                             <div className="w-full px-4 mb-2">
                                 <div className="relative w-full mb-3 items-center flex">
                                     <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                        Về khoá học: <span className="text-red-500">*</span>
-                                    </label>
-                                    <textarea
-                                        value={checkNull(state.detail, '')}
-                                        onChange={handleChangeDetail}
-                                        type="text"
-                                        placeholder="Chi tiết khoá học"
-                                        className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                    />
-                                </div>
-                            </div>
-                            <div className="w-full px-4 mb-2">
-                                <div className="relative w-full mb-3 items-center flex">
-                                    <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                         Mô tả khoá học: <span className="text-red-500">*</span>
                                     </label>
                                     <textarea
@@ -252,6 +176,20 @@ export default function CreateCourse() {
                                         onChange={handleChangeDescription}
                                         type="text"
                                         placeholder="Mô tả khoá học"
+                                        className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                    />
+                                </div>
+                            </div>
+                            <div className="w-full px-4 mb-2">
+                                <div className="relative w-full mb-3 items-center flex">
+                                    <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Về khoá học: <span className="text-red-500">*</span>
+                                    </label>
+                                    <textarea
+                                        value={checkNull(state.detail, '')}
+                                        onChange={handleChangeDetail}
+                                        type="text"
+                                        placeholder="Chi tiết khoá học"
                                         className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                     />
                                 </div>
@@ -308,6 +246,7 @@ export default function CreateCourse() {
                                         onBlur={onBlurAmount}
                                         onChange={handleChangeAmount}
                                         type="text"
+                                        defaultValue={state.amountStr}
                                         placeholder=""
                                         className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                     />
@@ -352,8 +291,9 @@ export default function CreateCourse() {
                                             allowClear
                                             style={{ width: '100%' }}
                                             placeholder="Please select"
-                                            defaultValue={[]}
+                                            value={state.teacherIds}
                                             onChange={handleTeacherIdsChange}
+                                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                         >
                                             {teacherList}
                                         </Select>
@@ -372,9 +312,16 @@ export default function CreateCourse() {
                             <button
                                 className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                 type="button"
-                                onClick={onCreate}
+                                onClick={onUpdate}
                             >
                                 Lưu
+                            </button>
+                            <button
+                                className="mx-2 mb-2 bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                                type="button"
+                                onClick={onDelete}
+                            >
+                                Xoá
                             </button>
                         </div>
                     </div>

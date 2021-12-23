@@ -34,7 +34,11 @@ export default function CreateCourse() {
         const data = await getData();
         SetTeacherList(
             data.data.rows.map(teacher => {
-                return <Option key={teacher.id}>{teacher.name}</Option>;
+                return (
+                    <Option key={teacher.id} value={teacher.id}>
+                        {teacher.name}
+                    </Option>
+                );
             }),
         );
     }, []);
@@ -61,7 +65,6 @@ export default function CreateCourse() {
 
     async function onCreate() {
         let dataUser = state;
-        console.log(dataUser);
         if (dataUser.teacherIds.length == 0) return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
@@ -237,20 +240,6 @@ export default function CreateCourse() {
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Về khoá học: <span className="text-red-500">*</span>
-                                        </label>
-                                        <textarea
-                                            value={checkNull(state.detail, '')}
-                                            onChange={handleChangeDetail}
-                                            type="text"
-                                            placeholder="Chi tiết khoá học"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Mô tả khoá học: <span className="text-red-500">*</span>
                                         </label>
                                         <textarea
@@ -258,6 +247,20 @@ export default function CreateCourse() {
                                             onChange={handleChangeDescription}
                                             type="text"
                                             placeholder="Mô tả khoá học"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Về khoá học: <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={checkNull(state.detail, '')}
+                                            onChange={handleChangeDetail}
+                                            type="text"
+                                            placeholder="Chi tiết khoá học"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
@@ -358,7 +361,7 @@ export default function CreateCourse() {
                                                 allowClear
                                                 style={{ width: '100%' }}
                                                 placeholder="Please select"
-                                                defaultValue={[]}
+                                                value={state.teacherIds}
                                                 onChange={handleTeacherIdsChange}
                                             >
                                                 {teacherList}
