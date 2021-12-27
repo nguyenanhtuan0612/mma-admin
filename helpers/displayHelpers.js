@@ -36,6 +36,14 @@ function dateFormat(createdAt) {
     return '';
 }
 
+function limitLength(value) {
+    if (!value) return '...';
+    if (value.length > 30) {
+        return value.slice(0,30);
+    }
+    return value;
+}
+
 function checkSelect(value) {
     if (value) {
         return value;
@@ -69,6 +77,7 @@ export default {
     getDate,
     avatarImg,
     checkNull,
+    limitLength,
     dateFormat,
     checkSelect,
     formatCurrency,

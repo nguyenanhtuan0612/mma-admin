@@ -15,18 +15,22 @@ export default function Detail({ state, setState, onDelete }) {
                         <b className="w-9/12">{checkNull(state.id)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Title:</span>
-                        <b className="w-9/12">{checkNull(state.title)}</b>
+                        <span className="w-3/12">Name:</span>
+                        <b className="w-9/12">{checkNull(state.name)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Page:</span>
-                        <b className="w-9/12">{checkNull(state.page.name)}</b>
+                        <span className="w-3/12">Like:</span>
+                        <b className="w-9/12">{state.like}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Tags:</span>
+                        <span className="w-3/12">Description:</span>
                         <b className="w-9/12">
-                            {checkNull(state.tagList.toString())}
+                            {checkNull(state.description)}
                         </b>
+                    </ul>
+                    <ul className="mb-2 flex w-full">
+                        <span className="w-3/12">Anh Bia:</span>
+                        <b className="w-9/12">{checkNull(state.coverImage)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
                         <span className="w-3/12">Trạng thái:</span>
@@ -52,7 +56,7 @@ export default function Detail({ state, setState, onDelete }) {
                     <button
                         className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
-                        onClick={() => router.push(`/blogs/${state.id}/edit`)}
+                        onClick={() => router.push(`/pages/${state.id}/edit`)}
                     >
                         Chỉnh sủa thông tin
                     </button>

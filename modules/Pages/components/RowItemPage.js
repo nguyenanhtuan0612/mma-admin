@@ -3,12 +3,12 @@ import { Popconfirm } from 'antd';
 import { displayHelpers } from 'helpers';
 import Link from 'next/link';
 
-export default function RowItemBlog({ data, updateActive }) {
+export default function RowItemPage({ data, updateActive }) {
     function activeUser(active) {
         if (active == true) {
             return (
                 <Popconfirm
-                    title="Bạn muốn vô hiệu page này?"
+                    title="Bạn muốn vô hiệu trang này?"
                     okText="Đồng ý"
                     cancelText="Hủy"
                     onConfirm={() => updateActive(id, { active: false })}
@@ -24,7 +24,7 @@ export default function RowItemBlog({ data, updateActive }) {
         }
         return (
             <Popconfirm
-                title="Bạn muốn kích hoạt thành viên này?"
+                title="Bạn muốn kích hoạt trang này?"
                 okText="Đồng ý"
                 cancelText="Hủy"
                 onConfirm={() => updateActive(id, { active: true })}
@@ -39,23 +39,22 @@ export default function RowItemBlog({ data, updateActive }) {
         );
     }
 
-    const { checkNull, avatarImg, getDate, isActive } = displayHelpers;
-    const { id, title, like, page, createdAt, active } = data;
+    const { checkNull, getDate } = displayHelpers;
+    const { id,name, like, createdAt, active } = data;
     return (
         <tr>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
             <th>
-                <Link href={`/blogs/${id}`} as={`/blogs/${id}`}>
+                <Link href={`/pages/${id}`} as={`/pages/${id}`}>
                     <a
-                        href={`/blogs/${id}`}
+                        href={`/pages/${id}`}
                         className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs whitespace-nowrap p-4 text-center flex items-center"
                     >
-                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(title)}</span>
+                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(name)}</span>
                     </a>
                 </Link>
             </th>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{checkNull(like, 0)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{checkNull(page.name)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{checkNull(like)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{getDate(createdAt)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{activeUser(active)}</td>
         </tr>

@@ -17,7 +17,17 @@ export default [
     {
         path: '/blogs',
         title: 'QUẢN LÝ BLOG',
-        icon: 'fas fa-paper-plane',
+        icon: 'fab fa-blogger-b',
+    },
+    {
+        path: '/pages',
+        title: 'Pages',
+        icon: 'fas fa-pager',
+    },
+    {
+        path: '/quotes',
+        title: 'Quotes',
+        icon: 'fas fa-quote-right',
     },
     {
         path: '/users/abc',

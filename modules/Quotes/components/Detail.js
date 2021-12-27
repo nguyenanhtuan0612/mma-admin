@@ -2,7 +2,7 @@ import React from 'react';
 import { serviceHelpers, displayHelpers } from 'helpers';
 import { useRouter } from 'next/router';
 
-const { isActive, checkNull, getDate } = displayHelpers;
+const { limitLength, checkNull, getDate } = displayHelpers;
 
 export default function Detail({ state, setState, onDelete }) {
     const router = useRouter();
@@ -15,25 +15,24 @@ export default function Detail({ state, setState, onDelete }) {
                         <b className="w-9/12">{checkNull(state.id)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Title:</span>
-                        <b className="w-9/12">{checkNull(state.title)}</b>
+                        <span className="w-3/12">Quote:</span>
+                        <b className="w-9/12">{limitLength(state.quote)}</b>
+                    </ul>  
+                    <ul className="mb-2 flex w-full">
+                        <span className="w-3/12">BookId:</span>
+                        <b className="w-9/12">{checkNull(state.bookId)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Page:</span>
-                        <b className="w-9/12">{checkNull(state.page.name)}</b>
+                        <span className="w-3/12">AuthoName:</span>
+                        <b className="w-9/12">{checkNull(state.authorName)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Tags:</span>
-                        <b className="w-9/12">
-                            {checkNull(state.tagList.toString())}
-                        </b>
+                        <span className="w-3/12">CategoryId:</span>
+                        <b className="w-9/12">{checkNull(state.categoryId)}</b>
                     </ul>
+                  
                     <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Trạng thái:</span>
-                        <b className="w-9/12">{isActive(state.active, true)}</b>
-                    </ul>
-                    <ul className="mb-2 flex w-full">
-                        <span className="w-3/12">Ngày đăng kí:</span>
+                        <span className="w-3/12">Ngày :</span>
                         <b className="w-9/12">{getDate(state.createdAt)}</b>
                     </ul>
                     <ul className="mb-2 flex w-full">
@@ -52,7 +51,7 @@ export default function Detail({ state, setState, onDelete }) {
                     <button
                         className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
-                        onClick={() => router.push(`/blogs/${state.id}/edit`)}
+                        onClick={() => router.push(`/quotes/${state.id}/edit`)}
                     >
                         Chỉnh sủa thông tin
                     </button>

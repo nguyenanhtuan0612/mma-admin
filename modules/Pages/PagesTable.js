@@ -5,11 +5,11 @@ import { serviceHelpers, openNotification, notiType, displayHelpers } from 'help
 import { useRouter } from 'next/router';
 import FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
-import RowItemBlog from './components/RowItemBlog';
+import RowItemPage from './components/RowItemPage';
 const { getDate } = displayHelpers;
 
-export default function BlogsTable() {
-    const [listBlogs, setListBlogs] = useState([]);
+export default function PagesTable() {
+    const [listPages, setListPages] = useState([]);
     const [count, setCount] = useState(0);
     const [active, setActive] = useState('');
     const [search, setSearch] = useState('');
@@ -29,11 +29,11 @@ export default function BlogsTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListBlogs(data.data.rows);
+        setListPages(data.data.rows);
         setCount(data.data.count);
     }, []);
 
-    function changeSearchPhone(e) {
+    function changeSearchPage(e) {
         e.preventDefault();
         return setSearch(e.target.value);
     }
@@ -53,7 +53,7 @@ export default function BlogsTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         setPage(1);
-        setListBlogs(data.data.rows);
+        setListPages(data.data.rows);
         setCount(data.data.count);
     }
 
@@ -67,27 +67,27 @@ export default function BlogsTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
 
-        const excelData = data.data.rows.map(blog => {
-            blog.createdAt = getDate(blog.createdAt);
-            switch (blog.active) {
+        const excelData = data.data.rows.map(page => {
+            page.createdAt = getDate(page.createdAt);
+            switch (page.active) {
                 case true: {
-                    blog.active = 'Kích hoạt';
+                    page.active = 'Kích hoạt';
                     break;
                 }
                 default: {
-                    blog.active = 'Vô hiệu';
+                    page.active = 'Vô hiệu';
                     break;
                 }
             }
 
             return {
-                Id: blog.id,
-                'Tên khoá học': blog.name,
-                Lớp: blog.class,
-                'Giá tiền': blog.amount,
-                'Số bài học': blog.numLesson,
-                'Ngày tạo': blog.createdAt,
-                'Trạng thái': blog.active,
+                Id: page.id,
+                'Tên khoá học': page.name,
+                Lớp: page.class,
+                'Giá tiền': page.amount,
+                'Số bài học': page.numLesson,
+                'Ngày tạo': page.createdAt,
+                'Trạng thái': page.active,
             };
         });
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -96,7 +96,7 @@ export default function BlogsTable() {
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const rs = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(rs, 'blogs' + fileExtension);
+        FileSaver.saveAs(rs, 'pages' + fileExtension);
     }
 
     async function handleClearFilter(e) {
@@ -116,17 +116,17 @@ export default function BlogsTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListBlogs(data.data.rows);
+        setListPages(data.data.rows);
         setCount(data.data.count);
     }
 
-    async function onclickCreateBlog(e) {
+    async function onclickCreatePage(e) {
         e.preventDefault();
-        router.push('/blogs/create');
+        router.push('/pages/create');
     }
 
     async function updateActive(id, body) {
-        const update = await serviceHelpers.updateData('blogs', id, body);
+        const update = await serviceHelpers.updateData('pages', id, body);
         if (update.data.statusCode === 400) {
             return;
         }
@@ -142,7 +142,7 @@ export default function BlogsTable() {
             return <div></div>;
         }
         openNotification(notiType.success, 'Cập nhật thành công !');
-        setListBlogs(data.data.rows);
+        setListPages(data.data.rows);
         setCount(data.data.count);
     }
 
@@ -159,7 +159,7 @@ export default function BlogsTable() {
             return <div></div>;
         }
         setPage(current);
-        setListBlogs(data.data.rows);
+        setListPages(data.data.rows);
         setCount(data.data.count);
     }
 
@@ -174,13 +174,13 @@ export default function BlogsTable() {
         }
         if (search != '') {
             filter.push({
-                operator: 'search',
+                operator: 'iLike',
                 value: `${search}`,
-                property: `title`,
+                property: `name`,
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.getListData('blogs', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.getListData('pages', strFilter, sort, start, 10);
         return data;
     }
 
@@ -195,13 +195,13 @@ export default function BlogsTable() {
         }
         if (search != '') {
             filter.push({
-                operator: 'search',
+                operator: 'iLike',
                 value: `${search}`,
-                property: `title`,
+                property: `name`,
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.exportData('blogs', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.exportData('pages', strFilter, sort, start, 10);
         return data;
     }
 
@@ -211,9 +211,9 @@ export default function BlogsTable() {
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mb-2 float-right bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={onclickCreateBlog}
+                    onClick={onclickCreatePage}
                 >
-                    <span className="fas fa-plus mr-2"></span> Thêm Blog
+                    <span className="fas fa-plus mr-2"></span> Thêm Page
                 </button>
                 <button
                     className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -228,7 +228,7 @@ export default function BlogsTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ BLOG</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ TRANG</h3>
                         </div>
                         <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
                             <div className="relative w-full mb-3 flex items-center 2xl:justify-end">
@@ -237,8 +237,8 @@ export default function BlogsTable() {
                                     value={search}
                                     type="text"
                                     className="2xl:w-3/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded text-xs font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                    placeholder="Tên Blog"
-                                    onChange={changeSearchPhone}
+                                    placeholder="Tên Page"
+                                    onChange={changeSearchPage}
                                 />
                                 <select
                                     value={active}
@@ -275,16 +275,15 @@ export default function BlogsTable() {
                         <thead>
                             <tr>
                                 <HeaderCell content="ID" width="w-1/24" />
-                                <HeaderCell content="TÊN BLOG" width="w-6/24" />
+                                <HeaderCell content="TÊN TRANG" width="w-6/24" />
                                 <HeaderCell content="LIKE" width="2/24" />
-                                <HeaderCell content="PAGE" width="2/24" />
                                 <HeaderCell content="NGÀY TẠO" width="w-3/24" />
                                 <HeaderCell content="HOẠT ĐỘNG" width="w-3/24" />
                             </tr>
                         </thead>
                         <tbody>
-                            {listBlogs && listBlogs.length > 0 ? (
-                                listBlogs.map((blog, index) => <RowItemBlog data={blog} key={index} updateActive={updateActive} />)
+                            {listPages && listPages.length > 0 ? (
+                                listPages.map((page, index) => <RowItemPage data={page} key={index} updateActive={updateActive} />)
                             ) : (
                                 <tr>
                                     <td colSpan="8">Không có dữ liệu</td>

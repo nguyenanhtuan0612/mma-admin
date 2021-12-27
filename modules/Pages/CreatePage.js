@@ -6,31 +6,27 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup/dist/yup.umd';
 import * as Yup from 'yup';
 import { Select } from 'antd';
-import { getPageFiles } from 'next/dist/server/get-page-files';
 
 const { Option } = Select;
 const { checkNull, avatarImg, dateFormat, checkSelect, formatCurrency, localStringToNumber } = displayHelpers;
 
-export default function CreateBlog() {
+export default function CreatePage() {
     const router = useRouter();
 
     const [isRoot, setIsRoot] = useState(false);
-    const [tagList, setTagList] = useState([]);
-    const [pageList, setPageList] = useState([]);
 
     const auth = useContext(AuthContext);
     const [state, setState] = useState({
-        class: '',
-        birthday: '',
-        tags: [],
-        page: '',
-        pageId : null,
-        active: true,
+        coverImage: '',
         description: '',
+        active: true,
+        userEmail: '',
+        name: '',
     });
 
     const validationSchema = Yup.object().shape({
-        title: Yup.string().required('Tên khoá học là bắt buộc'),
+        userEmail: Yup.string().required('Email người cần tạo là bắt buộc'),
+        name: Yup.string().required('Tên trang là bắt buộc'),
     });
     const formOptions = { resolver: yupResolver(validationSchema) };
     // get functions to build form with useForm() hook
@@ -42,21 +38,17 @@ export default function CreateBlog() {
     }, [auth]);
 
     useEffect(async () => {
-        const page = await getPage();
         const data = await getData();
-        setTagList(
-            data.data.rows.map(tag => {
-                return <Option key={tag.id} value={tag.slug}>{tag.name}</Option>;
-            }),
-        );
-        setPageList(
-            page.data.rows.map(page => {
-                return <Option key={page.id} value={page.id}>{page.name}</Option>;
-            }),
-        );
     }, []);
-    async function getPage(search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
-        const filter = [];
+
+    async function getData(search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+        const filter = [
+            {
+                operator: `eq`,
+                value: 'true',
+                property: `active`,
+            },
+        ];
         if (search != '') {
             filter.push({
                 operator: 'iLike',
@@ -69,33 +61,18 @@ export default function CreateBlog() {
         return data;
     }
 
-    async function getData(search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
-        const filter = [];
-        if (search != '') {
-            filter.push({
-                operator: 'iLike',
-                value: `${search}`,
-                property: `name`,
-            });
-        }
-        const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.getListData('tags', strFilter, sort, start, 10);
-        return data;
-    }
-
     async function onCreate() {
-        let dataBlog= state;
-        dataBlog.pageId = state.page;
-        const data = await createBlog(dataBlog);
+        let dataUser = state;
+        const data = await createPage(dataUser);
         if (!data) {
             return;
         }
         openNotification(notiType.success, 'Tạo mới thành công !');
-        router.push('/blogs');
+        router.push('/pages');
     }
 
-    async function createBlog(body) {
-        const { data } = await serviceHelpers.createData('blogs', body);
+    async function createPage(body) {
+        const { data } = await serviceHelpers.createData('pages/adminCreate', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -107,12 +84,30 @@ export default function CreateBlog() {
         return data;
     }
 
+    async function handleCoverImage(e) {
+        e.preventDefault();
+        setState({
+            ...state,
+            coverImage: e.target.value,
+        });
+    }
+
     async function handleChangeName(e) {
         e.preventDefault();
 
         setState({
             ...state,
-            title: e.target.value,
+            name: e.target.value,
+        });
+    }
+
+
+    async function handleChangeEmail(e) {
+        e.preventDefault();
+
+        setState({
+            ...state,
+            userEmail: e.target.value,
         });
     }
 
@@ -124,24 +119,11 @@ export default function CreateBlog() {
         });
     }
 
-    async function handleChangeContent(e) {
+    async function handleChangeDescription(e) {
         e.preventDefault();
         setState({
             ...state,
-            content: e.target.value,
-        });
-    }
-
-    function handlePageChange(value) {
-        setState({
-            ...state,
-            page: value,
-        });
-    }
-    function handleTagChange(value) {
-        setState({
-            ...state,
-            tags: [...value],
+            description: e.target.value,
         });
     }
 
@@ -160,73 +142,58 @@ export default function CreateBlog() {
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Tên Blog: <span className="text-red-500">*</span>
+                                            Tên Trang: <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            {...register('title')}
-                                            value={checkNull(state.title, '')}
+                                            {...register('name')}
+                                            value={checkNull(state.name, '')}
                                             onChange={handleChangeName}
                                             type="text"
-                                            placeholder="Tên blog"
+                                            placeholder="Tên trang"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.title?.message}</div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.name?.message}</div>
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Nội dung (html):
-                                        </label>
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Mô tả trang:</label>
                                         <textarea
-                                            value={checkNull(state.content, '')}
-                                            onChange={handleChangeContent}
+                                            value={checkNull(state.description, '')}
+                                            onChange={handleChangeDescription}
                                             type="text"
-                                            placeholder="Content"
+                                            placeholder="Tên khoá học"
                                             className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-4 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Cover Image:</label>
+                                        <input
+                                            value={checkNull(state.coverImage, '')}
+                                            onChange={handleCoverImage}
+                                            type="text"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            placeholder="Nguyễn Bá"
                                         />
                                     </div>
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Tag: <span className="text-red-500">*</span>
+                                            Email người tạo: <span className="text-red-500">*</span>
                                         </label>
-                                        <div className="w-8/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
-                                            <Select
-                                                mode="multiple"
-                                                allowClear
-                                                style={{ width: '100%' }}
-                                                placeholder="Please select"
-                                                defaultValue={[]}
-                                                onChange={handleTagChange}
-                                            >
-                                                {tagList}
-                                            </Select>
-                                        </div>
+                                        <input
+                                            {...register('userEmail')}
+                                            value={checkNull(state.userEmail, '')}
+                                            onChange={handleChangeEmail}
+                                            type="email"
+                                            placeholder="Email người tạo"
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        />
                                     </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.Tag?.message}</div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Page: <span className="text-red-500">*</span>
-                                        </label>
-                                        <div className="w-8/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
-                                            <Select
-                                                // mode="multiple"
-                                                allowClear
-                                                style={{ width: '100%' }}
-                                                placeholder="Please select"
-                                                defaultValue= {''}
-                                                onChange={handlePageChange}
-                                            >
-                                                <Option disabled={state.tags.length > 1 ? true : false}></Option>
-                                                {pageList}
-                                            </Select>
-                                        </div>
-                                    </div>
-                                    <div className="w-full justify-center items-center flex text-red-500">{errors.Tag?.message}</div>
+                                    <div className="w-full justify-center items-center flex text-red-500">{errors.userEmail?.message}</div>
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">

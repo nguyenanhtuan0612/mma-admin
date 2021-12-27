@@ -61,7 +61,6 @@ export default function CreateU() {
             if (!img) return;
             dataUser = { ...user, avatarImage: img.data.streamPath };
         }
-        console.log(dataUser);
         const data = await createUser(dataUser);
         if (!data) {
             return;
@@ -71,7 +70,6 @@ export default function CreateU() {
     }
 
     async function createUser(body) {
-        console.log('body', body);
         const { data } = await serviceHelpers.createData('users', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 

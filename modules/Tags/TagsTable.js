@@ -172,9 +172,9 @@ export default function TagsTable() {
         }
         if (search != '') {
             filter.push({
-                operator: 'iLike',
+                operator: 'search',
                 value: `${search}`,
-                property: `phone`,
+                property: `name,slug`,
             });
         }
         const strFilter = JSON.stringify(filter);

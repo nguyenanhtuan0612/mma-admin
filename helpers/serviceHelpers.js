@@ -2,7 +2,6 @@ import axios from 'axios';
 
 async function login(email, password) {
     try {
-        console.log(process.env.BACKEND_URL);
         const url = `${process.env.BACKEND_URL}/auth`;
         const data = await axios.post(url, {
             email,
@@ -176,7 +175,6 @@ async function uploadFile(path, file) {
         });
         return data;
     } catch (error) {
-        console.log(error);
         return error.response;
     }
 }
@@ -200,7 +198,6 @@ async function deleteData(path, id) {
         });
         return data;
     } catch (error) {
-        console.log(error);
         return error.response;
     }
 }

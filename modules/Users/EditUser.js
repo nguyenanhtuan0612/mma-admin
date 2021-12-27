@@ -42,7 +42,6 @@ export default function EditUser() {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
-            console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404) {

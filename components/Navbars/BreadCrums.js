@@ -16,7 +16,6 @@ export function BreadCrumbs() {
     const [crumbs, setCrumbs] = React.useState([]);
 
     React.useEffect(() => {
-        console.log(router.pathname);
         const segmentsPath = router.asPath.split('/');
         const segmentsRoute = router.route.split('/');
         const crumbLinks = CombineAccumulatively(segmentsPath);
@@ -37,15 +36,6 @@ export function BreadCrumbs() {
             return crumb;
         });
         setCrumbs(crumbs);
-
-        console.log({
-            router,
-            segmentsPath,
-            segmentsRoute,
-            crumbLinks,
-            crumbLabels,
-            crumbs,
-        });
     }, [router.route]);
 
     return (

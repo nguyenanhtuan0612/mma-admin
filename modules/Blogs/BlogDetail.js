@@ -10,16 +10,20 @@ const { confirm } = Modal;
 const { TabPane } = Tabs;
 const { checkNull, avatarImg } = displayHelpers;
 
-export default function UserDetail() {
+export default function BlogDetail() {
     const router = useRouter();
     const { id } = router.query;
 
     const auth = useContext(AuthContext);
     const [blog, setBlog] = useState({});
 
-    function callback(key) {
-        console.log(key);
-    }
+    const [state, setState] = useState({
+        title: null,
+        pageId: null,
+        page: {},
+        tagList: [],
+        tags: [],
+    });
 
     useEffect(async () => {
         const data = await getDetail(id);
@@ -27,8 +31,13 @@ export default function UserDetail() {
         if (!data) {
             return;
         }
-        setBlog(data.data);
-    }, [blog]);
+        const tagList = [];
+        data.data.tags.map(tag => {
+            tagList.push(tag.tags.name);
+
+        });
+        setState({ ...data.data, tagList });
+    }, []);
 
     async function getDetail(id) {
         const { data } = await serviceHelpers.detailData('blogs', id);
@@ -36,7 +45,6 @@ export default function UserDetail() {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
-            console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404) {
@@ -76,7 +84,6 @@ export default function UserDetail() {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
-            console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404) {
@@ -85,14 +92,12 @@ export default function UserDetail() {
         }
         return data;
     }
-
     async function getDetail(id) {
         const { data } = await serviceHelpers.detailData('blogs', id);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
-            console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404) {
@@ -112,9 +117,9 @@ export default function UserDetail() {
                     </div>
                 </div>
                 <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
-                    <Tabs defaultActiveKey="1" onChange={callback} size="large" tabBarStyle={{ fontWeight: 500 }}>
+                    <Tabs defaultActiveKey="1" size="large" tabBarStyle={{ fontWeight: 500 }}>
                         <TabPane tab="Thông tin cá nhân" key="1">
-                            <Detail blog={blog} onDelete={onDelete} />
+                            <Detail state={state} setState={setState} onDelete={onDelete} />
                         </TabPane>
                     </Tabs>
                 </div>

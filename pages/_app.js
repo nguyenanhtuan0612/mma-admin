@@ -16,7 +16,6 @@ Router.events.on('routeChangeStart', url => {
     if (url == '/auth/login') {
         return;
     }
-    console.log(`Loading: ${url}`);
     document.body.classList.add('body-page-transition');
     ReactDOM.render(<PageChange path={url} />, document.getElementById('page-transition'));
 });

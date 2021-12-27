@@ -12,8 +12,7 @@ export default function EditTag() {
 
     const [data, setData] = useState({
         name: '',
-        workPlace: '',
-        avatar: '',
+        slug: '',
         active: true,
     });
 
@@ -33,7 +32,6 @@ export default function EditTag() {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
-            console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404) {
@@ -48,8 +46,6 @@ export default function EditTag() {
 
     async function onUpdate() {
         let uploadData = data;
-        console.log(data);
-        console.log(uploadData);
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
@@ -88,7 +84,6 @@ export default function EditTag() {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
-            console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404) {
