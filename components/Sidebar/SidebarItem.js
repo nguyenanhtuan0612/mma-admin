@@ -1,10 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
-export default function SidebarItem({ path, title, icon }) {
+export default function SidebarItem({ path, title, icon, index }) {
     const router = useRouter();
+    const routes = [
+        {
+            path: '/',
+            index: 1,
+        },
+        {
+            path: '/users',
+            index: 2,
+        },
+        {
+            path: '/teachers',
+            index: 3,
+        },
+        {
+            path: '/courses',
+            index: 4,
+        },
+        {
+            path: '/lessons',
+            index: 4,
+        },
+    ];
+    let active = 0;
+    if (router.pathname.indexOf(path) > -1) {
+        for (const route of routes) {
+            if (route.path === path) {
+                active = route.index;
+            }
+        }
+    }
+    if (router.pathname !== '/' && path === '/') {
+        active = 0;
+    }
 
     return (
         <li className="items-center">
@@ -13,10 +46,10 @@ export default function SidebarItem({ path, title, icon }) {
                     href="#pablo"
                     className={
                         'text-xs uppercase py-3 font-bold block ' +
-                        (router.pathname == path ? 'text-sky-500 hover:text-sky-600' : 'text-blueGray-700 hover:text-blueGray-500')
+                        (active === index ? 'text-sky-500 hover:text-sky-600' : 'text-blueGray-700 hover:text-blueGray-500')
                     }
                 >
-                    <i className={icon + ' mr-2 text-sm ' + (router.pathname == path ? 'opacity-75' : 'text-blueGray-300')}></i>
+                    <i className={icon + ' mr-2 text-sm ' + (active === index ? 'opacity-75' : 'text-blueGray-300')}></i>
                     {title}
                 </a>
             </Link>
@@ -28,4 +61,5 @@ SidebarItem.propTypes = {
     path: PropTypes.any,
     title: PropTypes.any,
     icon: PropTypes.any,
+    index: PropTypes.any,
 };

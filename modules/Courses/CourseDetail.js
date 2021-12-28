@@ -5,6 +5,7 @@ import { serviceHelpers, displayHelpers, openNotification, notiType } from 'help
 import { useRouter } from 'next/router';
 import { Modal } from 'antd';
 import { AuthContext } from 'layouts/Admin';
+import LessonsTable from './LessonsTable';
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;
@@ -30,6 +31,7 @@ export default function CourseDetail() {
         targetStudent: null,
         result: null,
         teacherIds: [],
+        teacherDeactive: [],
         teacher: [],
     });
 
@@ -43,14 +45,20 @@ export default function CourseDetail() {
             return;
         }
         const teacherIds = [];
+        const teacherDeactive = [];
         data.data.teacher.map(t => {
-            teacherIds.push(t.teacher.id);
+            if (t.teacher.active === true) {
+                teacherIds.push(t.teacher.id);
+            } else {
+                teacherDeactive.push(t.teacher.id);
+            }
         });
         const amountStr = data.data.amount == '' ? null : formatCurrency(data.data.amount);
         setState({
             ...data.data,
             teacherIds,
             amountStr,
+            teacherDeactive,
         });
         setCreateObjectURL(data.data.avatar);
     }, []);
@@ -80,7 +88,7 @@ export default function CourseDetail() {
     }
 
     async function onUpdate() {
-        let dataUser = state;
+        let dataUser = { ...state, teacherIds: [...state.teacherIds, ...state.teacherDeactive] };
         if (dataUser.teacherIds.length == 0) return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
@@ -181,6 +189,9 @@ export default function CourseDetail() {
                                 uploadToClient={uploadToClient}
                                 onUpdate={onUpdate}
                             />
+                        </TabPane>
+                        <TabPane tab="Bài học" key="2">
+                            <LessonsTable />
                         </TabPane>
                     </Tabs>
                 </div>

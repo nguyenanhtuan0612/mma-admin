@@ -1,14 +1,12 @@
-import React, { createRef, useEffect, useState } from 'react';
 import { Pagination } from 'antd';
-import HeaderCell from '../../components/Tables/HeaderCell';
-import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
+import HeaderCell from 'components/Tables/HeaderCell';
 import { useRouter } from 'next/router';
-import FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
+import React, { createRef, useEffect, useState } from 'react';
 import RowItemCourse from './components/RowItemCourse';
+import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
 const { getDate } = displayHelpers;
 
-export default function CoursesTable() {
+export default function LessonsTable() {
     const [listCourse, setListCourse] = useState([]);
     const [count, setCount] = useState(0);
     const [active, setActive] = useState('');
@@ -180,7 +178,7 @@ export default function CoursesTable() {
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.getListData('courses', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.getListData('lessons', strFilter, sort, start, 10);
         return data;
     }
 
@@ -209,16 +207,16 @@ export default function CoursesTable() {
         <>
             <div>
                 <button
-                    className="2xl:w-2/12 xl:w-3/12 w-2/12 mb-2 float-right bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold float-right uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={onClickCreateUser}
+                    onClick={e => console.log(1)}
                 >
-                    <span className="fas fa-plus mr-2"></span> Thêm Khoá học
+                    <span className="fas fa-plus mr-2"></span> Thêm Bài Học
                 </button>
                 <button
-                    className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold float-right uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={handleExportExcel}
+                    onClick={e => console.log(1)}
                 >
                     <span className="fas fa-table mr-2"></span> Xuất File Excel
                 </button>
@@ -228,7 +226,7 @@ export default function CoursesTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ KHOÁ HỌC</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ NGƯỜI DÙNG</h3>
                         </div>
                         <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
                             <div className="relative w-full mb-3 flex items-center 2xl:justify-end">

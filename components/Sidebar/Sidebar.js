@@ -88,7 +88,7 @@ export default function Sidebar() {
 
                         <ul className="md:flex-col md:min-w-full flex flex-col list-none">
                             {data.map((item, index) => (
-                                <SidebarItem path={item.path} title={item.title} icon={item.icon} key={index} />
+                                <SidebarItem path={item.path} title={item.title} icon={item.icon} index={item.index} key={index} />
                             ))}
                         </ul>
 

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
-import { AuthContext } from 'layouts/Admin';
 import { Select } from 'antd';
 
 const { Option } = Select;
@@ -132,7 +131,7 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
         <>
             <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
                 <div className="w-full px-4 2xl:flex mt-4 mb-6 h-full">
-                    <div className="2xl:w-3/12 w-4/12 px-4 h-full mt-4">
+                    <div className="2xl:w-3/12 w-full px-4 h-full mt-4">
                         <div className="w-full flex justify-center">
                             <img
                                 alt="..."
