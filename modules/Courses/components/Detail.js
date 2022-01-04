@@ -127,6 +127,14 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
         });
     }
 
+    async function handleChangeActive(e) {
+        e.preventDefault();
+        setUser({
+            ...state,
+            active: e.target.value === 'true' ? true : false,
+        });
+    }
+
     return (
         <>
             <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
@@ -276,6 +284,19 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
                                         <option value="1">10</option>
                                         <option value="2">11</option>
                                         <option value="3">12</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="w-full px-4 mb-2">
+                                <div className="relative w-full mb-3 items-center flex">
+                                    <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Trạng thái:</label>
+                                    <select
+                                        value={checkSelect(state.active)}
+                                        onChange={handleChangeActive}
+                                        className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                    >
+                                        <option value="true">Hoạt động</option>
+                                        <option value="false">Vô hiệu</option>
                                     </select>
                                 </div>
                             </div>

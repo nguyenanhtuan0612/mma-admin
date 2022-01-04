@@ -1,19 +1,23 @@
+import React, { createRef, useEffect, useState } from 'react';
 import { Pagination } from 'antd';
 import HeaderCell from 'components/Tables/HeaderCell';
 import { useRouter } from 'next/router';
-import React, { createRef, useEffect, useState } from 'react';
-import RowItemCourse from './components/RowItemCourse';
 import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
+import RowItemLesson from './components/RowItemLesson';
 const { getDate } = displayHelpers;
+import FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
 
 export default function LessonsTable() {
-    const [listCourse, setListCourse] = useState([]);
+    const [list, setList] = useState([]);
     const [count, setCount] = useState(0);
     const [active, setActive] = useState('');
     const [search, setSearch] = useState('');
+    const [type, setType] = useState('');
     const [page, setPage] = useState(1);
     const inputSearchRef = createRef();
     const router = useRouter();
+    const { id } = router.query;
 
     useEffect(async () => {
         const data = await getData();
@@ -27,7 +31,7 @@ export default function LessonsTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListCourse(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }, []);
 
@@ -41,9 +45,14 @@ export default function LessonsTable() {
         return setActive(e.target.value);
     }
 
+    function changeType(e) {
+        e.preventDefault();
+        return setType(e.target.value);
+    }
+
     async function handleSubmitFilter(e) {
         e.preventDefault();
-        const data = await getData(active, search);
+        const data = await getData(active, type, search);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -51,13 +60,13 @@ export default function LessonsTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         setPage(1);
-        setListCourse(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
     async function handleExportExcel(e) {
         e.preventDefault();
-        const data = await exportData(active, search);
+        const data = await exportData(active, type, search);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -65,27 +74,36 @@ export default function LessonsTable() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
 
-        const excelData = data.data.rows.map(course => {
-            course.createdAt = getDate(course.createdAt);
-            switch (course.active) {
+        const excelData = data.data.rows.map(lesson => {
+            lesson.createdAt = getDate(lesson.createdAt);
+            switch (lesson.active) {
                 case true: {
-                    course.active = 'Kích hoạt';
+                    lesson.active = 'Kích hoạt';
                     break;
                 }
                 default: {
-                    course.active = 'Vô hiệu';
+                    lesson.active = 'Vô hiệu';
+                    break;
+                }
+            }
+
+            switch (lesson.isFree) {
+                case true: {
+                    lesson.isFree = 'Miễn phí';
+                    break;
+                }
+                default: {
+                    lesson.isFree = 'Có phí';
                     break;
                 }
             }
 
             return {
-                Id: course.id,
-                'Tên khoá học': course.name,
-                Lớp: course.class,
-                'Giá tiền': course.amount,
-                'Số bài học': course.numLesson,
-                'Ngày tạo': course.createdAt,
-                'Trạng thái': course.active,
+                Id: lesson.id,
+                'Tên bài học': lesson.name,
+                'Loại bài học': lesson.isFree,
+                'Ngày tạo': lesson.createdAt,
+                'Trạng thái': lesson.active,
             };
         });
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -94,13 +112,14 @@ export default function LessonsTable() {
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const rs = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(rs, 'courses' + fileExtension);
+        FileSaver.saveAs(rs, 'lessons' + fileExtension);
     }
 
     async function handleClearFilter(e) {
         e.preventDefault();
         setSearch('');
         setActive('');
+        setType('');
         setPage(1);
         inputSearchRef.current.focus();
         const data = await getData();
@@ -114,17 +133,17 @@ export default function LessonsTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setListCourse(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
-    async function onClickCreateUser(e) {
+    async function onClickCreate(e) {
         e.preventDefault();
-        router.push('/courses/create');
+        router.push('/lessons/create');
     }
 
     async function updateActive(id, body) {
-        const update = await serviceHelpers.updateData('courses', id, body);
+        const update = await serviceHelpers.updateData('lessons', id, body);
         if (update.data.statusCode === 400) {
             return;
         }
@@ -135,12 +154,12 @@ export default function LessonsTable() {
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode === 404 || data.statusCode === 401) {
             router.push('/auth/login');
             return <div></div>;
         }
         openNotification(notiType.success, 'Cập nhật thành công !');
-        setListCourse(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
@@ -157,17 +176,30 @@ export default function LessonsTable() {
             return <div></div>;
         }
         setPage(current);
-        setListCourse(data.data.rows);
+        setList(data.data.rows);
         setCount(data.data.count);
     }
 
-    async function getData(active = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
-        const filter = [];
+    async function getData(active = '', type = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+        const filter = [
+            {
+                operator: `eq`,
+                value: `${id}`,
+                property: `courseId`,
+            },
+        ];
         if (active != '') {
             filter.push({
                 operator: `eq`,
                 value: `${active}`,
                 property: `active`,
+            });
+        }
+        if (type != '') {
+            filter.push({
+                operator: `eq`,
+                value: `${type}`,
+                property: `isFree`,
             });
         }
         if (search != '') {
@@ -182,13 +214,26 @@ export default function LessonsTable() {
         return data;
     }
 
-    async function exportData(active = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
-        const filter = [];
+    async function exportData(active = '', type = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+        const filter = [
+            {
+                operator: `eq`,
+                value: `${id}`,
+                property: `courseId`,
+            },
+        ];
         if (active != '') {
             filter.push({
                 operator: `eq`,
                 value: `${active}`,
                 property: `active`,
+            });
+        }
+        if (type != '') {
+            filter.push({
+                operator: `eq`,
+                value: `${type}`,
+                property: `isFree`,
             });
         }
         if (search != '') {
@@ -199,7 +244,7 @@ export default function LessonsTable() {
             });
         }
         const strFilter = JSON.stringify(filter);
-        const { data } = await serviceHelpers.exportData('courses', strFilter, sort, start, 10);
+        const { data } = await serviceHelpers.exportData('lessons', strFilter, sort, start, 10);
         return data;
     }
 
@@ -209,14 +254,14 @@ export default function LessonsTable() {
                 <button
                     className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold float-right uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={e => console.log(1)}
+                    onClick={onClickCreate}
                 >
                     <span className="fas fa-plus mr-2"></span> Thêm Bài Học
                 </button>
                 <button
                     className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold float-right uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={e => console.log(1)}
+                    onClick={handleExportExcel}
                 >
                     <span className="fas fa-table mr-2"></span> Xuất File Excel
                 </button>
@@ -226,7 +271,7 @@ export default function LessonsTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ NGƯỜI DÙNG</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ BÀI HỌC</h3>
                         </div>
                         <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
                             <div className="relative w-full mb-3 flex items-center 2xl:justify-end">
@@ -235,9 +280,18 @@ export default function LessonsTable() {
                                     value={search}
                                     type="text"
                                     className="2xl:w-3/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded text-xs font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                    placeholder="Tên khoá học"
+                                    placeholder="Tên bài học"
                                     onChange={changeSearchPhone}
                                 />
+                                <select
+                                    value={type}
+                                    onChange={changeType}
+                                    className="border ml-2 2xl:w-3/12 bg-white text-blueGray-700 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear"
+                                >
+                                    <option value="">Loại bài học</option>
+                                    <option value="true">Miễn phí</option>
+                                    <option value="false">Có phí</option>
+                                </select>
                                 <select
                                     value={active}
                                     onChange={changeActive}
@@ -273,18 +327,17 @@ export default function LessonsTable() {
                         <thead>
                             <tr>
                                 <HeaderCell content="ID" width="w-1/24" />
-                                <HeaderCell content="TÊN KHOÁ HỌC" width="w-6/24" />
-                                <HeaderCell content="LỚP" width="2/24" />
-                                <HeaderCell content="GIÁ TIỀN" width="3/24" />
-                                <HeaderCell content="SỐ BÀI HỌC" width="w-3/24" />
+                                <HeaderCell content="TÊN BÀI HỌC" width="w-6/24" />
+                                <HeaderCell content="LOẠI BÀI HỌC" width="w-3/24" />
+                                <HeaderCell content="BAO GỒM" width="w-5/24" />
                                 <HeaderCell content="NGÀY TẠO" width="w-3/24" />
-                                <HeaderCell content="TRẠNG THÁI" width="w-3/24" />
-                                <HeaderCell content="HOẠT ĐỘNG" width="w-3/24" />
+                                <HeaderCell content="TRẠNG THÁI" width="w-4/24" />
+                                <HeaderCell content="HOẠT ĐỘNG" width="w-2/24" />
                             </tr>
                         </thead>
                         <tbody>
-                            {listCourse && listCourse.length > 0 ? (
-                                listCourse.map((user, index) => <RowItemCourse data={user} key={index} updateActive={updateActive} />)
+                            {list && list.length > 0 ? (
+                                list.map((user, index) => <RowItemLesson data={user} key={index} updateActive={updateActive} />)
                             ) : (
                                 <tr>
                                     <td colSpan="8">Không có dữ liệu</td>

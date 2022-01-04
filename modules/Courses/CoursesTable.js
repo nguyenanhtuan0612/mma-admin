@@ -276,10 +276,10 @@ export default function CoursesTable() {
                             <tr>
                                 <HeaderCell content="ID" width="w-1/24" />
                                 <HeaderCell content="TÊN KHOÁ HỌC" width="w-6/24" />
-                                <HeaderCell content="LỚP" width="2/24" />
-                                <HeaderCell content="GIÁ TIỀN" width="3/24" />
+                                <HeaderCell content="LỚP" width="w-2/24" />
+                                <HeaderCell content="GIÁ TIỀN" width="w-3/24" />
                                 <HeaderCell content="SỐ BÀI HỌC" width="w-3/24" />
-                                <HeaderCell content="NGÀY TẠO" width="w-3/24" />
+                                <HeaderCell content="CHI TIẾT" width="w-3/24" />
                                 <HeaderCell content="TRẠNG THÁI" width="w-3/24" />
                                 <HeaderCell content="HOẠT ĐỘNG" width="w-3/24" />
                             </tr>

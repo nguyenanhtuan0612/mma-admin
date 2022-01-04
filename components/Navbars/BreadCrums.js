@@ -9,6 +9,7 @@ const Route2LabelMap = {
     create: 'Tạo mới',
     teachers: 'Quản lý giáo viên',
     courses: 'Quản lý khoá học',
+    lessons: 'Danh sách bài học',
 };
 
 export function BreadCrumbs() {

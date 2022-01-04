@@ -1,14 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Tabs } from 'antd';
 import Detail from './components/Detail';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { Modal } from 'antd';
 import { AuthContext } from 'layouts/Admin';
-import LessonsTable from './LessonsTable';
 
 const { confirm } = Modal;
-const { TabPane } = Tabs;
 const { checkNull, avatarImg, formatCurrency } = displayHelpers;
 
 export default function CourseDetail() {
@@ -34,10 +31,6 @@ export default function CourseDetail() {
         teacherDeactive: [],
         teacher: [],
     });
-
-    function callback(key) {
-        console.log(key);
-    }
 
     useEffect(async () => {
         const data = await getDetail(id);
@@ -178,22 +171,17 @@ export default function CourseDetail() {
                     </div>
                 </div>
                 <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
-                    <Tabs defaultActiveKey="1" onChange={callback} size="large" tabBarStyle={{ fontWeight: 500 }}>
-                        <TabPane tab="Thông tin khoá học" key="1">
-                            <Detail
-                                state={state}
-                                onDelete={onDelete}
-                                setState={setState}
-                                createObjectURL={createObjectURL}
-                                imageUpload={imageUpload}
-                                uploadToClient={uploadToClient}
-                                onUpdate={onUpdate}
-                            />
-                        </TabPane>
-                        <TabPane tab="Bài học" key="2">
-                            <LessonsTable />
-                        </TabPane>
-                    </Tabs>
+                    <div className="flex flex-wrap">
+                        <Detail
+                            state={state}
+                            onDelete={onDelete}
+                            setState={setState}
+                            createObjectURL={createObjectURL}
+                            imageUpload={imageUpload}
+                            uploadToClient={uploadToClient}
+                            onUpdate={onUpdate}
+                        />
+                    </div>
                 </div>
             </div>
         </>
