@@ -56,7 +56,7 @@ export default function CourseDetail() {
         setCreateObjectURL(data.data.avatar);
     }, []);
 
-    function onDelete(id) {
+    function onDelete() {
         const role = auth.role;
         confirm({
             title: 'Bạn muốn xóa khoá học này?',
@@ -65,16 +65,12 @@ export default function CourseDetail() {
             okType: 'danger',
             cancelText: 'Hủy',
             async onOk() {
-                if (role && role == 'root') {
-                    const data = await deleteData(id);
-                    if (!data) {
-                        return;
-                    }
-                    openNotification(notiType.success, 'Thành công', 'Xoá người dùng thành công');
-                    router.push('/courses');
-                } else {
-                    return openNotification(notiType.warning, 'Không thành công', 'Bạn không có quyền xoá người dùng');
+                const data = await deleteData(id);
+                if (!data) {
+                    return;
                 }
+                openNotification(notiType.success, 'Thành công', 'Xoá người dùng thành công');
+                router.push('/courses');
             },
             onCancel() {},
         });

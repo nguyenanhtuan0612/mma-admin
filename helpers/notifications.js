@@ -21,6 +21,9 @@ function fomartError(message) {
         case `name must be a string`: {
             return 'Tên không hợp lệ !!';
         }
+        case `video must be a string`: {
+            return 'Video không hợp lệ !!';
+        }
         case `description must be a string`: {
             return 'Mô tả không hợp lệ !!';
         }

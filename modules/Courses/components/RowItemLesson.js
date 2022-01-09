@@ -1,5 +1,5 @@
 import React from 'react';
-import { Popconfirm } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import { displayHelpers } from 'helpers';
 import Link from 'next/link';
 
@@ -66,10 +66,12 @@ export default function RowItemLesson({ data, updateActive }) {
                     >
                         <img
                             src={avatarImg(thumb, '/img/empty.jpeg')}
-                            className=" object-contain object-center 2xl:h-12 2xl:w-12 2xl:flex xl:hidden xl:w-8 xl:h-8 bg-white rounded-full border"
+                            className=" object-contain object-center 2xl:w-12 2xl:flex xl:hidden xl:w-8 bg-white border"
                             alt="..."
                         ></img>{' '}
-                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(name)}</span>
+                        <Tooltip placement="topLeft" title={name}>
+                            <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(name, '', 20)}</span>
+                        </Tooltip>
                     </a>
                 </Link>
             </th>

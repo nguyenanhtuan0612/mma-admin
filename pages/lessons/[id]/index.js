@@ -1,16 +1,16 @@
 import Admin from 'layouts/Admin';
-import EditUser from 'modules/Users/EditUser';
+import DetailLesson from 'modules/Lessons/DetailLesson';
 
-export default function Edit() {
+export default function index() {
     return (
         <>
             <div className="flex flex-wrap">
                 <div className="w-full px-4">
-                    <EditUser />
+                    <DetailLesson />
                 </div>
             </div>
         </>
     );
 }
 
-Edit.layout = Admin;
+index.layout = Admin;

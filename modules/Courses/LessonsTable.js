@@ -139,7 +139,11 @@ export default function LessonsTable() {
 
     async function onClickCreate(e) {
         e.preventDefault();
-        router.push('/lessons/create');
+        const lessonCreate = '/lessons/create';
+        if (id) {
+            lessonCreate = `/lessons/create?courseId=${id}`;
+        }
+        router.push(lessonCreate);
     }
 
     async function updateActive(id, body) {
@@ -181,13 +185,14 @@ export default function LessonsTable() {
     }
 
     async function getData(active = '', type = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
-        const filter = [
-            {
+        const filter = [];
+        if (id) {
+            filter.push({
                 operator: `eq`,
                 value: `${id}`,
                 property: `courseId`,
-            },
-        ];
+            });
+        }
         if (active != '') {
             filter.push({
                 operator: `eq`,
@@ -215,13 +220,14 @@ export default function LessonsTable() {
     }
 
     async function exportData(active = '', type = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
-        const filter = [
-            {
+        const filter = [];
+        if (id) {
+            filter.push({
                 operator: `eq`,
                 value: `${id}`,
                 property: `courseId`,
-            },
-        ];
+            });
+        }
         if (active != '') {
             filter.push({
                 operator: `eq`,

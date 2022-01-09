@@ -1,5 +1,10 @@
-function checkNull(string, nullReturn = '...') {
+function checkNull(string, nullReturn = '...', numDisplay = -1) {
     if (string) {
+        if (numDisplay != -1) {
+            if (string.length > numDisplay) {
+                string = `${string.substring(0, numDisplay)}...`;
+            }
+        }
         return string;
     }
     return nullReturn;
