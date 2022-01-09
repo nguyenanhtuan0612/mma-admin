@@ -240,7 +240,7 @@ export default function CreateLesson() {
             if (!rs || !rs.data) return;
             const data = rs.data;
 
-            return setState({ ...state, video: data.streamPath });
+            return setState({ ...state, video: data.streamPath, duration: data.duration });
         }
         return openNotification(notiType.error, 'Lỗi hệ thống');
     }

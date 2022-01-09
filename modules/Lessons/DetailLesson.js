@@ -42,7 +42,6 @@ export default function DetailLesson() {
             ...state,
             ...data.data,
         };
-        console.log(stateData);
         if (data.data.documents) {
             setListDoc([{ url: data.data.documents, name: data.data.docName, status: 'done' }]);
         }
@@ -276,42 +275,72 @@ export default function DetailLesson() {
     }
 
     async function uploadLessonThumb(e) {
-        if (state.thumb) await deleteFile(state.thumb);
-        if (e.target.files && e.target.files[0]) {
-            const i = e.target.files[0];
-            const rs = await uploadThumb(i);
-            if (!rs || !rs.data) return;
-            const data = rs.data;
+        confirm({
+            title: 'Bạn muốn thay đổi file này?',
+            content: 'Sau khi thay đổi file thông tin bài học sẽ được lưu lại ngay lập tức !!',
+            okText: 'Thay đổi',
+            okType: 'success',
+            cancelText: 'Hủy',
+            async onOk() {
+                if (state.thumb) await deleteFile(state.thumb);
+                if (e.target.files && e.target.files[0]) {
+                    const i = e.target.files[0];
+                    const rs = await uploadThumb(i);
+                    if (!rs || !rs.data) return;
+                    const data = rs.data;
 
-            return setState({ ...state, thumb: data.streamPath });
-        }
-        return openNotification(notiType.error, 'Lỗi hệ thống');
+                    return setState({ ...state, thumb: data.streamPath });
+                }
+                return openNotification(notiType.error, 'Lỗi hệ thống');
+            },
+            onCancel() {},
+        });
     }
 
     async function uploadLessonVideo(e) {
-        if (state.video) await deleteFile(state.video);
-        if (e.target.files && e.target.files[0]) {
-            const i = e.target.files[0];
-            const rs = await uploadVideo(i);
-            if (!rs || !rs.data) return;
-            const data = rs.data;
+        confirm({
+            title: 'Bạn muốn thay đổi file này?',
+            content: 'Sau khi thay đổi file thông tin bài học sẽ được lưu lại ngay lập tức !!',
+            okText: 'Thay đổi',
+            okType: 'success',
+            cancelText: 'Hủy',
+            async onOk() {
+                if (state.video) await deleteFile(state.video);
+                if (e.target.files && e.target.files[0]) {
+                    const i = e.target.files[0];
+                    const rs = await uploadVideo(i);
+                    if (!rs || !rs.data) return;
+                    const data = rs.data;
 
-            return setState({ ...state, video: data.streamPath });
-        }
-        return openNotification(notiType.error, 'Lỗi hệ thống');
+                    return setState({ ...state, video: data.streamPath, duration: data.duration });
+                }
+                return openNotification(notiType.error, 'Lỗi hệ thống');
+            },
+            onCancel() {},
+        });
     }
 
     async function uploadLessonSolveVideo(e) {
-        if (state.video) await deleteFile(state.video);
-        if (e.target.files && e.target.files[0]) {
-            const i = e.target.files[0];
-            const rs = await uploadVideo(i);
-            if (!rs || !rs.data) return;
-            const data = rs.data;
+        confirm({
+            title: 'Bạn muốn thay đổi file này?',
+            content: 'Sau khi thay đổi file thông tin bài học sẽ được lưu lại ngay lập tức !!',
+            okText: 'Thay đổi',
+            okType: 'success',
+            cancelText: 'Hủy',
+            async onOk() {
+                if (state.video) await deleteFile(state.video);
+                if (e.target.files && e.target.files[0]) {
+                    const i = e.target.files[0];
+                    const rs = await uploadVideo(i);
+                    if (!rs || !rs.data) return;
+                    const data = rs.data;
 
-            return setState({ ...state, solveHomeworkVideo: data.streamPath });
-        }
-        return openNotification(notiType.error, 'Lỗi hệ thống');
+                    return setState({ ...state, solveHomeworkVideo: data.streamPath });
+                }
+                return openNotification(notiType.error, 'Lỗi hệ thống');
+            },
+            onCancel() {},
+        });
     }
 
     async function deleteDoc() {
