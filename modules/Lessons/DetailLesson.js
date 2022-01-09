@@ -223,9 +223,11 @@ export default function DetailLesson() {
 
     async function handleChangeActive(e) {
         e.preventDefault();
+        let value = true;
+        if (e.target.value == 'false') value = false;
         setState({
             ...state,
-            active: e.target.value == '' ? null : e.target.value,
+            active: value,
         });
     }
 
