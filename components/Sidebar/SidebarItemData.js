@@ -26,7 +26,7 @@ export default {
         },
         {
             path: '/rating',
-            title: 'Nhận xét khoá học',
+            title: 'QUẢN LÝ ĐÁNH GIÁ',
             icon: 'fas fa-star-half-alt',
             index: 5,
         },

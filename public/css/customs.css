@@ -101,7 +101,3 @@
 .upload {
     display: none;
 }
-
-.ck-editor__editable {
-    max-height: 100px;
-}

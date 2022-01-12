@@ -15,6 +15,7 @@ export default function EditTeacher() {
         workPlace: '',
         avatar: '',
         active: true,
+        gender: 'female',
     });
 
     useEffect(async () => {
@@ -48,8 +49,6 @@ export default function EditTeacher() {
 
     async function onUpdate() {
         let uploadData = data;
-        console.log(data);
-        console.log(uploadData);
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
@@ -137,6 +136,14 @@ export default function EditTeacher() {
         setData({
             ...data,
             active: e.target.value === 'true' ? true : false,
+        });
+    }
+
+    async function handleChangeGender(e) {
+        e.preventDefault();
+        setData({
+            ...data,
+            gender: e.target.value,
         });
     }
 
@@ -232,6 +239,19 @@ export default function EditTeacher() {
                                         >
                                             <option value="true">Hoạt động</option>
                                             <option value="false">Vô hiệu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="w-full lg:w-6/12 px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Trạng thái:</label>
+                                        <select
+                                            value={checkSelect(data.gender)}
+                                            onChange={handleChangeGender}
+                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        >
+                                            <option value="female">Nữ (Cô)</option>
+                                            <option value="male">Nam (Thầy)</option>
                                         </select>
                                     </div>
                                 </div>

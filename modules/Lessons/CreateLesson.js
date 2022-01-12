@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { Upload, Button, AutoComplete } from 'antd';
@@ -29,12 +29,25 @@ export default function CreateLesson() {
         duration: 0,
         video: null,
         thumb: null,
+        lessonContent: '',
     });
+
+    const editorRef = useRef();
+    const [editorLoaded, setEditorLoaded] = useState(false);
+    const { CKEditor, ClassicEditor } = editorRef.current || {};
+
+    useEffect(() => {
+        editorRef.current = {
+            CKEditor: require('@ckeditor/ckeditor5-react').CKEditor,
+            ClassicEditor: require('@ckeditor/ckeditor5-build-classic'),
+        };
+        setEditorLoaded(true);
+    }, []);
 
     useEffect(async () => {
         const { data } = await getDataCourse(courseId);
         setCourseName(data.data.name);
-    }, []);
+    }, [editorLoaded]);
 
     async function getDataCourse(id) {
         const rs = await serviceHelpers.detailData('courses', id);
@@ -172,6 +185,15 @@ export default function CreateLesson() {
         setState({
             ...state,
             active: value,
+        });
+    }
+
+    async function handleChangeContent(event, editor) {
+        const data = editor.getData();
+        console.log(data);
+        setState({
+            ...state,
+            lessonContent: data,
         });
     }
 
@@ -488,17 +510,17 @@ export default function CreateLesson() {
                             <div className="flex flex-wrap ">
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Khoá học:</label>
+                                        <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Khoá học:</label>
                                         <input
                                             disabled
-                                            className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                            className="w-9/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
                                             value={checkNull(courseName, '')}
                                         />
                                     </div>
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Tên bài học: <span className="text-red-500">*</span>
                                         </label>
                                         <input
@@ -506,19 +528,19 @@ export default function CreateLesson() {
                                             onChange={handleChangeName}
                                             type="text"
                                             placeholder="Tên bài học"
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            className="w-9/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         />
                                     </div>
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Loại bài học: <span className="text-red-500">*</span>
                                         </label>
                                         <select
                                             value={checkSelect(state.isFree)}
                                             onChange={handleChangeFree}
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            className="w-9/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         >
                                             <option value="false">Không miễn phí</option>
                                             <option value="true">Miễn phí</option>
@@ -527,13 +549,13 @@ export default function CreateLesson() {
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Trạng thái: <span className="text-red-500">*</span>
                                         </label>
                                         <select
                                             value={checkSelect(state.active)}
                                             onChange={handleChangeActive}
-                                            className="w-8/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            className="w-9/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         >
                                             <option value="true">Hoạt động </option>
                                             <option value="false">Vô hiệu</option>
@@ -542,10 +564,10 @@ export default function CreateLesson() {
                                 </div>
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Bài kiểm tra:
                                         </label>
-                                        <div className="w-8/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
+                                        <div className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
                                             <AutoComplete disabled onSearch={handleSearch} placeholder="input here" style={{ width: '100%' }}>
                                                 {result.map(email => (
                                                     <Option key={email} value={email}>
@@ -553,6 +575,27 @@ export default function CreateLesson() {
                                                     </Option>
                                                 ))}
                                             </AutoComplete>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full px-4 mb-2">
+                                    <div className="relative w-full mb-3 items-center flex">
+                                        <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                            Nội dung bài học:
+                                        </label>
+                                        <div className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
+                                            {editorLoaded ? (
+                                                <CKEditor
+                                                    editor={ClassicEditor}
+                                                    data={state.lessonContent}
+                                                    config={{
+                                                        toolbar: [],
+                                                    }}
+                                                    onChange={handleChangeContent}
+                                                />
+                                            ) : (
+                                                <div>Editor loading</div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
