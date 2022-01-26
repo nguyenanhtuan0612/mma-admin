@@ -1028,6 +1028,10 @@ video {
   isolation: auto;
 }
 
+.z-2 {
+  z-index: 2;
+}
+
 .z-10 {
   z-index: 10;
 }
@@ -1329,6 +1333,10 @@ video {
 
 .ml-4 {
   margin-left: 1rem;
+}
+
+.ml-8 {
+  margin-left: 2rem;
 }
 
 .ml-auto {
@@ -5365,6 +5373,10 @@ video {
 
   .\32xl\:w-7\/12 {
     width: 58.333333%;
+  }
+
+  .\32xl\:w-8\/12 {
+    width: 66.666667%;
   }
 
   .\32xl\:w-9\/12 {

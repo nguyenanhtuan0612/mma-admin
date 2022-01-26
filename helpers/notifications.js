@@ -24,6 +24,21 @@ function fomartError(message) {
         case `video must be a string`: {
             return 'Video không hợp lệ !!';
         }
+        case `node21 must be a string`: {
+            return 'Nút 2.1: video không hợp lệ !!';
+        }
+        case `node22 must be a string`: {
+            return 'Nút 2.2: video không hợp lệ !!';
+        }
+        case `node23 must be a string`: {
+            return 'Nút 2.3: video không hợp lệ !!';
+        }
+        case `node24 must be a string`: {
+            return 'Nút 2.4: video không hợp lệ !!';
+        }
+        case `node25 must be a string`: {
+            return 'Nút 2.5: video không hợp lệ !!';
+        }
         case `description must be a string`: {
             return 'Mô tả không hợp lệ !!';
         }

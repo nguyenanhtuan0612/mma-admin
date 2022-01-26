@@ -280,6 +280,16 @@ export default function UsersTable() {
             </div>
 
             <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'}>
+                <div className="loading px-4 mb-0">
+                    <div className="gooey z-2">
+                        <span className="dot"></span>
+                        <div className="dots">
+                            <span className="span_dot"></span>
+                            <span className="span_dot"></span>
+                            <span className="span_dot"></span>
+                        </div>
+                    </div>
+                </div>
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">

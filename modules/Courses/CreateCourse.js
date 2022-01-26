@@ -69,7 +69,7 @@ export default function CreateCourse() {
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
-            dataUser = { ...state, avatarImage: img.data.streamPath };
+            dataUser = { ...state, avatar: img.data.streamPath };
         }
         const data = await createCourse(dataUser);
         if (!data) {

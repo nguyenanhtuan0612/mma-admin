@@ -30,6 +30,14 @@ export default function CreateLesson() {
         video: null,
         thumb: null,
         lessonContent: '',
+        node21: null,
+        node22: null,
+        node23: null,
+        node24: null,
+        node25: null,
+        node31: null,
+        node32: null,
+        node33: null,
     });
 
     const editorRef = useRef();
@@ -157,7 +165,7 @@ export default function CreateLesson() {
             router.push('/auth/login');
             return <div></div>;
         }
-        return;
+        return data;
     }
 
     async function handleChangeName(e) {
@@ -210,6 +218,7 @@ export default function CreateLesson() {
     };
 
     async function uploadVideo(file) {
+        if (state.video) await deleteFile(state.video);
         const { data } = await serviceHelpers.uploadFile('lessons/videos', file);
         if (!data) {
             videoRef.current.value = null;
@@ -254,17 +263,167 @@ export default function CreateLesson() {
         return openNotification(notiType.error, 'Lỗi hệ thống');
     }
 
-    async function uploadLessonVideo(e) {
-        if (state.video) await deleteFile(state.video);
-        if (e.target.files && e.target.files[0]) {
-            const i = e.target.files[0];
-            const rs = await uploadVideo(i);
-            if (!rs || !rs.data) return;
-            const data = rs.data;
-
-            return setState({ ...state, video: data.streamPath, duration: data.duration });
+    async function uploadLessonVideo({ file, onSuccess, onError }) {
+        const duration = 0;
+        if (state.video) {
+            const old = await deleteFile(state.node22);
+            if (old && old.data) {
+                duration = old.data;
+            }
         }
-        return openNotification(notiType.error, 'Lỗi hệ thống');
+        const { data } = await serviceHelpers.uploadFile('lessons/videos', file);
+        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({
+            ...state,
+            video: data.data.streamPath,
+            duration: state.duration - duration + data.data.duration,
+        });
+        return onSuccess();
+    }
+
+    async function uploadVideo21({ file, onSuccess, onError }) {
+        const duration = 0;
+        if (state.node21) {
+            const old = await deleteFile(state.node22);
+            if (old && old.data) {
+                duration = old.data;
+            }
+        }
+        const { data } = await serviceHelpers.uploadFile('lessons/videos', file);
+        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({
+            ...state,
+            node21: data.data.streamPath,
+            duration: state.duration - duration + data.data.duration,
+        });
+        return onSuccess();
+    }
+
+    async function uploadVideo22({ file, onSuccess, onError }) {
+        const duration = 0;
+        if (state.node22) {
+            const old = await deleteFile(state.node22);
+            if (old && old.data) {
+                duration = old.data;
+            }
+        }
+        const { data } = await serviceHelpers.uploadFile('lessons/videos', file);
+        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({
+            ...state,
+            node22: data.data.streamPath,
+            duration: state.duration - duration + data.data.duration,
+        });
+        return onSuccess();
+    }
+
+    async function uploadVideo23({ file, onSuccess, onError }) {
+        const duration = 0;
+        if (state.node23) {
+            const old = await deleteFile(state.node23);
+            if (old && old.data) {
+                duration = old.data;
+            }
+        }
+        const { data } = await serviceHelpers.uploadFile('lessons/videos', file);
+        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        console.log(data.data);
+        setState({
+            ...state,
+            node23: data.data.streamPath,
+            duration: state.duration - duration + data.data.duration,
+        });
+        return onSuccess();
+    }
+
+    async function uploadVideo24({ file, onSuccess, onError }) {
+        const duration = 0;
+        if (state.node24) {
+            const old = await deleteFile(state.node24);
+            if (old && old.data) {
+                duration = old.data;
+            }
+        }
+        const { data } = await serviceHelpers.uploadFile('lessons/videos', file);
+        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({
+            ...state,
+            node24: data.data.streamPath,
+            duration: state.duration - duration + data.data.duration,
+        });
+        return onSuccess();
+    }
+
+    async function uploadVideo25({ file, onSuccess, onError }) {
+        const duration = 0;
+        if (state.node25) {
+            const old = await deleteFile(state.node25);
+            if (old && old.data) {
+                duration = old.data;
+            }
+        }
+        const { data } = await serviceHelpers.uploadFile('lessons/videos', file);
+        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({
+            ...state,
+            node25: data.data.streamPath,
+            duration: state.duration - duration + data.data.duration,
+        });
+        return onSuccess();
     }
 
     async function uploadLessonSolveVideo(e) {
@@ -289,11 +448,62 @@ export default function CreateLesson() {
     }
 
     async function deleteVideo() {
-        await deleteFile(state.video);
-        videoRef.current.value = null;
+        if (state.video) {
+            await deleteFile(state.video);
+        }
         setState({
             ...state,
             video: null,
+        });
+    }
+
+    async function deleteVideo21() {
+        if (state.node21) {
+            await deleteFile(state.node21);
+        }
+        setState({
+            ...state,
+            node21: null,
+        });
+    }
+
+    async function deleteVideo22() {
+        if (state.node22) {
+            await deleteFile(state.node22);
+        }
+        setState({
+            ...state,
+            node22: null,
+        });
+    }
+
+    async function deleteVideo23() {
+        if (state.node23) {
+            await deleteFile(state.node23);
+        }
+        setState({
+            ...state,
+            node23: null,
+        });
+    }
+
+    async function deleteVideo24() {
+        if (state.node24) {
+            await deleteFile(state.node24);
+        }
+        setState({
+            ...state,
+            node24: null,
+        });
+    }
+
+    async function deleteVideo25() {
+        if (state.node25) {
+            await deleteFile(state.node25);
+        }
+        setState({
+            ...state,
+            node25: null,
         });
     }
 
@@ -363,151 +573,9 @@ export default function CreateLesson() {
                     </div>
                 </div>
                 <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
-                    <div className="w-full px-4 2xl:flex mt-4 mb-6 h-full">
-                        <div className="2xl:w-4/12 w-6/12 px-4 h-full mt-4">
-                            <div className="mb-8">
-                                <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                    Video: <span className="text-red-500">*</span>
-                                </label>
-                                <div className="w-full flex items-center mt-2">
-                                    <div className="w-7/12" hidden={state.video ? false : true}>
-                                        <ReactPlayer
-                                            url={state.video}
-                                            width="100%"
-                                            height="auto"
-                                            controls
-                                            config={{ file: { attributes: { controlsList: 'nodownload' } } }}
-                                            onContextMenu={e => e.preventDefault()}
-                                        />
-                                    </div>
-                                    <div className="w-5/12">
-                                        <label
-                                            htmlFor="uploadVideo"
-                                            className="mx-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        >
-                                            Chọn video
-                                        </label>
-                                        <input
-                                            ref={videoRef}
-                                            name="uploadVideo"
-                                            id="uploadVideo"
-                                            className="upload"
-                                            type="file"
-                                            onChange={uploadLessonVideo}
-                                        />
-                                        <button
-                                            onClick={deleteVideo}
-                                            hidden={state.video ? false : true}
-                                            className="mx-2 mt-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        >
-                                            Xoá video
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-8">
-                                <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh đầu video (320 x 180): </label>
-                                <div className="w-full flex items-center mt-2">
-                                    <div className="w-7/12" hidden={state.thumb ? false : true}>
-                                        <img
-                                            alt="..."
-                                            src={avatarImg(state.thumb, '/img/empty.jpeg')}
-                                            className=" object-contain shadow-xl border w-full"
-                                        />
-                                    </div>
-                                    <div className="w-5/12">
-                                        <label
-                                            htmlFor="uploadThumb"
-                                            className="mx-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        >
-                                            Chọn ảnh
-                                        </label>
-                                        <input
-                                            ref={thumbRef}
-                                            name="uploadThumb"
-                                            id="uploadThumb"
-                                            className="upload"
-                                            type="file"
-                                            onChange={uploadLessonThumb}
-                                        />
-                                        <button
-                                            onClick={deleteThumb}
-                                            hidden={state.thumb ? false : true}
-                                            className="mx-2 mt-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        >
-                                            Xoá ảnh
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-8">
-                                <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">File tài liệu:</label>
-                                <div className="w-full flex items-center mt-2">
-                                    <Upload customRequest={uploadDoc} maxCount={1} onRemove={deleteDoc}>
-                                        <Button icon={<UploadOutlined />}>Chọn tài liệu</Button>
-                                    </Upload>
-                                </div>
-                            </div>
-                            <div className="mb-8">
-                                <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">File bài tập:</label>
-                                <div className="w-full flex items-center mt-2">
-                                    <Upload customRequest={uploadHomework} maxCount={1} onRemove={deleteHomework}>
-                                        <Button icon={<UploadOutlined />}>Chọn file</Button>
-                                    </Upload>
-                                </div>
-                            </div>
-                            <div className="mb-8">
-                                <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">File giải bài tập:</label>
-                                <div className="w-full flex items-center mt-2">
-                                    <Upload customRequest={uploadSolveHomework} maxCount={1} onRemove={deleteSolveHomework}>
-                                        <Button icon={<UploadOutlined />}>Chọn file</Button>
-                                    </Upload>
-                                </div>
-                            </div>
-                            <div className="mb-8">
-                                <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                    Video: <span className="text-red-500">*</span>
-                                </label>
-                                <div className="w-full flex items-center mt-2">
-                                    <div className="w-7/12" hidden={state.solveHomeworkVideo ? false : true}>
-                                        <ReactPlayer
-                                            url={state.solveHomeworkVideo}
-                                            width="100%"
-                                            height="auto"
-                                            controls
-                                            config={{ file: { attributes: { controlsList: 'nodownload' } } }}
-                                            onContextMenu={e => e.preventDefault()}
-                                        />
-                                    </div>
-                                    <div className="w-5/12">
-                                        <label
-                                            htmlFor="uploadSolveVideo"
-                                            className="mx-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        >
-                                            Chọn video
-                                        </label>
-                                        <input
-                                            ref={solveHomeworkVideoRef}
-                                            name="uploadSolveVideo"
-                                            id="uploadSolveVideo"
-                                            className="upload"
-                                            type="file"
-                                            onChange={uploadLessonSolveVideo}
-                                        />
-                                        <button
-                                            onClick={deleteSolveVideo}
-                                            hidden={state.solveHomeworkVideo ? false : true}
-                                            className="mx-2 mt-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        >
-                                            Xoá video
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="2xl:w-6/12 w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
-                            <div className="flex flex-wrap ">
+                    <div className="w-full px-4 2xl:flex mt-4 mb-6">
+                        <div className="w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
+                            <div className="flex flex-wrap w-6/12">
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Khoá học:</label>
@@ -565,22 +633,6 @@ export default function CreateLesson() {
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Bài kiểm tra:
-                                        </label>
-                                        <div className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
-                                            <AutoComplete disabled onSearch={handleSearch} placeholder="input here" style={{ width: '100%' }}>
-                                                {result.map(email => (
-                                                    <Option key={email} value={email}>
-                                                        {email}
-                                                    </Option>
-                                                ))}
-                                            </AutoComplete>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="w-full px-4 mb-2">
-                                    <div className="relative w-full mb-3 items-center flex">
-                                        <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                             Nội dung bài học:
                                         </label>
                                         <div className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
@@ -600,23 +652,208 @@ export default function CreateLesson() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="w-full px-6 flex items-center mt-2 justify-center">
-                                <button
-                                    className="mx-2 mb-2 bg-yellow-500 hover:bg-yellow-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                    type="button"
-                                    onClick={clickBack}
-                                >
-                                    Trở về
-                                </button>
-                                <button
-                                    className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                    type="button"
-                                    onClick={onCreate}
-                                >
-                                    Tạo mới
-                                </button>
+                        </div>
+                    </div>
+                    <div className="w-full px-4 mt-4 ml-8">
+                        <div className="2xl:w-4/12">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                Video Nút 1.1: <span className="text-red-500">*</span>
+                            </label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadLessonVideo} maxCount={1} onRemove={deleteVideo}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                            <div className="w-7/12" hidden={state.video ? false : true}>
+                                <ReactPlayer
+                                    url={state.video}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                    config={{ file: { attributes: { controlsList: 'nodownload' } } }}
+                                    onContextMenu={e => e.preventDefault()}
+                                />
                             </div>
                         </div>
+                    </div>
+                    <div className="w-full px-4 mt-10 ml-8 flex flex-wrap">
+                        <div className="2xl:w-4/12 mt-4">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                Video Nút 2.1: <span className="text-red-500">*</span>
+                            </label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadVideo21} maxCount={1} onRemove={deleteVideo21}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                            <div className="w-7/12" hidden={state.node21 ? false : true}>
+                                <ReactPlayer
+                                    url={state.node21}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                    config={{ file: { attributes: { controlsList: 'nodownload' } } }}
+                                    onContextMenu={e => e.preventDefault()}
+                                />
+                            </div>
+                        </div>
+                        <div className="2xl:w-4/12 mt-4">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                Video Nút 2.2: <span className="text-red-500">*</span>
+                            </label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadVideo22} maxCount={1} onRemove={deleteVideo22}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                            <div className="w-7/12" hidden={state.node22 ? false : true}>
+                                <ReactPlayer
+                                    url={state.node22}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                    config={{ file: { attributes: { controlsList: 'nodownload' } } }}
+                                    onContextMenu={e => e.preventDefault()}
+                                />
+                            </div>
+                        </div>
+                        <div className="2xl:w-4/12 mt-4">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                Video Nút 2.3: <span className="text-red-500">*</span>
+                            </label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadVideo23} maxCount={1} onRemove={deleteVideo23}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                            <div className="w-7/12" hidden={state.node23 ? false : true}>
+                                <ReactPlayer
+                                    url={state.node23}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                    config={{ file: { attributes: { controlsList: 'nodownload' } } }}
+                                    onContextMenu={e => e.preventDefault()}
+                                />
+                            </div>
+                        </div>
+                        <div className="2xl:w-4/12 mt-4">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                Video Nút 2.4: <span className="text-red-500">*</span>
+                            </label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadVideo24} maxCount={1} onRemove={deleteVideo24}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                            <div className="w-7/12" hidden={state.node24 ? false : true}>
+                                <ReactPlayer
+                                    url={state.node24}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                    config={{ file: { attributes: { controlsList: 'nodownload' } } }}
+                                    onContextMenu={e => e.preventDefault()}
+                                />
+                            </div>
+                        </div>
+                        <div className="2xl:w-4/12 mt-4">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                Video Nút 2.5: <span className="text-red-500">*</span>
+                            </label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadVideo25} maxCount={1} onRemove={deleteVideo25}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                            <div className="w-7/12" hidden={state.node25 ? false : true}>
+                                <ReactPlayer
+                                    url={state.node25}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                    config={{ file: { attributes: { controlsList: 'nodownload' } } }}
+                                    onContextMenu={e => e.preventDefault()}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full px-4 mt-10 ml-8 flex">
+                        <div className="mb-8">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh đầu video (320 x 180): </label>
+                            <div className="w-full flex items-center mt-2">
+                                <div className="w-7/12" hidden={state.thumb ? false : true}>
+                                    <img
+                                        alt="..."
+                                        src={avatarImg(state.thumb, '/img/empty.jpeg')}
+                                        className=" object-contain shadow-xl border w-full"
+                                    />
+                                </div>
+                                <div className="w-5/12">
+                                    <label
+                                        htmlFor="uploadThumb"
+                                        className="mx-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                                    >
+                                        Chọn ảnh
+                                    </label>
+                                    <input
+                                        ref={thumbRef}
+                                        name="uploadThumb"
+                                        id="uploadThumb"
+                                        className="upload"
+                                        type="file"
+                                        onChange={uploadLessonThumb}
+                                    />
+                                    <button
+                                        onClick={deleteThumb}
+                                        hidden={state.thumb ? false : true}
+                                        className="mx-2 mt-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                                    >
+                                        Xoá ảnh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mb-8">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">File tài liệu:</label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadDoc} maxCount={1} onRemove={deleteDoc}>
+                                    <Button icon={<UploadOutlined />}>Chọn tài liệu</Button>
+                                </Upload>
+                            </div>
+                        </div>
+                        <div className="mb-8">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">File bài tập:</label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadHomework} maxCount={1} onRemove={deleteHomework}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                        </div>
+                        <div className="mb-8">
+                            <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">File giải bài tập:</label>
+                            <div className="w-full flex items-center mt-2">
+                                <Upload customRequest={uploadSolveHomework} maxCount={1} onRemove={deleteSolveHomework}>
+                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                </Upload>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full px-6 flex items-center mt-2 justify-center mb-8">
+                        <button
+                            className="mx-2 mb-2 bg-yellow-500 hover:bg-yellow-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                            type="button"
+                            onClick={clickBack}
+                        >
+                            Trở về
+                        </button>
+                        <button
+                            className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                            type="button"
+                            onClick={onCreate}
+                        >
+                            Tạo mới
+                        </button>
                     </div>
                 </div>
             </div>

@@ -101,3 +101,62 @@
 .upload {
     display: none;
 }
+
+.gooey {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10;
+    height: 40px;
+    background: rgb(255, 255, 255);
+    filter: contrast(20);
+}
+
+.dot {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 12px;
+    left: 15px;
+    filter: blur(4px);
+    background: #000;
+    border-radius: 50%;
+    transform: translateX(0);
+    animation: dot 2.8s infinite;
+}
+
+.dots {
+    transform: translateX(0);
+    margin-top: 12px;
+    margin-left: 31px;
+    animation: dots 2.8s infinite;
+}
+.span_dot {
+    display: block;
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-left: 16px;
+    filter: blur(4px);
+    background: #000;
+    border-radius: 50%;
+}
+
+.loading {
+    position: absolute;
+    background: rgb(255, 255, 255, 0.5);
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+}
+
+@keyframes dot {
+    50% {
+        transform: translateX(96px);
+    }
+}
+@keyframes dots {
+    50% {
+        transform: translateX(-31px);
+    }
+}

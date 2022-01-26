@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { AuthContext } from 'layouts/Admin';
-
 const { checkNull, avatarImg, dateFormat, checkSelect } = displayHelpers;
+const { backendHost } = serviceHelpers;
 
 export default function EditUser() {
     const router = useRouter();

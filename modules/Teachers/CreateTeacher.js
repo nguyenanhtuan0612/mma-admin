@@ -42,7 +42,7 @@ export default function CreateTeacher() {
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
-            uploadData = { ...data, avatarImage: img.data.streamPath };
+            uploadData = { ...data, avatar: img.data.streamPath };
         }
         const rs = await create(uploadData);
         if (!rs) {

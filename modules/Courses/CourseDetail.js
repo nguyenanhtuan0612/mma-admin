@@ -69,7 +69,7 @@ export default function CourseDetail() {
                 if (!data) {
                     return;
                 }
-                openNotification(notiType.success, 'Thành công', 'Xoá người dùng thành công');
+                openNotification(notiType.success, 'Thành công', 'Xoá khoá học thành công');
                 router.push('/courses');
             },
             onCancel() {},
