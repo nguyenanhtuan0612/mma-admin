@@ -5,6 +5,7 @@ import { serviceHelpers, displayHelpers, openNotification, notiType } from 'help
 import { useRouter } from 'next/router';
 import { Modal } from 'antd';
 import { AuthContext } from 'layouts/Admin';
+import { loadingFalse, loadingTrue } from 'store/actions';
 
 const { confirm } = Modal;
 const { TabPane } = Tabs;
@@ -14,7 +15,9 @@ export default function UserDetail() {
     const router = useRouter();
     const { id } = router.query;
 
-    const auth = useContext(AuthContext);
+    const [stateP, dispatch] = useContext(AuthContext);
+    const auth = stateP.user;
+
     const [user, setUser] = useState({});
 
     function callback(key) {
@@ -22,11 +25,13 @@ export default function UserDetail() {
     }
 
     useEffect(async () => {
+        dispatch(loadingTrue());
         const data = await getDetail(id);
         if (!data) {
             return;
         }
         setUser(data.data);
+        dispatch(loadingFalse());
     }, []);
 
     async function getDetail(id) {

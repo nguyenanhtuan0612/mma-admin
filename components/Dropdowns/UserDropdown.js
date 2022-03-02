@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import { AuthContext } from 'layouts/Admin';
 
 export default function UserDropdown() {
-    const user = useContext(AuthContext);
+    const [state, dispatch] = useContext(AuthContext);
+    const user = state.user;
     const [avatar, setAvatar] = useState('/img/avatar.jpeg');
 
     // dropdown props

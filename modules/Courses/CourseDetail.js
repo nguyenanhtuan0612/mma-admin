@@ -12,7 +12,8 @@ export default function CourseDetail() {
     const router = useRouter();
     const { id } = router.query;
 
-    const auth = useContext(AuthContext);
+    const [stateP, dispatch] = useContext(AuthContext);
+    const auth = stateP.user;
     const [createObjectURL, setCreateObjectURL] = useState(null);
     const [imageUpload, setImageUpload] = useState(null);
     const [state, setState] = useState({

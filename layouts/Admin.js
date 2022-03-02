@@ -1,15 +1,17 @@
-import React, { useEffect, useState, createContext } from 'react';
+import React, { useEffect, useState, createContext, useReducer } from 'react';
 import AdminNavbar from 'components/Navbars/AdminNavbar.js';
 import Sidebar from 'components/Sidebar/Sidebar.js';
 import FooterAdmin from 'components/Footers/FooterAdmin.js';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { serviceHelpers } from 'helpers';
+import reducer, { initState } from 'store/reducer';
+import { setState } from 'store/actions';
 
 export const AuthContext = createContext();
 
 export default function Admin({ children }) {
-    const [user, setUser] = useState({});
+    const [state, dispatch] = useReducer(reducer, initState);
     const [authorize, setAuthorize] = useState(false);
     const router = useRouter();
     useEffect(async () => {
@@ -35,12 +37,22 @@ export default function Admin({ children }) {
             router.push('/auth/login');
             return <div></div>;
         }
-        setUser(data.data);
+        dispatch(setState(data.data));
         setAuthorize(true);
     }, []);
 
     return (
-        <AuthContext.Provider value={user}>
+        <AuthContext.Provider value={[state, dispatch]}>
+            <div className={state.loading == false ? 'loading z-2 hidden' : 'loading z-2'}>
+                <div className="gooey z-2">
+                    <span className="dot"></span>
+                    <div className="dots">
+                        <span className="span_dot"></span>
+                        <span className="span_dot"></span>
+                        <span className="span_dot"></span>
+                    </div>
+                </div>
+            </div>
             <div className={authorize == false ? 'hidden' : ''}>
                 <Sidebar />
                 <div className="relative md:ml-64 bg-blueGray-200 min-h-screen">

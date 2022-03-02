@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useContext, useEffect, useState } from 'react';
 import { Pagination } from 'antd';
 import HeaderCell from 'components/Tables/HeaderCell';
 import { useRouter } from 'next/router';
@@ -7,8 +7,11 @@ import RowItemLesson from './components/RowItemLesson';
 const { getDate } = displayHelpers;
 import FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
+import { loadingFalse, loadingTrue } from 'store/actions';
+import { AuthContext } from 'layouts/Admin';
 
 export default function LessonsTable() {
+    const [state, dispatch] = useContext(AuthContext);
     const [list, setList] = useState([]);
     const [count, setCount] = useState(0);
     const [active, setActive] = useState('');
@@ -20,6 +23,7 @@ export default function LessonsTable() {
     const { id } = router.query;
 
     useEffect(async () => {
+        dispatch(loadingTrue());
         const data = await getData();
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
@@ -33,6 +37,7 @@ export default function LessonsTable() {
         }
         setList(data.data.rows);
         setCount(data.data.count);
+        dispatch(loadingFalse());
     }, []);
 
     function changeSearchPhone(e) {

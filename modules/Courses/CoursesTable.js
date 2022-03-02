@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useContext, useEffect, useState } from 'react';
 import { Pagination } from 'antd';
 import HeaderCell from '../../components/Tables/HeaderCell';
 import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
@@ -6,9 +6,12 @@ import { useRouter } from 'next/router';
 import FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import RowItemCourse from './components/RowItemCourse';
+import { AuthContext } from 'layouts/Admin';
+import { loadingFalse, loadingTrue } from 'store/actions';
 const { getDate } = displayHelpers;
 
 export default function CoursesTable() {
+    const [state, dispatch] = useContext(AuthContext);
     const [listCourse, setListCourse] = useState([]);
     const [count, setCount] = useState(0);
     const [active, setActive] = useState('');
@@ -18,6 +21,7 @@ export default function CoursesTable() {
     const router = useRouter();
 
     useEffect(async () => {
+        dispatch(loadingTrue());
         const data = await getData();
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
@@ -31,6 +35,7 @@ export default function CoursesTable() {
         }
         setListCourse(data.data.rows);
         setCount(data.data.count);
+        dispatch(loadingFalse());
     }, []);
 
     function changeSearchPhone(e) {

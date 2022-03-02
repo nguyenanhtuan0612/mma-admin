@@ -9,7 +9,8 @@ export default function EditUser() {
     const router = useRouter();
 
     const { id } = router.query;
-    const auth = useContext(AuthContext);
+    const [stateP, dispatch] = useContext(AuthContext);
+    const auth = stateP.user;
     const [user, setUser] = useState({
         firstName: '',
         lastName: '',

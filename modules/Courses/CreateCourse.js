@@ -14,7 +14,6 @@ export default function CreateCourse() {
     const [imageUpload, setImageUpload] = useState(null);
     const [teacherList, SetTeacherList] = useState([]);
 
-    const auth = useContext(AuthContext);
     const [state, setState] = useState({
         name: null,
         amount: null,
