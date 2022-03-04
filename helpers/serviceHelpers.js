@@ -228,6 +228,8 @@ async function deleteFile(path) {
     }
 }
 
+const mediaURL = process.env.MEDIA_URL;
+
 export default {
     login,
     checkToken,
@@ -239,4 +241,5 @@ export default {
     createData,
     exportData,
     deleteFile,
+    mediaURL,
 };

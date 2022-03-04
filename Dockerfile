@@ -10,6 +10,7 @@ COPY /modules /mma-admin/modules/
 COPY /pages /mma-admin/pages/
 COPY /public /mma-admin/public/
 COPY /styles /mma-admin/styles/
+COPY /store /mma-admin/store/
 COPY package.json /mma-admin/package.json
 COPY package-lock.json /mma-admin/package-lock.json
 COPY .env.prod /mma-admin/.env

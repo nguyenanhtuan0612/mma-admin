@@ -5,8 +5,8 @@ import FooterAdmin from 'components/Footers/FooterAdmin.js';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { serviceHelpers } from 'helpers';
-import reducer, { initState } from 'store/reducer';
-import { setState } from 'store/actions';
+import reducer, { initState } from '../store/reducer';
+import { setState } from '../store/actions';
 
 export const AuthContext = createContext();
 
