@@ -1,10 +1,8 @@
-import React, { createRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
-import { Upload, Button, AutoComplete } from 'antd';
+import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import ReactPlayer from 'react-player';
-const { Option } = AutoComplete;
 const { checkNull, avatarImg, checkSelect } = displayHelpers;
 const { mediaURL } = serviceHelpers;
 
@@ -20,6 +18,7 @@ export default function CreateLesson() {
         type: null,
         active: false,
         thumb: false,
+        lessonContent: null,
     });
 
     const editorRef = useRef();
@@ -110,11 +109,9 @@ export default function CreateLesson() {
 
     async function handleChangeType(e) {
         e.preventDefault();
-        let value = true;
-        if (e.target.value == 'false') value = false;
         setState({
             ...state,
-            active: value,
+            type: e.target.value,
         });
     }
 
