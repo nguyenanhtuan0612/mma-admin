@@ -27,6 +27,14 @@ export default function ExamsTable() {
                     onClick={() => router.push('/questions/multipleChoice')}
                     className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
                 >
+                    Sắp xếp
+                </button>
+            </Menu.Item>
+            <Menu.Item>
+                <button
+                    onClick={() => router.push('/questions/multipleChoice')}
+                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                >
                     Trắc nghiệm
                 </button>
             </Menu.Item>
@@ -40,7 +48,12 @@ export default function ExamsTable() {
             </Menu.Item>
             <Menu.Item>
                 <button
-                    onClick={() => router.push('/questions/matching')}
+                    onClick={() =>
+                        router.push(
+                            `/questions/matching?examId=${id}&lessonId=${exam.lessonId}`,
+                            `/questions/matching?examId=${id}&lessonId=${exam.lessonId}`,
+                        )
+                    }
                     className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
                 >
                     Nối

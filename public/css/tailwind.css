@@ -1174,6 +1174,11 @@ video {
   margin-bottom: 1.5rem;
 }
 
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
 .my-32 {
   margin-top: 8rem;
   margin-bottom: 8rem;
@@ -1489,10 +1494,6 @@ video {
 
 .h-40 {
   height: 10rem;
-}
-
-.h-60 {
-  height: 15rem;
 }
 
 .h-auto {

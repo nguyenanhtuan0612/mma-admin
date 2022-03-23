@@ -28,7 +28,7 @@ export default function Form1({ pState, setState, courseName }) {
             </Menu.Item>
             <Menu.Item>
                 <button
-                    onClick={() => router.push('/questions/matching')}
+                    onClick={() => router.push('/questions/matching',`/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`,)}
                     className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
                 >
                     Nối
