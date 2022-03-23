@@ -53,8 +53,22 @@ export default function RowItemLesson({ data, updateActive }) {
         return value;
     }
 
+    function isType(type) {
+        switch (type) {
+            case 'test': {
+                return 'Kiểm tra';
+            }
+            case 'form_2': {
+                return 'Dạng 2';
+            }
+            default: {
+                return 'Dạng 1';
+            }
+        }
+    }
+
     const { checkNull, avatarImg, getDate, isActive } = displayHelpers;
-    const { id, isFree, documents, active, thumb, homeworkId, testId, name, createdAt } = data;
+    const { id, isFree, active, thumb, type, name, createdAt } = data;
     return (
         <tr>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
@@ -76,9 +90,7 @@ export default function RowItemLesson({ data, updateActive }) {
                 </Link>
             </th>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{checkFree(isFree)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">
-                {include(documents, homeworkId, testId)}
-            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{isType(type)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{getDate(createdAt)}</td>
             <td className="px-2 2xl:px-2 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isActive(active)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{activeCourse(active)}</td>

@@ -1491,6 +1491,10 @@ video {
   height: 10rem;
 }
 
+.h-60 {
+  height: 15rem;
+}
+
 .h-auto {
   height: auto;
 }

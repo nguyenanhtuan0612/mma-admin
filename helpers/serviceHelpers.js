@@ -228,6 +228,32 @@ async function deleteFile(path) {
     }
 }
 
+async function detailFile(path) {
+    try {
+        const token = window.localStorage.getItem('accessToken');
+        if (!token) {
+            return {
+                data: {
+                    statusCode: 404,
+                    message: 'Invalid Token',
+                },
+            };
+        }
+        const url = `${process.env.BACKEND_URL}/upload?path=${path}`;
+        const data = await axios.delete(url, {
+            headers: {
+                Authorization: token,
+            },
+            data: {
+                streamPath: path,
+            },
+        });
+        return data;
+    } catch (error) {
+        return error.response;
+    }
+}
+
 const mediaURL = process.env.MEDIA_URL;
 
 export default {
@@ -241,5 +267,6 @@ export default {
     createData,
     exportData,
     deleteFile,
+    detailFile,
     mediaURL,
 };

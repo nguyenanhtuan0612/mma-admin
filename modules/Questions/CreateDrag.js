@@ -1,9 +1,12 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Upload } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import { useRouter } from 'next/router';
 import { notiType, openNotification, serviceHelpers } from 'helpers';
+import { AuthContext } from 'layouts/Admin';
+import { loadingFalse, loadingTrue } from 'store/actions';
+const { mediaURL } = serviceHelpers;
 
 function Zone(data) {
     const [dt, setDt] = useState(data.data);
@@ -89,11 +92,19 @@ function Zone(data) {
 function ZonePic(data) {
     const dt = data.data;
     const index = data.index;
+    console.log(dt);
 
     return (
         <div
             className="border border-black absolute justify-center items-center flex"
-            style={{ top: `${dt.top}%`, left: `${dt.left}%`, height: `${dt.height}%`, width: `${dt.width}%` }}
+            style={{
+                top: `${dt.top}%`,
+                left: `${dt.left}%`,
+                height: `${dt.height}%`,
+                width: `${dt.width}%`,
+                type: 'emptyBox',
+                effectAllowed: 'move',
+            }}
         >
             {index + 1}
         </div>
@@ -101,18 +112,30 @@ function ZonePic(data) {
 }
 
 export default function CreateDrag() {
+    const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
     const lessonId = parseInt(router.query.lessonId);
+    const examId = parseInt(router.query.examId);
     const [lesson, setLesson] = useState(null);
     const [state, setState] = useState({
         question: null,
         level: 'easy',
+        isRandom: true,
+        questionAudio: null,
+        questionAudioInfo: [],
+        image: null,
+        imageInfo: [],
+        active: true,
+        solve: null,
+        solveInfo: [],
     });
     const [zones, setZones] = useState([]);
 
     useEffect(async () => {
+        dispatch(loadingTrue());
         const lessonName = await getDetailLesson();
         setLesson(lessonName);
+        dispatch(loadingFalse());
     }, []);
 
     async function getDetailLesson() {
@@ -135,7 +158,7 @@ export default function CreateDrag() {
     const [pic, setPic] = useState(renderPic([]));
 
     function addZone() {
-        const newZones = [...zones, { top: '0', left: '0', width: '10', height: '10', content: '' }];
+        const newZones = [...zones, { top: '0', left: '0', width: '10', height: '10', content: '', type: 'emptyBox', effectAllowed: 'move' }];
         setZones(newZones);
         setPic(renderPic(newZones));
     }
@@ -169,8 +192,111 @@ export default function CreateDrag() {
             }
         }
 
-        console.log(newState);
         setState(newState);
+    }
+
+    async function uploadFile(file, onSuccess, onError, field) {
+        if (state[field]) {
+            const rs1 = await serviceHelpers.detailFile(state[field]);
+            if (!rs1) return openNotification(notiType.error, 'Lỗi hệ thống');
+            const data1 = rs1.data;
+
+            if (data1.statusCode === 400) {
+                openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+                return onError(data.message);
+            }
+            if (data1.statusCode === 404) {
+                router.push('/auth/login');
+                return <div></div>;
+            }
+        }
+        const rs = await serviceHelpers.uploadFile('/lessons/videos', file);
+        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data = rs.data;
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({
+            ...state,
+            [field]: mediaURL + data.data.streamPath,
+            [field + 'Info']: [
+                {
+                    name: data.data.originalname,
+                    url: mediaURL + data.data.streamPath,
+                },
+            ],
+        });
+        return onSuccess();
+    }
+
+    async function deleteFile(field) {
+        const rs1 = await serviceHelpers.deleteFile(state[field]);
+        if (!rs1) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data1 = rs1.data;
+
+        if (data1.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data1.message);
+            return onError(data1.message);
+        }
+        if (data1.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({
+            ...state,
+            [field]: null,
+            [field + 'Info']: [],
+        });
+    }
+
+    async function onCreate() {
+        const zonesProp = [];
+        const zoneContent = [];
+        for (const dt of zones) {
+            const prop = {
+                top: `${dt.top}%`,
+                left: `${dt.left}%`,
+                height: `${dt.height}%`,
+                width: `${dt.width}%`,
+                type: 'emptyBox',
+                effectAllowed: 'move',
+            };
+            zonesProp.push(prop);
+            if (dt.content == '' || dt.content == null) {
+                return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
+            }
+            zoneContent.push(dt.content);
+        }
+
+        const body = { ...state, typeAnswer: 'text', content: zonesProp, answers: zoneContent, lessonId };
+        const rs1 = await serviceHelpers.createData('questions/drag', body);
+        const data1 = catchErr(rs1);
+        const exam = catchErr(await serviceHelpers.detailData('exams', examId));
+        const arr = exam.data.exam.listQuestions;
+        arr.push(data1.data.id);
+        catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+        router.push(`/exams/${examId}`, `/exams/${examId}`);
+    }
+
+    function catchErr(rs) {
+        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data = rs.data;
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        return data;
     }
 
     return (
@@ -241,11 +367,43 @@ export default function CreateDrag() {
                                                 Audio câu hỏi:
                                             </label>
                                             <div className="w-9/12 px-3 h-auto ">
-                                                <Upload>
-                                                    <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                                <Upload
+                                                    fileList={state.questionAudio ? state.questionAudioInfo : []}
+                                                    customRequest={({ file, onSuccess, onError }) =>
+                                                        uploadFile(file, onSuccess, onError, 'questionAudio')
+                                                    }
+                                                    onRemove={() => deleteFile('questionAudio')}
+                                                >
+                                                    <Button hidden={state.questionAudio ? true : false} icon={<UploadOutlined />}>
+                                                        Chọn file
+                                                    </Button>
                                                 </Upload>
-                                                <div className="w-full mt-2" hidden={false}>
+                                                <div className="w-full mt-2" hidden={state.questionAudio ? false : true}>
                                                     <ReactAudioPlayer src={state.questionAudio} controls />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full mb-2  px-4">
+                                        <div className="relative w-full mb-3 flex">
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Ảnh lời giải:
+                                            </label>
+                                            <div className="w-9/12 px-3 h-auto ">
+                                                <Upload
+                                                    fileList={state.solve ? state.solveInfo : []}
+                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'solve')}
+                                                    onRemove={() => deleteFile('solve')}
+                                                >
+                                                    <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>
+                                                        Chọn file
+                                                    </Button>
+                                                </Upload>
+                                                <div
+                                                    style={{ width: '100%', height: 'auto', position: 'relative' }}
+                                                    hidden={state.solve ? false : true}
+                                                >
+                                                    <img src={state.solve} className="object-contain w-full border-2" alt="..."></img>
                                                 </div>
                                             </div>
                                         </div>
@@ -287,20 +445,21 @@ export default function CreateDrag() {
                                 </label>
 
                                 <div className="w-full">
-                                    <Upload>
-                                        <Button icon={<UploadOutlined />}>Chọn file</Button>
+                                    <Upload
+                                        fileList={state.image ? state.imageInfo : []}
+                                        customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
+                                        onRemove={() => deleteFile('image')}
+                                    >
+                                        <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
+                                            Chọn file
+                                        </Button>
                                     </Upload>
-                                    <div style={{ width: '100%', height: 'auto', position: 'relative' }}>
+                                    <div style={{ width: '100%', height: 'auto', position: 'relative' }} hidden={state.image ? false : true}>
                                         <div style={{ width: '100%', height: '100%', position: 'absolute' }}>{pic}</div>
-                                        <img
-                                            src="
-                                        http://54.179.149.123/api/v1/files/streaming/questions/file-1647092784745.png"
-                                            className="object-contain w-full border-2"
-                                            alt="..."
-                                        ></img>
+                                        <img src={state.image} alt="..."></img>
                                     </div>
                                 </div>
-                                <div className="mt-2 w-full">
+                                <div hidden={state.image ? false : true} className="mt-2 w-full">
                                     <button
                                         className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                         type="button"
@@ -323,14 +482,14 @@ export default function CreateDrag() {
                         <button
                             className="mx-2 mb-2 bg-yellow-500 hover:bg-yellow-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            //onClick={() => router.back()}
+                            onClick={() => router.back()}
                         >
                             Trở về
                         </button>
                         <button
                             className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            // onClick={onCreate}
+                            onClick={() => onCreate()}
                         >
                             Tạo mới
                         </button>

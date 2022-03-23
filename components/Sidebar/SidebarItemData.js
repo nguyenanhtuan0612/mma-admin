@@ -42,18 +42,6 @@ export default {
             icon: 'fas fa-percentage',
             index: 7,
         },
-        {
-            path: '/questions',
-            title: 'Quản lý câu hỏi',
-            icon: 'fas fa-question',
-            index: 8,
-        },
-        {
-            path: '/exams',
-            title: 'Quản lý đề thi',
-            icon: 'fas fa-file-alt',
-            index: 9,
-        },
     ],
     routes: [
         {
@@ -87,14 +75,6 @@ export default {
         {
             path: '/promotions',
             index: 7,
-        },
-        {
-            path: '/questions',
-            index: 8,
-        },
-        {
-            path: '/exams',
-            index: 9,
         },
     ],
 };

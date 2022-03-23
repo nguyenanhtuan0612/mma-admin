@@ -24,6 +24,13 @@ export default function DetailLesson() {
         lessonContent: null,
         thumbName: null,
         questionNode11: null,
+        videoNode12: null,
+        videoNode12Info: {},
+        videoNode12Name: null,
+
+        videoNode21: null,
+        videoNode21Info: {},
+        videoNode21Name: null,
     });
 
     const editorRef = useRef();
@@ -40,7 +47,52 @@ export default function DetailLesson() {
 
     useEffect(async () => {
         const lesson = await getDataLeson(id);
-        setState(lesson.data);
+        const psta = {
+            ...lesson.data,
+            videoNode12Info: [
+                {
+                    url: lesson.data.videoNode12,
+                    name: lesson.data.videoNode12Name,
+                },
+            ],
+            videoNode21Info: [
+                {
+                    url: lesson.data.videoNode21,
+                    name: lesson.data.videoNode21Name,
+                },
+            ],
+            videoNode31Info: [
+                {
+                    url: lesson.data.videoNode21,
+                    name: lesson.data.videoNode21Name,
+                },
+            ],
+            videoNode33Info: [
+                {
+                    url: lesson.data.videoNode21,
+                    name: lesson.data.videoNode21Name,
+                },
+            ],
+            videoNode41Info: [
+                {
+                    url: lesson.data.videoNode21,
+                    name: lesson.data.videoNode21Name,
+                },
+            ],
+            videoNode43Info: [
+                {
+                    url: lesson.data.videoNode21,
+                    name: lesson.data.videoNode21Name,
+                },
+            ],
+            videoNode63Info: [
+                {
+                    url: lesson.data.videoNode21,
+                    name: lesson.data.videoNode21Name,
+                },
+            ],
+        };
+        setState(psta);
         setListThumb([{ url: mediaURL + lesson.data.streamPath, name: lesson.data.thumbName }]);
         const course = await getDataCourse(lesson.data.courseId);
         setCourseName(course.data.name);
@@ -175,7 +227,7 @@ export default function DetailLesson() {
 
     function renderByType(type) {
         if (type == 'form_1') {
-            return <Form1 pState={state} setState={setState} />;
+            return <Form1 pState={state} setState={setState} courseName={courseName} />;
         }
         if (type == 'form_2') {
             return <Form2 pState={state} />;
@@ -280,7 +332,7 @@ export default function DetailLesson() {
                             </div>
                         </div>
                         <div className="w-6/12 px-4 mt-4 mb-6">
-                            <div className="2xl:w-4/12">
+                            <div className="2xl:w-full w-full">
                                 <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Ảnh bài học: <span className="text-red-500">*</span>
                                 </label>
@@ -289,8 +341,8 @@ export default function DetailLesson() {
                                         <Button icon={<UploadOutlined />}>Chọn file</Button>
                                     </Upload>
                                 </div>
-                                <div className="w-7/12" hidden={state.thumb ? false : true}>
-                                    <img src={avatarImg(state.thumb)} className="object-contain w-full" alt="..."></img>
+                                <div className="w-full" hidden={state.thumb ? false : true}>
+                                    <img src={avatarImg(state.thumb)} className="h-40" alt="..."></img>
                                 </div>
                             </div>
                         </div>

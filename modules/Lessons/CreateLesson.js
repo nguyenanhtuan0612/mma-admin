@@ -15,9 +15,9 @@ export default function CreateLesson() {
         name: null,
         isFree: false,
         courseId: courseId,
-        type: null,
+        type: 'form_1',
         active: false,
-        thumb: false,
+        thumb: null,
         lessonContent: null,
     });
 
@@ -58,8 +58,9 @@ export default function CreateLesson() {
         if (!data) {
             return;
         }
+        const lessonId = data.data.id;
         openNotification(notiType.success, 'Tạo mới thành công !');
-        router.push(`/courses/${courseId}/lessons`);
+        router.push(`/lessons/${lessonId}`, `/lessons/${lessonId}`);
     }
 
     async function CreateLesson(body) {
@@ -76,6 +77,7 @@ export default function CreateLesson() {
     }
 
     async function deleteFile(path) {
+        debugger;
         const { data } = await serviceHelpers.deleteFile(path);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
@@ -117,7 +119,6 @@ export default function CreateLesson() {
 
     async function handleChangeContent(event, editor) {
         const data = editor.getData();
-        console.log(data);
         setState({
             ...state,
             lessonContent: data,
@@ -125,10 +126,9 @@ export default function CreateLesson() {
     }
 
     async function uploadLessonThumb({ file, onSuccess, onError }) {
-        if (state.solveHomeworkDoc) await deleteFile(state.thumb);
-        const { data } = await serviceHelpers.uploadFile('lessons/avatars', file);
-        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
-
+        const rs = await serviceHelpers.uploadFile('lessons/avatars', file);
+        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data = rs.data;
         if (data.statusCode === 400) {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
@@ -137,7 +137,6 @@ export default function CreateLesson() {
             router.push('/auth/login');
             return <div></div>;
         }
-        console.log(mediaURL + data.data.streamPath);
         setState({
             ...state,
             thumb: mediaURL + data.data.streamPath,
