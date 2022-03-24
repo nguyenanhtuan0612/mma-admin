@@ -3,6 +3,7 @@ import { serviceHelpers, displayHelpers, openNotification, notiType } from 'help
 import { useRouter } from 'next/router';
 import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import { loadingFalse } from 'store/actions';
 const { checkNull, avatarImg, checkSelect } = displayHelpers;
 const { mediaURL } = serviceHelpers;
 
@@ -53,6 +54,7 @@ export default function CreateLesson() {
     }
 
     async function onCreate() {
+        dispatch(loadingTrue());
         let lesson = state;
         const data = await CreateLesson(lesson);
         if (!data) {
@@ -60,6 +62,7 @@ export default function CreateLesson() {
         }
         const lessonId = data.data.id;
         openNotification(notiType.success, 'Tạo mới thành công !');
+        dispatch(loadingFalse());
         router.push(`/lessons/${lessonId}`, `/lessons/${lessonId}`);
     }
 
@@ -77,7 +80,7 @@ export default function CreateLesson() {
     }
 
     async function deleteFile(path) {
-        debugger;
+        dispatch(loadingTrue());
         const { data } = await serviceHelpers.deleteFile(path);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
@@ -88,6 +91,7 @@ export default function CreateLesson() {
             router.push('/auth/login');
             return <div></div>;
         }
+        dispatch(loadingFalse());
         return data;
     }
 
@@ -126,6 +130,7 @@ export default function CreateLesson() {
     }
 
     async function uploadLessonThumb({ file, onSuccess, onError }) {
+        dispatch(loadingTrue());
         const rs = await serviceHelpers.uploadFile('lessons/avatars', file);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs.data;
@@ -141,12 +146,15 @@ export default function CreateLesson() {
             ...state,
             thumb: mediaURL + data.data.streamPath,
         });
+        dispatch(loadingFalse());
         return onSuccess();
     }
 
     async function deleteThumb(e) {
+        dispatch(loadingTrue());
         await deleteFile(state.thumb);
         setState({ ...state, thumb: null });
+        dispatch(loadingFalse());
     }
 
     return (

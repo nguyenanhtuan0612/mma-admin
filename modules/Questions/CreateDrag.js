@@ -193,6 +193,7 @@ export default function CreateDrag() {
     }
 
     async function uploadFile(file, onSuccess, onError, field) {
+        dispatch(loadingTrue());
         if (state[field]) {
             const rs1 = await serviceHelpers.detailFile(state[field]);
             if (!rs1) return openNotification(notiType.error, 'Lỗi hệ thống');
@@ -229,6 +230,7 @@ export default function CreateDrag() {
                 },
             ],
         });
+        dispatch(loadingFalse());
         return onSuccess();
     }
 
@@ -253,6 +255,7 @@ export default function CreateDrag() {
     }
 
     async function onCreate() {
+        dispatch(loadingTrue());
         const zonesProp = [];
         const zoneContent = [];
         for (const dt of zones) {
@@ -278,6 +281,7 @@ export default function CreateDrag() {
         const arr = exam.data.exam.listQuestions;
         arr.push(data1.data.id);
         catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+        dispatch(loadingFalse());
         router.push(`/exams/${examId}`, `/exams/${examId}`);
     }
 

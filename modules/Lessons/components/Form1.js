@@ -28,7 +28,7 @@ export default function Form1({ pState, setState, courseName }) {
             </Menu.Item>
             <Menu.Item>
                 <button
-                    onClick={() => router.push('/questions/matching',`/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`,)}
+                    onClick={() => router.push('/questions/matching', `/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`)}
                     className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
                 >
                     Nối
@@ -51,6 +51,7 @@ export default function Form1({ pState, setState, courseName }) {
     );
 
     async function uploadVideo(file, onSuccess, onError, field) {
+        dispatch(loadingTrue());
         let oldDur = 0;
         if (pState[field]) {
             const rs1 = await serviceHelpers.detailFile(pState[field]);
@@ -90,6 +91,7 @@ export default function Form1({ pState, setState, courseName }) {
             ],
             duration: pState.duration + data.data.duration - oldDur,
         });
+        dispatch(loadingFalse());
         return onSuccess();
     }
 

@@ -52,6 +52,7 @@ export default function Form1({ pState, setState, courseName }) {
     );
 
     async function uploadVideo(file, onSuccess, onError, field) {
+        dispatch(loadingTrue());
         let oldDur = 0;
         if (pState[field]) {
             const rs1 = await serviceHelpers.detailFile(pState[field]);
@@ -91,6 +92,7 @@ export default function Form1({ pState, setState, courseName }) {
             ],
             duration: pState.duration + data.data.duration - oldDur,
         });
+        dispatch(loadingTrue());
         return onSuccess();
     }
 

@@ -36,6 +36,7 @@ export default function CreateMatching() {
             setDt(dt);
         }, [state]);
         async function uploadImage(file, onSuccess, onError, side) {
+            dispatch(loadingTrue());
             const rs = await serviceHelpers.uploadFile('/questions', file);
             if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
             const data = rs.data;
@@ -56,6 +57,7 @@ export default function CreateMatching() {
                 },
             });
             onChangeZone(index, side, 'imageUrl', mediaURL + data.data.streamPath);
+            dispatch(loadingFalse());
             return onSuccess();
         }
 
@@ -125,7 +127,7 @@ export default function CreateMatching() {
                                 <div className="w-8/12 ml-4" hidden={state.typeAnswerRight == 'image' ? false : true}>
                                     <Upload
                                         listType="picture-card"
-                                        customRequest={({ file, onSuccess, onError }) => uploadImage(file, onSuccess, onError, 'left')}
+                                        customRequest={({ file, onSuccess, onError }) => uploadImage(file, onSuccess, onError, 'right')}
                                         showUploadList={false}
                                     >
                                         {dt.right.imageUrl ? <img src={dt.right.imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
@@ -183,6 +185,7 @@ export default function CreateMatching() {
     }
 
     async function uploadFile(file, onSuccess, onError) {
+        dispatch(loadingTrue());
         const rs = await serviceHelpers.uploadFile('/questions', file);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs.data;
@@ -205,6 +208,7 @@ export default function CreateMatching() {
                 },
             ],
         });
+        dispatch(loadingFalse());
         return onSuccess();
     }
 
@@ -254,6 +258,7 @@ export default function CreateMatching() {
     }
 
     async function onCreate() {
+        dispatch(loadingTrue());
         for (const dt of zones) {
             if (state.typeAnswerLeft == 'text' && dt.left.content == '') {
                 return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
@@ -276,6 +281,7 @@ export default function CreateMatching() {
         const arr = exam.data.exam.listQuestions;
         arr.push(data1.data.id);
         catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+        dispatch(loadingFalse());
         router.push(`/exams/${examId}`, `/exams/${examId}`);
     }
 
