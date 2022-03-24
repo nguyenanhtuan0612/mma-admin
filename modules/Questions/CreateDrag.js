@@ -207,7 +207,7 @@ export default function CreateDrag() {
                 return <div></div>;
             }
         }
-        const rs = await serviceHelpers.uploadFile('/lessons/videos', file);
+        const rs = await serviceHelpers.uploadFile('/questions', file);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs.data;
 

@@ -76,11 +76,9 @@ export default function RowItemExams({ data, updateActive }) {
         <tr>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
             <th>
-                <Link href={`/courses/${id}/lessons`} as={`/courses/${id}/lessons`}>
-                    <a className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs whitespace-nowrap p-4 text-center flex items-center">
-                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(question)}</span>
-                    </a>
-                </Link>
+                <a className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs whitespace-nowrap p-4 text-center flex items-center">
+                    <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(question)}</span>
+                </a>
             </th>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isType(type)}</td>
             <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{isLevel(level)}</td>
