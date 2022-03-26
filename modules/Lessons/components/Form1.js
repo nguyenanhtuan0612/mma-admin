@@ -2,11 +2,14 @@ import { UploadOutlined } from '@ant-design/icons';
 import ReactPlayer from 'react-player';
 import { Button, Dropdown, Menu, Select, Upload } from 'antd';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useContext } from 'react';
 import { notiType, openNotification, serviceHelpers } from 'helpers';
 const { mediaURL } = serviceHelpers;
+import { AuthContext } from 'layouts/Admin';
+import { loadingFalse, loadingTrue } from 'store/actions';
 
 export default function Form1({ pState, setState, courseName }) {
+    const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
     const menuQuestion = (
         <Menu>
@@ -73,6 +76,12 @@ export default function Form1({ pState, setState, courseName }) {
         const data = rs.data;
 
         if (data.statusCode === 400) {
+            dispatch(loadingFalse());
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 413) {
+            dispatch(loadingFalse());
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
@@ -307,12 +316,7 @@ export default function Form1({ pState, setState, courseName }) {
                                 </Button>
                             </Upload>
                             <div className="w-full mt-2" hidden={pState.videoNode31 ? false : true}>
-                                <ReactPlayer
-                                    url={'http://54.179.149.123/api/v1/files/streaming/lessons_videos/file-1642836681736.mp4'}
-                                    width="100%"
-                                    height="auto"
-                                    controls
-                                />
+                                <ReactPlayer url={pState.videoNode31} width="100%" height="auto" controls />
                             </div>
                         </div>
                     </div>
@@ -409,7 +413,7 @@ export default function Form1({ pState, setState, courseName }) {
                         <div className="w-full mt-2 mb-8 h-auto">
                             <Upload
                                 fileList={pState.videoNode41 ? pState.videoNode41Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videvideoNode41oNode21')}
+                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode41')}
                                 onRemove={() => deleteVideo('videoNode41')}
                             >
                                 <Button hidden={pState.videoNode41 ? true : false} icon={<UploadOutlined />}>

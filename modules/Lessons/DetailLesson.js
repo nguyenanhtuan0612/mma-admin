@@ -1,6 +1,6 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Upload } from 'antd';
-import { displayHelpers, notiType, serviceHelpers } from 'helpers';
+import { displayHelpers, notiType, openNotification, serviceHelpers } from 'helpers';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import Form1 from './components/Form1';
@@ -126,18 +126,17 @@ export default function DetailLesson() {
         return data.data;
     }
 
-    async function onCreate() {
-        let lesson = state;
-        const data = await CreateLesson(lesson);
+    async function onUpdate() {
+        const data = await CreateLesson(state);
         if (!data) {
             return;
         }
-        openNotification(notiType.success, 'Tạo mới thành công !');
-        router.push(`/courses/${courseId}/lessons`);
+        openNotification(notiType.success, 'Lưu thành công !');
+        router.push(`/courses/${state.courseId}/lessons`);
     }
 
     async function CreateLesson(body) {
-        const { data } = await serviceHelpers.createData('lessons', body);
+        const { data } = await serviceHelpers.updateData('lessons', id, body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
@@ -359,14 +358,14 @@ export default function DetailLesson() {
                         <button
                             className="mx-2 mb-2 bg-green-400 hover:bg-green-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={onCreate}
+                            onClick={onUpdate}
                         >
                             Kiểm tra điều kiện kích hoạt khóa học
                         </button>
                         <button
                             className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={onCreate}
+                            onClick={onUpdate}
                         >
                             Lưu khóa học
                         </button>

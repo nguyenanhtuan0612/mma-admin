@@ -47,6 +47,12 @@ export default function RowItemExams({ data, updateActive }) {
             case 'drag': {
                 return 'Kéo thả';
             }
+            case 'matching': {
+                return 'Nối';
+            }
+            case 'multiChoice': {
+                return 'Trắc nghiệm';
+            }
             default: {
                 return '...';
             }

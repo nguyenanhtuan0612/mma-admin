@@ -184,7 +184,7 @@ export default function CreateMatching() {
         }
     }
 
-    async function uploadFile(file, onSuccess, onError) {
+    async function uploadFile(file, onSuccess, onError, field) {
         dispatch(loadingTrue());
         const rs = await serviceHelpers.uploadFile('/questions', file);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
@@ -261,20 +261,24 @@ export default function CreateMatching() {
         dispatch(loadingTrue());
         for (const dt of zones) {
             if (state.typeAnswerLeft == 'text' && dt.left.content == '') {
+                dispatch(loadingFalse());
                 return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
             }
             if (state.typeAnswerRight == 'text' && dt.right.content == '') {
+                dispatch(loadingFalse());
                 return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
             }
             if (state.typeAnswerRight == 'image' && dt.right.imageUrl == null) {
+                dispatch(loadingFalse());
                 return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
             }
             if (state.typeAnswerLeft == 'image' && dt.left.imageUrl == null) {
+                dispatch(loadingFalse());
                 return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
             }
         }
 
-        const body = { ...state, typeAnswer: 'text', answers: { content: zones, correct: true }, lessonId };
+        const body = { ...state, answers: { content: zones, correct: true }, lessonId };
         const rs1 = await serviceHelpers.createData('questions/matching', body);
         const data1 = catchErr(rs1);
         const exam = catchErr(await serviceHelpers.detailData('exams', examId));
@@ -373,8 +377,8 @@ export default function CreateMatching() {
                                             <div className="w-9/12 px-3 h-auto ">
                                                 <Upload
                                                     fileList={state.solve ? state.solveInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError)}
-                                                    onRemove={() => deleteFile()}
+                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'solve')}
+                                                    onRemove={() => deleteFile('solve')}
                                                 >
                                                     <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>
                                                         Chọn file
