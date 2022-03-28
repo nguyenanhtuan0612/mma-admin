@@ -111,23 +111,24 @@ function ZonePic(data) {
     );
 }
 
-export default function CreateDrag() {
+export default function UpdateDrag({ data, lessonId }) {
     const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
-    const lessonId = parseInt(router.query.lessonId);
     const examId = parseInt(router.query.examId);
     const [lesson, setLesson] = useState(null);
     const [state, setState] = useState({
         question: null,
         level: 'easy',
         isRandom: false,
-        audio: null,
-        audioInfo: [],
+        questionAudio: null,
+        questionAudioInfo: [],
         image: null,
         imageInfo: [],
         active: true,
         solve: null,
         solveInfo: [],
+        audio: null,
+        audioInfo: [],
     });
     const [zones, setZones] = useState([]);
 
@@ -135,8 +136,45 @@ export default function CreateDrag() {
         dispatch(loadingTrue());
         const lessonName = await getDetailLesson();
         setLesson(lessonName);
+        data.audioInfo = [
+            {
+                url: data.audio,
+                name: data.audioName,
+            },
+        ];
+        data.solveInfo = [
+            {
+                url: data.solve,
+                name: data.solveName,
+            },
+        ];
+        data.imageInfo = [
+            {
+                url: data.image,
+                name: data.imageName,
+            },
+        ];
+        const arr = [];
+        if (data.answers[0] && data.answers[0]) {
+            for (const [index, iterator] of data.content.entries()) {
+                arr.push({
+                    ...iterator,
+                    content: data.answers[index].content,
+                    top: parseInt(iterator.top),
+                    left: parseInt(iterator.left),
+                    width: parseInt(iterator.width),
+                    height: parseInt(iterator.height),
+                });
+            }
+        }
+        setState(data);
+        setZones(arr);
         dispatch(loadingFalse());
-    }, []);
+    }, [data]);
+
+    useEffect(() => {
+        setPic(renderPic(zones));
+    }, [zones]);
 
     async function getDetailLesson() {
         const rs = await serviceHelpers.detailData('lessons', lessonId);
@@ -254,7 +292,7 @@ export default function CreateDrag() {
         });
     }
 
-    async function onCreate() {
+    async function onUpdate() {
         dispatch(loadingTrue());
         const zonesProp = [];
         const zoneContent = [];
@@ -276,7 +314,8 @@ export default function CreateDrag() {
         }
 
         const body = { ...state, typeAnswer: 'text', content: zonesProp, answers: zoneContent, lessonId };
-        const rs1 = await serviceHelpers.createData('questions/drag', body);
+        console.log(body);
+        const rs1 = await serviceHelpers.updateData('questions/drag', data.id, body);
         const data1 = catchErr(rs1);
         const exam = catchErr(await serviceHelpers.detailData('exams', examId));
         const arr = exam.data.exam.listQuestions;
@@ -306,7 +345,7 @@ export default function CreateDrag() {
             <div className="border-2">
                 <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Tạo câu hỏi kéo thả</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Sửa câu hỏi kéo thả</b>
                     </div>
                 </div>
                 <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
@@ -472,9 +511,9 @@ export default function CreateDrag() {
                         <button
                             className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={() => onCreate()}
+                            onClick={() => onUpdate()}
                         >
-                            Tạo mới
+                            Lưu
                         </button>
                     </div>
                 </div>

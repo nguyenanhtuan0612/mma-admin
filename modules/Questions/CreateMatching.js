@@ -18,8 +18,8 @@ export default function CreateMatching() {
         question: null,
         level: 'easy',
         isRandom: false,
-        questionAudio: null,
-        questionAudioInfo: [],
+        audio: null,
+        audioInfo: [],
         image: null,
         imageInfo: [],
         active: true,
@@ -278,7 +278,11 @@ export default function CreateMatching() {
             }
         }
 
-        const body = { ...state, answers: { content: zones, correct: true }, lessonId };
+        const body = {
+            ...state,
+            answers: { content: zones, correct: true, typeAnswerLeft: state.typeAnswerLeft, typeAnswerRight: state.typeAnswerRight },
+            lessonId,
+        };
         const rs1 = await serviceHelpers.createData('questions/matching', body);
         const data1 = catchErr(rs1);
         const exam = catchErr(await serviceHelpers.detailData('exams', examId));
@@ -353,18 +357,16 @@ export default function CreateMatching() {
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
                                             <div className="w-9/12 px-3 h-auto ">
                                                 <Upload
-                                                    fileList={state.questionAudio ? state.questionAudioInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) =>
-                                                        uploadFile(file, onSuccess, onError, 'questionAudio')
-                                                    }
-                                                    onRemove={() => deleteFile('questionAudio')}
+                                                    fileList={state.audio ? state.audioInfo : []}
+                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
+                                                    onRemove={() => deleteFile('audio')}
                                                 >
-                                                    <Button hidden={state.questionAudio ? true : false} icon={<UploadOutlined />}>
+                                                    <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
                                                         Chọn file
                                                     </Button>
                                                 </Upload>
-                                                <div className="w-full mt-2" hidden={state.questionAudio ? false : true}>
-                                                    <ReactAudioPlayer src={state.questionAudio} controls />
+                                                <div className="w-full mt-2" hidden={state.audio ? false : true}>
+                                                    <ReactAudioPlayer src={state.audio} controls />
                                                 </div>
                                             </div>
                                         </div>

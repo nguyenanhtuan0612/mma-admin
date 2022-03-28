@@ -18,8 +18,8 @@ export default function CreateMultipleChoice() {
         question: null,
         level: 'easy',
         isRandom: false,
-        questionAudio: null,
-        questionAudioInfo: [],
+        audio: null,
+        audioInfo: [],
         image: null,
         imageInfo: [],
         active: true,
@@ -178,7 +178,7 @@ export default function CreateMultipleChoice() {
         }
     }
 
-    async function uploadFile(file, onSuccess, onError) {
+    async function uploadFile(file, onSuccess, onError, field) {
         dispatch(loadingTrue());
         const rs = await serviceHelpers.uploadFile('/questions', file);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
@@ -278,7 +278,7 @@ export default function CreateMultipleChoice() {
         }
 
         const body = { ...state, answers: zones, lessonId };
-        //console.log(body);
+        console.log(body);
         const rs1 = await serviceHelpers.createData('questions/multiChoice', body);
         const data1 = catchErr(rs1);
         const exam = catchErr(await serviceHelpers.detailData('exams', examId));
@@ -308,7 +308,7 @@ export default function CreateMultipleChoice() {
             <div className="border-2">
                 <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Tạo câu hỏi nối</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Tạo câu hỏi trắc nghiệm</b>
                     </div>
                 </div>
                 <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
@@ -353,19 +353,19 @@ export default function CreateMultipleChoice() {
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
                                             <div className="w-9/12 px-3 h-auto ">
                                                 <Upload
-                                                    fileList={state.solve ? state.solveInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError)}
+                                                    fileList={state.image ? state.imageInfo : []}
+                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
                                                     onRemove={() => deleteFile()}
                                                 >
-                                                    <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>
+                                                    <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
                                                         Chọn file
                                                     </Button>
                                                 </Upload>
                                                 <div
                                                     style={{ width: '100%', height: 'auto', position: 'relative' }}
-                                                    hidden={state.solve ? false : true}
+                                                    hidden={state.image ? false : true}
                                                 >
-                                                    <img src={state.solve} className="object-contain w-full border-2" alt="..."></img>
+                                                    <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
                                                 </div>
                                             </div>
                                         </div>
@@ -375,18 +375,16 @@ export default function CreateMultipleChoice() {
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
                                             <div className="w-9/12 px-3 h-auto ">
                                                 <Upload
-                                                    fileList={state.questionAudio ? state.questionAudioInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) =>
-                                                        uploadFile(file, onSuccess, onError, 'questionAudio')
-                                                    }
-                                                    onRemove={() => deleteFile('questionAudio')}
+                                                    fileList={state.audio ? state.audioInfo : []}
+                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
+                                                    onRemove={() => deleteFile('audio')}
                                                 >
-                                                    <Button hidden={state.questionAudio ? true : false} icon={<UploadOutlined />}>
+                                                    <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
                                                         Chọn file
                                                     </Button>
                                                 </Upload>
-                                                <div className="w-full mt-2" hidden={state.questionAudio ? false : true}>
-                                                    <ReactAudioPlayer src={state.questionAudio} controls />
+                                                <div className="w-full mt-2" hidden={state.audio ? false : true}>
+                                                    <ReactAudioPlayer src={state.audio} controls />
                                                 </div>
                                             </div>
                                         </div>
@@ -399,7 +397,7 @@ export default function CreateMultipleChoice() {
                                             <div className="w-9/12 px-3 h-auto ">
                                                 <Upload
                                                     fileList={state.solve ? state.solveInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError)}
+                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'solve')}
                                                     onRemove={() => deleteFile()}
                                                 >
                                                     <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>

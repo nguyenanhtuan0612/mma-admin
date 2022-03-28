@@ -1,120 +1,16 @@
-import { UploadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Upload } from 'antd';
-import React, { useEffect, useState, useContext } from 'react';
-import ReactAudioPlayer from 'react-audio-player';
-import { useRouter } from 'next/router';
 import { notiType, openNotification, serviceHelpers } from 'helpers';
 import { AuthContext } from 'layouts/Admin';
+import { useRouter } from 'next/router';
+import React, { useState, useContext, useEffect } from 'react';
+import ReactAudioPlayer from 'react-audio-player';
 import { loadingFalse, loadingTrue } from 'store/actions';
 const { mediaURL } = serviceHelpers;
 
-function Zone(data) {
-    const [dt, setDt] = useState(data.data);
-    const index = data.index;
-    const { deleteZone, onChangeZone } = data;
-
-    return (
-        <div className="border flex-wrap flex w-full px-2 py-2 ">
-            <span className=" mt-4 mr-8 text-blueGray-600 text-xs font-bold text-right">Vùng: {index + 1}</span>
-            <div className=" mt-2 mr-8">
-                <label className="text-blueGray-600 text-xs font-bold text-right mr-2">Tọa độ trên:</label>
-                <input
-                    onChange={e => {
-                        e.preventDefault();
-                        setDt({ ...data.data, top: e.target.value });
-                        onChangeZone(index, 'top', e.target.value);
-                    }}
-                    value={dt.top}
-                    className="px-1 py-2 text-blueGray-700 bg-white text-xs border font-bold w-10"
-                />{' '}
-            </div>
-            <div className=" mt-2 mr-8">
-                <label className="text-blueGray-600  text-xs font-bold text-right mr-2">Tọa độ trái:</label>
-                <input
-                    onChange={e => {
-                        e.preventDefault();
-                        setDt({ ...data.data, left: e.target.value });
-                        onChangeZone(index, 'left', e.target.value);
-                    }}
-                    value={dt.left}
-                    className="px-1 py-2 text-blueGray-700 bg-white  text-xs border font-bold w-10"
-                />{' '}
-            </div>
-            <div className=" mt-2 mr-8 ">
-                <label className="text-blueGray-600 text-xs font-bold text-right mr-2">Dài:</label>
-                <input
-                    onChange={e => {
-                        e.preventDefault();
-                        setDt({ ...data.data, width: e.target.value });
-                        onChangeZone(index, 'width', e.target.value);
-                    }}
-                    value={dt.width}
-                    className="px-1 py-2 text-blueGray-700 bg-white text-xs border font-bold w-10"
-                />{' '}
-            </div>
-            <div className=" mt-2 mr-8">
-                <label className="text-blueGray-60 text-xs font-bold text-right mr-2">Rộng:</label>
-                <input
-                    onChange={e => {
-                        e.preventDefault();
-                        setDt({ ...data.data, height: e.target.value });
-                        onChangeZone(index, 'height', e.target.value);
-                    }}
-                    value={dt.height}
-                    className="px-1 py-2 text-blueGray-700 bg-white  text-xs border font-bold w-10"
-                />{' '}
-            </div>
-            <div className=" mt-2 mr-8">
-                <label className="text-blueGray-600  text-xs font-bold text-right mr-2">Nội dung:</label>
-                <input
-                    onChange={e => {
-                        e.preventDefault();
-                        setDt({ ...data.data, content: e.target.left });
-                        onChangeZone(index, 'content', e.target.value);
-                    }}
-                    value={dt.content}
-                    className="px-1 py-2 text-blueGray-700 bg-white  text-xs border font-bold w-20"
-                />{' '}
-            </div>
-            <div className=" mt-2 mr-8">
-                <button
-                    className="bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                    type="button"
-                    onClick={() => deleteZone(index)}
-                >
-                    Xóa
-                </button>
-            </div>
-        </div>
-    );
-}
-
-function ZonePic(data) {
-    const dt = data.data;
-    const index = data.index;
-    console.log(dt);
-
-    return (
-        <div
-            className="border border-black absolute justify-center items-center flex"
-            style={{
-                top: `${dt.top}%`,
-                left: `${dt.left}%`,
-                height: `${dt.height}%`,
-                width: `${dt.width}%`,
-                type: 'emptyBox',
-                effectAllowed: 'move',
-            }}
-        >
-            {index + 1}
-        </div>
-    );
-}
-
-export default function CreateDrag() {
+export default function UpdateMultipleChoice({ data, lessonId }) {
     const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
-    const lessonId = parseInt(router.query.lessonId);
     const examId = parseInt(router.query.examId);
     const [lesson, setLesson] = useState(null);
     const [state, setState] = useState({
@@ -128,15 +24,149 @@ export default function CreateDrag() {
         active: true,
         solve: null,
         solveInfo: [],
+        typeAnswer: 'text',
     });
     const [zones, setZones] = useState([]);
+    const [change, setChange] = useState(false);
+
+    function Zone({ state, data, index, deleteZone, onChangeZone }) {
+        const [dt, setDt] = useState(data);
+        useEffect(() => {
+            setDt(dt);
+        }, [state]);
+
+        async function uploadImage(file, onSuccess, onError) {
+            dispatch(loadingTrue());
+            const rs = await serviceHelpers.uploadFile('/questions', file);
+            if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+            const data = rs.data;
+
+            if (data.statusCode === 400) {
+                openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+                return onError(data.message);
+            }
+            if (data.statusCode === 404) {
+                router.push('/auth/login');
+                return <div></div>;
+            }
+            console.log(mediaURL + data.data.streamPath);
+            setDt({
+                ...dt,
+                content: mediaURL + data.data.streamPath,
+            });
+            onChangeZone(index, 'content', mediaURL + data.data.streamPath);
+            dispatch(loadingFalse());
+            return onSuccess();
+        }
+
+        const uploadButton = (
+            <div>
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+        );
+        console.log(dt);
+        return (
+            <div className="w-full mt-4">
+                <div className="w-full flex border-2 p-2">
+                    <div className="w-2/12 items-center justify-center flex">
+                        <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Đúng:</label>
+                        <input
+                            checked={dt.correct}
+                            name="correct"
+                            type="radio"
+                            onChange={e => {
+                                setDt({
+                                    ...dt,
+                                    correct: e.target.checked,
+                                });
+                                onChangeZone(index, 'correct', e.target.checked);
+                            }}
+                        />
+                    </div>
+                    <div className="w-8/12 flex p-2">
+                        <div className="w-full px-4 justify-center items-center">
+                            <div className="relative w-full items-center flex">
+                                <label className="w-5/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Nội dung đáp án:</label>
+                                <input
+                                    onChange={e => {
+                                        e.preventDefault();
+                                        setDt({
+                                            ...dt,
+                                            content: e.target.value,
+                                        });
+                                        onChangeZone(index, 'content', e.target.value);
+                                    }}
+                                    value={dt.content}
+                                    hidden={state.typeAnswer == 'text' ? false : true}
+                                    className="w-7/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                />
+                                <div className="w-7/12 ml-4" hidden={state.typeAnswer == 'image' ? false : true}>
+                                    <Upload
+                                        listType={dt.content !== '' ? 'picture' : 'picture-card'}
+                                        customRequest={({ file, onSuccess, onError }) => uploadImage(file, onSuccess, onError)}
+                                        showUploadList={false}
+                                    >
+                                        {dt.content !== '' ? (
+                                            <img
+                                                className="border"
+                                                src={state.typeAnswer == 'image' ? dt.content : null}
+                                                alt="avatar"
+                                                style={{ width: '100%' }}
+                                            />
+                                        ) : (
+                                            uploadButton
+                                        )}
+                                    </Upload>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-2/12 items-center flex p-2 justify-center">
+                        <button
+                            className="bg-red-500 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                            type="button"
+                            onClick={() => deleteZone(index)}
+                        >
+                            Xóa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     useEffect(async () => {
         dispatch(loadingTrue());
         const lessonName = await getDetailLesson();
-        setLesson(lessonName);
+        setLesson(lessonName.name);
+        data.audioInfo = [
+            {
+                url: data.audio,
+                name: data.audioName,
+            },
+        ];
+        data.solveInfo = [
+            {
+                url: data.solve,
+                name: data.solveName,
+            },
+        ];
+        data.imageInfo = [
+            {
+                url: data.image,
+                name: data.imageName,
+            },
+        ];
+        data.typeAnswer = data.answers[0] ? data.answers[0].typeAnswer : 'text';
+        setState(data);
+        setZones(data.answers);
         dispatch(loadingFalse());
     }, []);
+
+    useEffect(async () => {
+        setZones(zones);
+    }, [change]);
 
     async function getDetailLesson() {
         const rs = await serviceHelpers.detailData('lessons', lessonId);
@@ -148,38 +178,14 @@ export default function CreateDrag() {
             router.push('/auth/login');
             return <div></div>;
         }
-        return data.data.data.name;
-    }
-
-    function renderPic(zones) {
-        return zones && zones.length > 0 ? zones.map((data, index) => <ZonePic data={data} key={index} index={index} />) : null;
-    }
-
-    const [pic, setPic] = useState(renderPic([]));
-
-    function addZone() {
-        const newZones = [...zones, { top: '0', left: '0', width: '10', height: '10', content: '', type: 'emptyBox', effectAllowed: 'move' }];
-        setZones(newZones);
-        setPic(renderPic(newZones));
-    }
-
-    function deleteZone(index) {
-        const a1 = zones.slice(0, index);
-        const a2 = zones.slice(index + 1, zones.length);
-        const newZones = a1.concat(a2);
-        setZones(newZones);
-        setPic(renderPic(newZones));
-    }
-
-    function onChangeZone(index, field, value) {
-        const newZones = zones;
-        newZones[index][field] = value;
-        setZones(newZones);
-        setPic(renderPic(newZones));
+        return data.data.data;
     }
 
     function onChangeState(field, e, type = 'string') {
         e.preventDefault();
+        if (field == 'typeAnswer') {
+            setZones([]);
+        }
         switch (type) {
             case 'boolean': {
                 const value = e.target.value == 'true' ? true : false;
@@ -194,20 +200,6 @@ export default function CreateDrag() {
 
     async function uploadFile(file, onSuccess, onError, field) {
         dispatch(loadingTrue());
-        if (state[field]) {
-            const rs1 = await serviceHelpers.detailFile(state[field]);
-            if (!rs1) return openNotification(notiType.error, 'Lỗi hệ thống');
-            const data1 = rs1.data;
-
-            if (data1.statusCode === 400) {
-                openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-                return onError(data.message);
-            }
-            if (data1.statusCode === 404) {
-                router.push('/auth/login');
-                return <div></div>;
-            }
-        }
         const rs = await serviceHelpers.uploadFile('/questions', file);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs.data;
@@ -234,6 +226,40 @@ export default function CreateDrag() {
         return onSuccess();
     }
 
+    function addZone() {
+        const index = zones.length;
+        const newZones = [
+            ...zones,
+            {
+                content: '',
+                correct: false,
+            },
+        ];
+        setZones(newZones);
+    }
+
+    function deleteZone(index) {
+        const a1 = zones.slice(0, index);
+        const a2 = zones.slice(index + 1, zones.length);
+        const newZones = a1.concat(a2);
+        setZones([...newZones]);
+    }
+
+    function onChangeZone(index, field, value) {
+        const newZones = zones;
+        newZones[index][field] = value;
+        if (field == 'correct' && newZones[index].correct == true) {
+            for (let i = 0; i < newZones.length; i++) {
+                if (i == index) {
+                    continue;
+                }
+                newZones[i].correct = false;
+            }
+            setChange(!change);
+        }
+        setZones(newZones);
+    }
+
     async function deleteFile(field) {
         const rs1 = await serviceHelpers.deleteFile(state[field]);
         if (!rs1) return openNotification(notiType.error, 'Lỗi hệ thống');
@@ -254,29 +280,26 @@ export default function CreateDrag() {
         });
     }
 
-    async function onCreate() {
+    async function onUpdate() {
         dispatch(loadingTrue());
-        const zonesProp = [];
-        const zoneContent = [];
+        const flag = false;
         for (const dt of zones) {
-            const prop = {
-                top: `${dt.top}%`,
-                left: `${dt.left}%`,
-                height: `${dt.height}%`,
-                width: `${dt.width}%`,
-                type: 'emptyBox',
-                effectAllowed: 'move',
-            };
-            zonesProp.push(prop);
-            if (dt.content == '' || dt.content == null) {
-                dispatch(loadingFalse());
-                return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
+            if (dt.correct == true) {
+                flag = true;
             }
-            zoneContent.push(dt.content);
+            if (dt.content == '') {
+                dispatch(loadingFalse());
+                return openNotification(notiType.error, 'Lỗi hệ thống', 'Thiếu nội dung đáp án');
+            }
+        }
+        if (flag == false) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống', 'Chưa có đáp án đúng');
         }
 
-        const body = { ...state, typeAnswer: 'text', content: zonesProp, answers: zoneContent, lessonId };
-        const rs1 = await serviceHelpers.createData('questions/drag', body);
+        const body = { ...state, answers: zones, lessonId };
+        //console.log(body);
+        const rs1 = await serviceHelpers.updateData('questions/multiChoice', data.id, body);
         const data1 = catchErr(rs1);
         const exam = catchErr(await serviceHelpers.detailData('exams', examId));
         const arr = exam.data.exam.listQuestions;
@@ -292,7 +315,6 @@ export default function CreateDrag() {
 
         if (data.statusCode === 400) {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-            return onError(data.message);
         }
         if (data.statusCode === 404) {
             router.push('/auth/login');
@@ -306,12 +328,12 @@ export default function CreateDrag() {
             <div className="border-2">
                 <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Tạo câu hỏi kéo thả</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Tạo câu hỏi trắc nghiệm</b>
                     </div>
                 </div>
                 <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
-                    <div className="flex w-full">
-                        <div className="w-6/12 px-4 mt-4 mb-6">
+                    <div className="w-full pt-4 flex">
+                        <div className="w-6/12 px-4 mb-6">
                             <div className="w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                                 <div className="flex flex-wrap w-full">
                                     <div className="w-full px-4 mb-2">
@@ -348,9 +370,29 @@ export default function CreateDrag() {
                                     </div>
                                     <div className="w-full mb-2  px-4">
                                         <div className="relative w-full mb-3 flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Audio câu hỏi:
-                                            </label>
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
+                                            <div className="w-9/12 px-3 h-auto ">
+                                                <Upload
+                                                    fileList={state.image ? state.imageInfo : []}
+                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
+                                                    onRemove={() => deleteFile()}
+                                                >
+                                                    <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
+                                                        Chọn file
+                                                    </Button>
+                                                </Upload>
+                                                <div
+                                                    style={{ width: '100%', height: 'auto', position: 'relative' }}
+                                                    hidden={state.image ? false : true}
+                                                >
+                                                    <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full mb-2  px-4">
+                                        <div className="relative w-full mb-3 flex">
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
                                             <div className="w-9/12 px-3 h-auto ">
                                                 <Upload
                                                     fileList={state.audio ? state.audioInfo : []}
@@ -376,7 +418,7 @@ export default function CreateDrag() {
                                                 <Upload
                                                     fileList={state.solve ? state.solveInfo : []}
                                                     customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'solve')}
-                                                    onRemove={() => deleteFile('solve')}
+                                                    onRemove={() => deleteFile()}
                                                 >
                                                     <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>
                                                         Chọn file
@@ -410,6 +452,23 @@ export default function CreateDrag() {
                                     </div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Tạo đề ngẫu nhiên: <span className="text-red-500">*</span>
+                                            </label>
+                                            <select
+                                                onChange={e => {
+                                                    onChangeState('isRandom', e, 'boolean');
+                                                }}
+                                                value={state.isRandom}
+                                                className="w-9/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            >
+                                                <option value="true">Có</option>
+                                                <option value="false">Không</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="w-full px-4 mb-2">
+                                        <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Bài học:</label>
                                             <input
                                                 disabled={true}
@@ -423,38 +482,47 @@ export default function CreateDrag() {
                         </div>
                         <div className="w-6/12 px-4 mt-4 mb-6">
                             <div className="2xl:w-full">
-                                <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                    Ảnh câu hỏi: <span className="text-red-500">*</span>
-                                </label>
-
                                 <div className="w-full">
-                                    <Upload
-                                        fileList={state.image ? state.imageInfo : []}
-                                        customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
-                                        onRemove={() => deleteFile('image')}
-                                    >
-                                        <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
-                                            Chọn file
-                                        </Button>
-                                    </Upload>
-                                    <div style={{ width: '100%', height: 'auto', position: 'relative' }} hidden={state.image ? false : true}>
-                                        <div style={{ width: '100%', height: '100%', position: 'absolute' }}>{pic}</div>
-                                        <img src={state.image} alt="..."></img>
+                                    <div className="w-full flex">
+                                        <div className="w-6/12 items-center flex">
+                                            <label className="w-6/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">
+                                                Định dạng câu trả lời: <span className="text-red-500">*</span>
+                                            </label>
+                                            <select
+                                                onChange={e => {
+                                                    onChangeState('typeAnswer', e);
+                                                }}
+                                                value={state.typeAnswer}
+                                                className="w-6/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                            >
+                                                <option value="text">Text</option>
+                                                <option value="image">Ảnh</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div hidden={state.image ? false : true} className="mt-2 w-full">
+                                <div className="mt-2 w-full">
                                     <button
                                         className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                         type="button"
                                         onClick={addZone}
                                     >
-                                        Thêm vùng thả
+                                        Thêm đáp án
                                     </button>
                                     <div>
                                         {zones && zones.length > 0
-                                            ? zones.map((data, index) => (
-                                                  <Zone data={data} key={index} index={index} onChangeZone={onChangeZone} deleteZone={deleteZone} />
-                                              ))
+                                            ? zones.map((data, index) => {
+                                                  return (
+                                                      <Zone
+                                                          onChangeZone={onChangeZone}
+                                                          state={state}
+                                                          data={data}
+                                                          key={index}
+                                                          index={index}
+                                                          deleteZone={deleteZone}
+                                                      />
+                                                  );
+                                              })
                                             : null}
                                     </div>
                                 </div>
@@ -472,9 +540,9 @@ export default function CreateDrag() {
                         <button
                             className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={() => onCreate()}
+                            onClick={() => onUpdate()}
                         >
-                            Tạo mới
+                            Lưu
                         </button>
                     </div>
                 </div>
