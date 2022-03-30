@@ -21,7 +21,6 @@ COPY tailwind.config.js /mma-admin/tailwind.config.js
 
 # build 
 RUN npm install
-RUN npm run postcss
 RUN npm run build
 
 # start app

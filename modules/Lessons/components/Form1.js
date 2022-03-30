@@ -2,7 +2,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import ReactPlayer from 'react-player';
 import { Button, Upload } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { notiType, openNotification, serviceHelpers } from 'helpers';
 const { mediaURL } = serviceHelpers;
 import { AuthContext } from 'layouts/Admin';
@@ -11,6 +11,30 @@ import { loadingFalse, loadingTrue } from 'store/actions';
 export default function Form1({ pState, setState, courseName }) {
     const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
+    const [numQs, setNumQs] = useState({
+        easy: 0,
+        medium: 0,
+        hard: 0,
+    });
+
+    useEffect(async () => {
+        const data = await getNumQuestions(pState.id);
+        setNumQs(data.data);
+    }, [pState]);
+
+    async function getNumQuestions(id) {
+        const rs = await serviceHelpers.detailData('lessons/numQuestion', id);
+        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data = rs;
+
+        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        return data.data;
+    }
 
     async function uploadVideo(file, onSuccess, onError, field) {
         dispatch(loadingTrue());
@@ -483,15 +507,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full">
                         <div className="relative w-full mb-3 items-center flex">
                             <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">Câu hỏi dễ:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">15</span>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.easy}/15</span>
                         </div>
                         <div className="relative w-full mb-3 items-center flex">
                             <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">Câu hỏi trung bình:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">10</span>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.medium}/10</span>
                         </div>
                         <div className="relative w-full mb-3 items-center flex">
                             <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">Câu hỏi khó:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">5</span>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.hard}/5</span>
                         </div>
                     </div>
                 </div>

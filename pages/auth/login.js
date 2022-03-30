@@ -7,6 +7,7 @@ export default function Login() {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [showPass, setShowPass] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     function handleChangePhone(e) {
         setPhone(e.target.value);
@@ -22,13 +23,16 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setLoading(true);
         const { data } = await serviceHelpers.login(phone, password);
         if (!data) {
+            setLoading(false);
             openNotification(notiType.error, 'Đăng nhập thất bại', 'Lỗi hệ thống');
             return;
         }
         if (data.statusCode === 200) {
             if (data.data.role == 'user') {
+                setLoading(false);
                 alert('Không đủ quyền truy cập');
                 return;
             }
@@ -38,12 +42,23 @@ export default function Login() {
             router.push(returnUrl);
             return;
         }
+        setLoading(false);
         openNotification(notiType.error, 'Đăng nhập thất bại', data.message);
         return;
     }
 
     return (
         <>
+            <div className={loading == false ? 'hidden' : 'loading z-2'}>
+                <div className="gooey z-2">
+                    <span className="dot"></span>
+                    <div className="dots">
+                        <span className="span_dot"></span>
+                        <span className="span_dot"></span>
+                        <span className="span_dot"></span>
+                    </div>
+                </div>
+            </div>
             <div className="container mx-auto px-4 h-full">
                 <div className="flex content-center items-center justify-center h-full">
                     <div className="w-full lg:w-4/12 px-4">

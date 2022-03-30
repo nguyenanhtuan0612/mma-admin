@@ -43,7 +43,7 @@ export default function Admin({ children }) {
 
     return (
         <AuthContext.Provider value={[state, dispatch]}>
-            <div className={state.loading == false ? 'loading z-2 hidden' : 'loading z-2'}>
+            <div className={state.loading == false ? 'hidden' : 'loading z-2'}>
                 <div className="gooey z-2">
                     <span className="dot"></span>
                     <div className="dots">

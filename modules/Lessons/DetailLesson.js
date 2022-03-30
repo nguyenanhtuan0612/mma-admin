@@ -342,7 +342,7 @@ export default function DetailLesson() {
                                     </Upload>
                                 </div>
                                 <div className="w-full" hidden={state.thumb ? false : true}>
-                                    <img src={avatarImg(state.thumb)} className="h-40" alt="..."></img>
+                                    <img src={avatarImg(state.thumb)} className="h-40 border" alt="..."></img>
                                 </div>
                             </div>
                         </div>
