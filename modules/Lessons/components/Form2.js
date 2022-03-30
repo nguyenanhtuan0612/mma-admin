@@ -175,13 +175,13 @@ export default function Form1({ pState, setState, courseName }) {
                     <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 1</span>
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Câu hỏi nhanh nút 1.1:</span>
-                        <div className="w-full px-6 flex mt-2 mb-2" hidden={pState.questionNode11 ? false : true}>
+                        <div className="w-full px-6 flex mt-2 mb-2" hidden={pState.examNode11 ? false : true}>
                             <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Câu hỏi 1:</span>
                         </div>
                         <div className="w-full px-6 flex mt-2 mb-2">
                             <Dropdown overlay={menuQuestion} placement="bottomRight" arrow>
                                 <button
-                                    hidden={pState.questionNode11 ? true : false}
+                                    hidden={pState.examNode11 ? true : false}
                                     className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                     type="button"
                                 >
@@ -189,14 +189,14 @@ export default function Form1({ pState, setState, courseName }) {
                                 </button>
                             </Dropdown>
                             <button
-                                hidden={pState.questionNode11 ? false : true}
+                                hidden={pState.examNode11 ? false : true}
                                 className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                 type="button"
                             >
                                 Chỉnh sửa
                             </button>
                             <button
-                                hidden={pState.questionNode11 ? false : true}
+                                hidden={pState.examNode11 ? false : true}
                                 className="mx-2 mb-2 bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                 type="button"
                             >

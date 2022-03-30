@@ -1,6 +1,6 @@
 import { UploadOutlined } from '@ant-design/icons';
 import ReactPlayer from 'react-player';
-import { Button, Dropdown, Menu, Select, Upload } from 'antd';
+import { Button, Upload } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useContext } from 'react';
 import { notiType, openNotification, serviceHelpers } from 'helpers';
@@ -11,47 +11,6 @@ import { loadingFalse, loadingTrue } from 'store/actions';
 export default function Form1({ pState, setState, courseName }) {
     const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
-    const menuQuestion = (
-        <Menu>
-            <Menu.Item>
-                <button
-                    onClick={() => router.push('/questions/multipleChoice')}
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Trắc nghiệm
-                </button>
-            </Menu.Item>
-            <Menu.Item>
-                <button
-                    onClick={() => router.push('/questions/fill')}
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Điền từ
-                </button>
-            </Menu.Item>
-            <Menu.Item>
-                <button
-                    onClick={() => router.push('/questions/matching', `/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`)}
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Nối
-                </button>
-            </Menu.Item>
-            <Menu.Item>
-                <button
-                    onClick={() =>
-                        router.push(
-                            `/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`,
-                            `/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`,
-                        )
-                    }
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Kéo thả
-                </button>
-            </Menu.Item>
-        </Menu>
-    );
 
     async function uploadVideo(file, onSuccess, onError, field) {
         dispatch(loadingTrue());
@@ -179,33 +138,31 @@ export default function Form1({ pState, setState, courseName }) {
                 <div className="ml-2 w-6/12 mb-8 px-3">
                     <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 1</span>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Câu hỏi nhanh nút 1.1:</span>
-                        <div className="w-full px-6 flex mt-2 mb-2" hidden={pState.questionNode11 ? false : true}>
-                            <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Câu hỏi 1:</span>
-                        </div>
-                        <div className="w-full px-6 flex mt-2 mb-2">
-                            <Dropdown overlay={menuQuestion} placement="bottomRight" arrow>
-                                <button
-                                    hidden={pState.questionNode11 ? true : false}
-                                    className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                    type="button"
-                                >
-                                    Tạo mới
-                                </button>
-                            </Dropdown>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 1.1:</span>
+                        <div className="w-full px-6 flex mt-2 mb-8">
                             <button
-                                hidden={pState.questionNode11 ? false : true}
+                                onClick={e => createListQuestions(e, 'examNode11', '1.1')}
+                                hidden={pState.examNode11 ? true : false}
+                                className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                                type="button"
+                            >
+                                Tạo mới
+                            </button>
+                            <button
+                                hidden={pState.examNode11 ? false : true}
+                                onClick={() => router.push(`/exams/${pState.examNode11}`)}
                                 className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                 type="button"
                             >
                                 Chỉnh sửa
                             </button>
                             <button
-                                hidden={pState.questionNode11 ? false : true}
+                                hidden={pState.examNode11 ? false : true}
+                                onClick={e => deleteListQuestions(e, 'examNode11')}
                                 className="mx-2 mb-2 bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                 type="button"
                             >
-                                Xóa câu hỏi
+                                Xóa list câu hỏi
                             </button>
                         </div>
                     </div>

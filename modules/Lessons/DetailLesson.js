@@ -8,6 +8,7 @@ import Form2 from './components/Form2';
 import Test from './components/Test';
 const { checkNull, avatarImg, checkSelect } = displayHelpers;
 const { mediaURL } = serviceHelpers;
+import { loadingFalse, loadingTrue } from 'store/actions';
 
 export default function DetailLesson() {
     const router = useRouter();
@@ -23,7 +24,7 @@ export default function DetailLesson() {
         thumb: false,
         lessonContent: null,
         thumbName: null,
-        questionNode11: null,
+        examNode11: null,
         videoNode12: null,
         videoNode12Info: {},
         videoNode12Name: null,

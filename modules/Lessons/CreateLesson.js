@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { serviceHelpers, displayHelpers, openNotification, notiType } from 'helpers';
 import { useRouter } from 'next/router';
 import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { loadingFalse } from 'store/actions';
+import { loadingFalse, loadingTrue } from 'store/actions';
 const { checkNull, avatarImg, checkSelect } = displayHelpers;
 const { mediaURL } = serviceHelpers;
+import { AuthContext } from 'layouts/Admin';
 
 export default function CreateLesson() {
     const router = useRouter();
-
+    const [load, dispatch] = useContext(AuthContext);
     const [courseName, setCourseName] = useState(null);
     const courseId = parseInt(router.query.courseId);
     const [state, setState] = useState({
@@ -40,6 +41,7 @@ export default function CreateLesson() {
     }, [editorLoaded]);
 
     async function getDataCourse(id) {
+        dispatch(loadingTrue());
         const rs = await serviceHelpers.detailData('courses', id);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs;
@@ -50,6 +52,7 @@ export default function CreateLesson() {
             router.push('/auth/login');
             return <div></div>;
         }
+        dispatch(loadingFalse());
         return data;
     }
 
@@ -252,7 +255,7 @@ export default function CreateLesson() {
                             </div>
                         </div>
                         <div className="w-6/12 px-4 mt-4 mb-6">
-                            <div className="2xl:w-4/12">
+                            <div className="2xl:w-full w-full">
                                 <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Ảnh bài học: <span className="text-red-500">*</span>
                                 </label>
@@ -261,8 +264,8 @@ export default function CreateLesson() {
                                         <Button icon={<UploadOutlined />}>Chọn file</Button>
                                     </Upload>
                                 </div>
-                                <div className="w-7/12" hidden={state.thumb ? false : true}>
-                                    <img src={avatarImg(state.thumb)} className="object-contain w-full" alt="..."></img>
+                                <div className="w-full" hidden={state.thumb ? false : true}>
+                                    <img src={avatarImg(state.thumb)} className="h-40" alt="..."></img>
                                 </div>
                             </div>
                         </div>
