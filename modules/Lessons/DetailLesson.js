@@ -2,15 +2,17 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Upload } from 'antd';
 import { displayHelpers, notiType, openNotification, serviceHelpers } from 'helpers';
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import Form1 from './components/Form1';
 import Form2 from './components/Form2';
 import Test from './components/Test';
 const { checkNull, avatarImg, checkSelect } = displayHelpers;
 const { mediaURL } = serviceHelpers;
 import { loadingFalse, loadingTrue } from 'store/actions';
+import { AuthContext } from 'layouts/Admin';
 
 export default function DetailLesson() {
+    const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
     const { id } = router.query;
     const [courseName, setCourseName] = useState(null);
@@ -47,6 +49,7 @@ export default function DetailLesson() {
     }, []);
 
     useEffect(async () => {
+        dispatch(loadingTrue());
         const lesson = await getDataLeson(id);
         const psta = {
             ...lesson.data,
@@ -97,38 +100,55 @@ export default function DetailLesson() {
         setListThumb([{ url: mediaURL + lesson.data.streamPath, name: lesson.data.thumbName }]);
         const course = await getDataCourse(lesson.data.courseId);
         setCourseName(course.data.name);
+        dispatch(loadingFalse());
     }, [editorLoaded]);
 
     async function getDataLeson(id) {
+        dispatch(loadingTrue());
         const rs = await serviceHelpers.detailData('lessons', id);
-        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        if (!rs) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống');
+        }
         const data = rs;
 
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
 
         if (data.statusCode === 404) {
             router.push('/auth/login');
             return <div></div>;
         }
+        dispatch(loadingFalse());
         return data.data;
     }
 
     async function getDataCourse(id) {
+        dispatch(loadingTrue());
         const rs = await serviceHelpers.detailData('courses', id);
-        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        if (!rs) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống');
+        }
         const data = rs;
 
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
 
         if (data.statusCode === 404) {
             router.push('/auth/login');
             return <div></div>;
         }
+        dispatch(loadingFalse());
         return data.data;
     }
 
     async function onUpdate() {
-        const data = await CreateLesson(state);
+        const data = await UpdateLesson(state);
         if (!data) {
             return;
         }
@@ -136,30 +156,42 @@ export default function DetailLesson() {
         router.push(`/courses/${state.courseId}/lessons`);
     }
 
-    async function CreateLesson(body) {
+    async function UpdateLesson(body) {
+        dispatch(loadingTrue());
         const { data } = await serviceHelpers.updateData('lessons', id, body);
-        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
-
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-
-        if (data.statusCode === 404) {
-            router.push('/auth/login');
-            return <div></div>;
+        if (!data) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống');
         }
-        return data;
-    }
-
-    async function deleteFile(path) {
-        const { data } = await serviceHelpers.deleteFile(path);
-        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
-
         if (data.statusCode === 400) {
+            dispatch(loadingFalse());
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404) {
             router.push('/auth/login');
             return <div></div>;
         }
+        dispatch(loadingFalse());
+        return data;
+    }
+
+    async function deleteFile(path) {
+        dispatch(loadingTrue());
+        const { data } = await serviceHelpers.deleteFile(path);
+        if (!data) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống');
+        }
+
+        if (data.statusCode === 400) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
+        if (data.statusCode === 404) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        dispatch(loadingFalse());
         return data;
     }
 
@@ -199,15 +231,21 @@ export default function DetailLesson() {
     }
 
     async function uploadLessonThumb({ file, onSuccess, onError }) {
+        dispatch(loadingTrue());
         if (state.solveHomeworkDoc) await deleteFile(state.thumb);
         const { data } = await serviceHelpers.uploadFile('lessons/avatars', file);
-        if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
+        if (!data) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống');
+        }
 
         if (data.statusCode === 400) {
+            dispatch(loadingFalse());
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
         if (data.statusCode === 404) {
+            dispatch(loadingFalse());
             router.push('/auth/login');
             return <div></div>;
         }
@@ -216,6 +254,7 @@ export default function DetailLesson() {
             thumb: mediaURL + data.data.streamPath,
         });
         setListThumb([{ url: mediaURL + data.data.streamPath, name: data.data.originalname }]);
+        dispatch(loadingFalse());
         return onSuccess();
     }
 
@@ -235,6 +274,27 @@ export default function DetailLesson() {
         if (type == 'test') {
             return <Test />;
         }
+    }
+
+    async function checkAndActice(id) {
+        dispatch(loadingTrue());
+        const { data } = await serviceHelpers.updateData('lessons/checkActive', id);
+        if (!data) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống');
+        }
+
+        if (data.statusCode === 400) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
+            dispatch(loadingFalse());
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        dispatch(loadingFalse());
+        return onSuccess();
     }
 
     return (
@@ -359,7 +419,10 @@ export default function DetailLesson() {
                         <button
                             className="mx-2 mb-2 bg-green-400 hover:bg-green-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={onUpdate}
+                            onClick={e => {
+                                e.preventDefault();
+                                checkAndActice(id);
+                            }}
                         >
                             Kiểm tra điều kiện kích hoạt khóa học
                         </button>

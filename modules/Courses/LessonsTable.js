@@ -151,25 +151,29 @@ export default function LessonsTable() {
         router.push(lessonCreate);
     }
 
-    async function updateActive(id, body) {
-        const update = await serviceHelpers.updateData('lessons', id, body);
+    async function deleteLesson(id) {
+        dispatch(loadingTrue());
+        const update = await serviceHelpers.deleteData('lessons', id);
         if (update.data.statusCode === 400) {
             return;
         }
         const data = await getData(active, search, (page - 1) * 10);
         if (!data) {
+            dispatch(loadingFalse());
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
         if (data.statusCode === 400) {
+            dispatch(loadingFalse());
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
         if (data.statusCode === 404 || data.statusCode === 401) {
             router.push('/auth/login');
             return <div></div>;
         }
-        openNotification(notiType.success, 'Cập nhật thành công !');
+        openNotification(notiType.success, 'Xóa thành công !');
         setList(data.data.rows);
         setCount(data.data.count);
+        dispatch(loadingFalse());
     }
 
     async function handlePaginationChange(current) {
@@ -348,7 +352,7 @@ export default function LessonsTable() {
                         </thead>
                         <tbody>
                             {list && list.length > 0 ? (
-                                list.map((user, index) => <RowItemLesson data={user} key={index} updateActive={updateActive} />)
+                                list.map((user, index) => <RowItemLesson data={user} key={index} deleteLesson={deleteLesson} />)
                             ) : (
                                 <tr>
                                     <td colSpan="8">Không có dữ liệu</td>

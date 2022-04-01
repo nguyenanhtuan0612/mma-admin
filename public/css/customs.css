@@ -147,6 +147,16 @@
     z-index: 2;
 }
 
+.loading-admin {
+    position: absolute;
+    background: rgb(255, 255, 255, 0.5);
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
 @keyframes dot {
     50% {
         transform: translateX(96px);

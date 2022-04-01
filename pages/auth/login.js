@@ -49,7 +49,7 @@ export default function Login() {
 
     return (
         <>
-            <div className={loading == false ? 'hidden' : 'loading z-2'}>
+            <div className={loading == false ? 'hidden' : 'loading-admin z-2'}>
                 <div className="gooey z-2">
                     <span className="dot"></span>
                     <div className="dots">

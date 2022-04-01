@@ -129,11 +129,12 @@ async function updateData(path, id, body) {
             };
         }
         const url = `${process.env.BACKEND_URL}/${path}/${id}`;
-        return axios.patch(url, body, {
+        const data = await axios.patch(url, body, {
             headers: {
                 Authorization: token,
             },
         });
+        return data;
     } catch (error) {
         return error.response;
     }
