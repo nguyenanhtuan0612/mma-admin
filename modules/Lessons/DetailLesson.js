@@ -53,43 +53,7 @@ export default function DetailLesson() {
         const lesson = await getDataLeson(id);
         const psta = {
             ...lesson.data,
-            videoNode12Info: [
-                {
-                    url: lesson.data.videoNode12,
-                    name: lesson.data.videoNode12Name,
-                },
-            ],
             videoNode21Info: [
-                {
-                    url: lesson.data.videoNode21,
-                    name: lesson.data.videoNode21Name,
-                },
-            ],
-            videoNode31Info: [
-                {
-                    url: lesson.data.videoNode21,
-                    name: lesson.data.videoNode21Name,
-                },
-            ],
-            videoNode33Info: [
-                {
-                    url: lesson.data.videoNode21,
-                    name: lesson.data.videoNode21Name,
-                },
-            ],
-            videoNode41Info: [
-                {
-                    url: lesson.data.videoNode21,
-                    name: lesson.data.videoNode21Name,
-                },
-            ],
-            videoNode43Info: [
-                {
-                    url: lesson.data.videoNode21,
-                    name: lesson.data.videoNode21Name,
-                },
-            ],
-            videoNode63Info: [
                 {
                     url: lesson.data.videoNode21,
                     name: lesson.data.videoNode21Name,
@@ -269,10 +233,10 @@ export default function DetailLesson() {
             return <Form1 pState={state} setState={setState} courseName={courseName} />;
         }
         if (type == 'form_2') {
-            return <Form2 pState={state} />;
+            return <Form2 pState={state} setState={setState} courseName={courseName} />;
         }
         if (type == 'test') {
-            return <Test />;
+            return <Test pState={state} setState={setState} courseName={courseName} />;
         }
     }
 

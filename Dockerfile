@@ -1,27 +1,17 @@
-FROM node:14-alpine
+FROM node:14-alpine as build
 EXPOSE 3000
 WORKDIR /mma-admin
-
-# copy 
-COPY /components /mma-admin/components/
-COPY /helpers /mma-admin/helpers/
-COPY /layouts /mma-admin/layouts/
-COPY /modules /mma-admin/modules/
-COPY /pages /mma-admin/pages/
-COPY /public /mma-admin/public/
-COPY /styles /mma-admin/styles/
-COPY /store /mma-admin/store/
-COPY package.json /mma-admin/package.json
-COPY package-lock.json /mma-admin/package-lock.json
+COPY . /mma-admin/
 COPY .env.prod /mma-admin/.env
-COPY jsconfig.json /mma-admin/jsconfig.json
-COPY next.config.js /mma-admin/next.config.js
-COPY postcss.config.js /mma-admin/postcss.config.js
-COPY tailwind.config.js /mma-admin/tailwind.config.js
-
-# build 
 RUN npm install
-RUN npm run build
+RUN npm run export
 
-# start app
-CMD [ "npm","start" ]
+FROM nginx:alpine
+COPY --from=build /mma-admin/out /usr/share/nginx/html
+RUN rm /etc/nginx/conf.d/default.conf
+COPY /nginx/nginx.conf /etc/nginx/conf.d
+COPY /cert/cert.pem  /etc/letsencrypt/cert.pem
+COPY /cert/key.pem /etc/letsencrypt/key.pem
+EXPOSE 80
+EXPOSE 443
+CMD ["nginx", "-g", "daemon off;"]

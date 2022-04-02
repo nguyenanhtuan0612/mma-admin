@@ -1,5 +1,9 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { notiType, openNotification, serviceHelpers } from 'helpers';
+const { mediaURL } = serviceHelpers;
+import { AuthContext } from 'layouts/Admin';
+import { loadingFalse, loadingTrue } from 'store/actions';
 
 export default function Test({ pState, setState, courseName }) {
     const router = useRouter();
@@ -18,7 +22,6 @@ export default function Test({ pState, setState, courseName }) {
             router.push('/auth/login');
             return <div></div>;
         }
-        console.log(data.data.id);
         const rs1 = await serviceHelpers.updateData('lessons', pState.id, { ...pState, [field]: data.data.id });
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data1 = rs1.data;

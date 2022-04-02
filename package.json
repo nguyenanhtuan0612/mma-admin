@@ -4,13 +4,14 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "next start",
+        "start": "node server.js",
         "lint": "next lint",
         "format": "prettier --write \"**/**/*.js\"",
         "tailwind": "tailwindcss -i styles/index.css -o public/css/tailwind.css",
         "tailwind:w": "tailwind build -i styles/index.css -o public/css/tailwind.css --watch",
         "postcss": "postcss styles/index.css -o public/css/tailwind.css",
-        "postcss:w": "postcss styles/index.css -o public/css/tailwind.css -w"
+        "postcss:w": "postcss styles/index.css -o public/css/tailwind.css -w",
+        "export": "next build && next export"
     },
     "dependencies": {
         "@ant-design/icons": "^4.7.0",

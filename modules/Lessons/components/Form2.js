@@ -1,8 +1,8 @@
 import { UploadOutlined } from '@ant-design/icons';
 import ReactPlayer from 'react-player';
-import { Button, Dropdown, Menu, Select, Upload } from 'antd';
+import { Button, Upload } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { notiType, openNotification, serviceHelpers } from 'helpers';
 const { mediaURL } = serviceHelpers;
 import { AuthContext } from 'layouts/Admin';
@@ -11,48 +11,30 @@ import { loadingFalse, loadingTrue } from 'store/actions';
 export default function Form1({ pState, setState, courseName }) {
     const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
-    console.log(router);
-    const menuQuestion = (
-        <Menu>
-            <Menu.Item>
-                <button
-                    onClick={() => router.push('/questions/multipleChoice')}
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Trắc nghiệm
-                </button>
-            </Menu.Item>
-            <Menu.Item>
-                <button
-                    onClick={() => router.push('/questions/fill')}
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Điền từ
-                </button>
-            </Menu.Item>
-            <Menu.Item>
-                <button
-                    onClick={() => router.push('/questions/matching')}
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Nối
-                </button>
-            </Menu.Item>
-            <Menu.Item>
-                <button
-                    onClick={() =>
-                        router.push(
-                            `/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`,
-                            `/questions/drag?lessonId=${pState.id}&ref=${router.asPath}`,
-                        )
-                    }
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                >
-                    Kéo thả
-                </button>
-            </Menu.Item>
-        </Menu>
-    );
+    const [numQs, setNumQs] = useState({
+        easy: 0,
+        medium: 0,
+        hard: 0,
+    });
+
+    useEffect(async () => {
+        const data = await getNumQuestions(pState.id);
+        setNumQs(data.data);
+    }, [pState]);
+
+    async function getNumQuestions(id) {
+        const rs = await serviceHelpers.detailData('lessons/numQuestion', id);
+        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data = rs;
+
+        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        return data.data;
+    }
 
     async function uploadVideo(file, onSuccess, onError, field) {
         dispatch(loadingTrue());
@@ -77,6 +59,12 @@ export default function Form1({ pState, setState, courseName }) {
         const data = rs.data;
 
         if (data.statusCode === 400) {
+            dispatch(loadingFalse());
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode === 413) {
+            dispatch(loadingFalse());
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
@@ -95,7 +83,7 @@ export default function Form1({ pState, setState, courseName }) {
             ],
             duration: pState.duration + data.data.duration - oldDur,
         });
-        dispatch(loadingTrue());
+        dispatch(loadingFalse());
         return onSuccess();
     }
 
@@ -119,6 +107,11 @@ export default function Form1({ pState, setState, courseName }) {
             [field + 'Info']: [],
             duration: pState.duration - oldDur,
         });
+    }
+
+    async function onChangeState(field, value) {
+        value = '' ? null : value;
+        setState({ ...pState, [field]: value });
     }
 
     async function createListQuestions(e, field, node) {
@@ -174,22 +167,19 @@ export default function Form1({ pState, setState, courseName }) {
                 <div className="ml-2 w-6/12 mb-8 px-3">
                     <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 1</span>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Câu hỏi nhanh nút 1.1:</span>
-                        <div className="w-full px-6 flex mt-2 mb-2" hidden={pState.examNode11 ? false : true}>
-                            <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Câu hỏi 1:</span>
-                        </div>
-                        <div className="w-full px-6 flex mt-2 mb-2">
-                            <Dropdown overlay={menuQuestion} placement="bottomRight" arrow>
-                                <button
-                                    hidden={pState.examNode11 ? true : false}
-                                    className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                    type="button"
-                                >
-                                    Tạo mới
-                                </button>
-                            </Dropdown>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 1.1:</span>
+                        <div className="w-full px-6 flex mt-2 mb-8">
+                            <button
+                                onClick={e => createListQuestions(e, 'examNode11', '1.1')}
+                                hidden={pState.examNode11 ? true : false}
+                                className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                                type="button"
+                            >
+                                Tạo mới
+                            </button>
                             <button
                                 hidden={pState.examNode11 ? false : true}
+                                onClick={() => router.push(`/exams/${pState.examNode11}`)}
                                 className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                 type="button"
                             >
@@ -197,25 +187,26 @@ export default function Form1({ pState, setState, courseName }) {
                             </button>
                             <button
                                 hidden={pState.examNode11 ? false : true}
+                                onClick={e => deleteListQuestions(e, 'examNode11')}
                                 className="mx-2 mb-2 bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                                 type="button"
                             >
-                                Xóa câu hỏi
+                                Xóa list câu hỏi
                             </button>
                         </div>
                     </div>
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video tổng quan nút 1.2:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode12 ? pState.videoNode12Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode12')}
-                                onRemove={() => deleteVideo('videoNode12')}
-                            >
-                                <Button hidden={pState.videoNode12 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode12}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode12', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode12 ? false : true}>
                                 <ReactPlayer url={pState.videoNode12} width="100%" height="auto" controls />
                             </div>
@@ -258,15 +249,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 3.1:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode31 ? pState.videoNode31Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode31')}
-                                onRemove={() => deleteVideo('videoNode31')}
-                            >
-                                <Button hidden={pState.videoNode31 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode31}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode31', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode31 ? false : true}>
                                 <ReactPlayer url={pState.videoNode31} width="100%" height="auto" controls />
                             </div>
@@ -309,15 +300,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 3.3:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode33 ? pState.videoNode33Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode33')}
-                                onRemove={() => deleteVideo('videoNode33')}
-                            >
-                                <Button hidden={pState.videoNode33 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode33}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode33', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode33 ? false : true}>
                                 <ReactPlayer url={pState.videoNode33} width="100%" height="auto" controls />
                             </div>
@@ -363,15 +354,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 4.1:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode41 ? pState.videoNode41Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode41')}
-                                onRemove={() => deleteVideo('videoNode41')}
-                            >
-                                <Button hidden={pState.videoNode41 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode41}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode41', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode41 ? false : true}>
                                 <ReactPlayer url={pState.videoNode41} width="100%" height="auto" controls />
                             </div>
@@ -414,17 +405,17 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 4.3:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode42 ? pState.videoNode42Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode42')}
-                                onRemove={() => deleteVideo('videoNode42')}
-                            >
-                                <Button hidden={pState.videoNode42 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
-                            <div className="w-full mt-2" hidden={pState.videoNode42 ? false : true}>
-                                <ReactPlayer url={pState.videoNode42} width="100%" height="auto" controls />
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode43}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode43', e.target.value);
+                                }}
+                            />
+                            <div className="w-full mt-2" hidden={pState.videoNode43 ? false : true}>
+                                <ReactPlayer url={pState.videoNode43} width="100%" height="auto" controls />
                             </div>
                         </div>
                     </div>
@@ -478,15 +469,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full">
                         <div className="relative w-full mb-3 items-center flex">
                             <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">Câu hỏi dễ:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">15</span>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.easy}/15</span>
                         </div>
                         <div className="relative w-full mb-3 items-center flex">
                             <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">Câu hỏi trung bình:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">10</span>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.medium}/10</span>
                         </div>
                         <div className="relative w-full mb-3 items-center flex">
                             <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">Câu hỏi khó:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">5</span>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.hard}/5</span>
                         </div>
                     </div>
                 </div>
@@ -563,15 +554,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video giá trị cuộc sống 6.3:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode63 ? pState.videoNode63Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode63')}
-                                onRemove={() => deleteVideo('videoNode63')}
-                            >
-                                <Button hidden={pState.videoNode63 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode63}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode63', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode63 ? false : true}>
                                 <ReactPlayer url={pState.videoNode63} width="100%" height="auto" controls />
                             </div>

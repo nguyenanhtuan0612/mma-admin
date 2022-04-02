@@ -109,6 +109,11 @@ export default function Form1({ pState, setState, courseName }) {
         });
     }
 
+    async function onChangeState(field, value) {
+        value = '' ? null : value;
+        setState({ ...pState, [field]: value });
+    }
+
     async function createListQuestions(e, field, node) {
         e.preventDefault();
         const examName = `List câu hỏi nút ${node} của bài học: ${pState.name} - Khóa: ${courseName}`;
@@ -193,15 +198,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video tổng quan nút 1.2:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode12 ? pState.videoNode12Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode12')}
-                                onRemove={() => deleteVideo('videoNode12')}
-                            >
-                                <Button hidden={pState.videoNode12 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode12}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode12', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode12 ? false : true}>
                                 <ReactPlayer url={pState.videoNode12} width="100%" height="auto" controls />
                             </div>
@@ -287,15 +292,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 3.1:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode31 ? pState.videoNode31Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode31')}
-                                onRemove={() => deleteVideo('videoNode31')}
-                            >
-                                <Button hidden={pState.videoNode31 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode31}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode31', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode31 ? false : true}>
                                 <ReactPlayer url={pState.videoNode31} width="100%" height="auto" controls />
                             </div>
@@ -338,15 +343,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 3.3:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode33 ? pState.videoNode33Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode33')}
-                                onRemove={() => deleteVideo('videoNode33')}
-                            >
-                                <Button hidden={pState.videoNode33 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode33}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode33', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode33 ? false : true}>
                                 <ReactPlayer url={pState.videoNode33} width="100%" height="auto" controls />
                             </div>
@@ -392,15 +397,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 4.1:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode41 ? pState.videoNode41Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode41')}
-                                onRemove={() => deleteVideo('videoNode41')}
-                            >
-                                <Button hidden={pState.videoNode41 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode41}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode41', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode41 ? false : true}>
                                 <ReactPlayer url={pState.videoNode41} width="100%" height="auto" controls />
                             </div>
@@ -443,17 +448,17 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 4.3:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode42 ? pState.videoNode42Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode42')}
-                                onRemove={() => deleteVideo('videoNode42')}
-                            >
-                                <Button hidden={pState.videoNode42 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
-                            <div className="w-full mt-2" hidden={pState.videoNode42 ? false : true}>
-                                <ReactPlayer url={pState.videoNode42} width="100%" height="auto" controls />
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode43}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode43', e.target.value);
+                                }}
+                            />
+                            <div className="w-full mt-2" hidden={pState.videoNode43 ? false : true}>
+                                <ReactPlayer url={pState.videoNode43} width="100%" height="auto" controls />
                             </div>
                         </div>
                     </div>
@@ -592,15 +597,15 @@ export default function Form1({ pState, setState, courseName }) {
                     <div className="w-full mb-2">
                         <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video giá trị cuộc sống 6.3:</span>
                         <div className="w-full mt-2 mb-8 h-auto">
-                            <Upload
-                                fileList={pState.videoNode63 ? pState.videoNode63Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode63')}
-                                onRemove={() => deleteVideo('videoNode63')}
-                            >
-                                <Button hidden={pState.videoNode63 ? true : false} icon={<UploadOutlined />}>
-                                    Chọn file
-                                </Button>
-                            </Upload>
+                            <input
+                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                type="text"
+                                value={pState.videoNode63}
+                                onChange={e => {
+                                    e.preventDefault();
+                                    onChangeState('videoNode63', e.target.value);
+                                }}
+                            />
                             <div className="w-full mt-2" hidden={pState.videoNode63 ? false : true}>
                                 <ReactPlayer url={pState.videoNode63} width="100%" height="auto" controls />
                             </div>
