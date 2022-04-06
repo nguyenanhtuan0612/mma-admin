@@ -5,7 +5,8 @@ var fs = require('fs');
 const next = require('next');
 const port = parseInt(process.env.PORT) || 3000;
 const httpsPort = parseInt(process.env.PORT) || 3443;
-const dev = process.env.NODE_ENV !== 'production';
+const dev = process.env.NODE_ENV === 'production';
+console.log(dev);
 const app = next({ dev, dir: __dirname });
 const handle = app.getRequestHandler();
 

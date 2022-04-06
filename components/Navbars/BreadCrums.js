@@ -10,6 +10,11 @@ const Route2LabelMap = {
     teachers: 'Quản lý giáo viên',
     courses: 'Quản lý khoá học',
     lessons: 'Danh sách bài học',
+    exams: 'Danh sách câu hỏi',
+    questions: 'Câu hỏi',
+    multipleChoice: 'Trắc nghiệm',
+    drag: 'Kéo thả',
+    matching: 'Nối',
 };
 
 export function BreadCrumbs() {

@@ -68,7 +68,7 @@ export default function Form1({ pState, setState, courseName }) {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -100,7 +100,7 @@ export default function Form1({ pState, setState, courseName }) {
             router.push('/auth/login');
             return <div></div>;
         }
-        const oldDur = data1.data.data.duration;
+        const oldDur = data1.data ? data1.data.data.duration : 0;
         setState({
             ...pState,
             [field]: null,
@@ -124,7 +124,7 @@ export default function Form1({ pState, setState, courseName }) {
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -153,7 +153,7 @@ export default function Form1({ pState, setState, courseName }) {
         if (data.statusCode === 400) {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -505,6 +505,9 @@ export default function Form1({ pState, setState, courseName }) {
                         <button
                             className="bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
+                            onClick={e => {
+                                router.push(`/exams?lessonId=${pState.id}`, `/exams?lessonId=${pState.id}`);
+                            }}
                         >
                             Quản lý kho câu hỏi
                         </button>

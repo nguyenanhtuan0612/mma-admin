@@ -13,11 +13,12 @@ export default function CreateMultipleChoice() {
     const router = useRouter();
     const lessonId = parseInt(router.query.lessonId);
     const examId = parseInt(router.query.examId);
+    const isRandom = router.query.isRandom == 'true' ? true : false;
     const [lesson, setLesson] = useState(null);
     const [state, setState] = useState({
         question: null,
         level: 'easy',
-        isRandom: false,
+        isRandom: isRandom || false,
         audio: null,
         audioInfo: [],
         image: null,
@@ -46,7 +47,7 @@ export default function CreateMultipleChoice() {
                 openNotification(notiType.error, 'Lỗi hệ thống', data.message);
                 return onError(data.message);
             }
-            if (data.statusCode === 404) {
+            if (data.statusCode <= 404 && data.statusCode >= 401) {
                 router.push('/auth/login');
                 return <div></div>;
             }
@@ -66,7 +67,7 @@ export default function CreateMultipleChoice() {
                 <div style={{ marginTop: 8 }}>Upload</div>
             </div>
         );
-        console.log(dt);
+
         return (
             <div className="w-full mt-4">
                 <div className="w-full flex border-2 p-2">
@@ -154,7 +155,7 @@ export default function CreateMultipleChoice() {
         const data = rs;
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -188,7 +189,7 @@ export default function CreateMultipleChoice() {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -278,15 +279,18 @@ export default function CreateMultipleChoice() {
         }
 
         const body = { ...state, answers: zones, lessonId };
-        console.log(body);
         const rs1 = await serviceHelpers.createData('questions/multiChoice', body);
         const data1 = catchErr(rs1);
-        const exam = catchErr(await serviceHelpers.detailData('exams', examId));
-        const arr = exam.data.exam.listQuestions;
-        arr.push(data1.data.id);
-        catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+        if (examId) {
+            const exam = catchErr(await serviceHelpers.detailData('exams', examId));
+            const arr = exam.data.exam.listQuestions;
+            arr.push(data1.data.id);
+            catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+            dispatch(loadingFalse());
+            return router.push(`/exams/${examId}`, `/exams/${examId}`);
+        }
         dispatch(loadingFalse());
-        router.push(`/exams/${examId}`, `/exams/${examId}`);
+        router.push(`/exams?lessonId=${lessonId}`, `/exams?lessonId=${lessonId}`);
     }
 
     function catchErr(rs) {
@@ -296,7 +300,7 @@ export default function CreateMultipleChoice() {
         if (data.statusCode === 400) {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }

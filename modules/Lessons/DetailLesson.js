@@ -81,7 +81,7 @@ export default function DetailLesson() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
 
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -103,7 +103,7 @@ export default function DetailLesson() {
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
 
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -131,7 +131,7 @@ export default function DetailLesson() {
             dispatch(loadingFalse());
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -151,7 +151,7 @@ export default function DetailLesson() {
             dispatch(loadingFalse());
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -208,7 +208,7 @@ export default function DetailLesson() {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             dispatch(loadingFalse());
             router.push('/auth/login');
             return <div></div>;

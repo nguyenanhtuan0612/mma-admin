@@ -69,7 +69,7 @@ export default class MyApp extends App {
             <React.Fragment>
                 <Head>
                     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-                    <title>MathMap Academy</title>
+                    <title>EduMaps Admin</title>
                 </Head>
                 <Layout>
                     <Component {...pageProps} />

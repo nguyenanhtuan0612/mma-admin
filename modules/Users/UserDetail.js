@@ -43,7 +43,7 @@ export default function UserDetail() {
             console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -83,7 +83,7 @@ export default function UserDetail() {
             console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -99,7 +99,7 @@ export default function UserDetail() {
             console.log(data.message);
             return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }

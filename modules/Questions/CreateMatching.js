@@ -45,7 +45,7 @@ export default function CreateMatching() {
                 openNotification(notiType.error, 'Lỗi hệ thống', data.message);
                 return onError(data.message);
             }
-            if (data.statusCode === 404) {
+            if (data.statusCode <= 404 && data.statusCode >= 401) {
                 router.push('/auth/login');
                 return <div></div>;
             }
@@ -163,7 +163,7 @@ export default function CreateMatching() {
         const data = rs;
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -194,7 +194,7 @@ export default function CreateMatching() {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -300,7 +300,7 @@ export default function CreateMatching() {
         if (data.statusCode === 400) {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }

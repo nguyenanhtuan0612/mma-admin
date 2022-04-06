@@ -45,7 +45,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
                 openNotification(notiType.error, 'Lỗi hệ thống', data.message);
                 return onError(data.message);
             }
-            if (data.statusCode === 404) {
+            if (data.statusCode <= 404 && data.statusCode >= 401) {
                 router.push('/auth/login');
                 return <div></div>;
             }
@@ -174,7 +174,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
         const data = rs;
         if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -208,7 +208,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
             return onError(data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
@@ -301,12 +301,16 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
         //console.log(body);
         const rs1 = await serviceHelpers.updateData('questions/multiChoice', data.id, body);
         const data1 = catchErr(rs1);
-        const exam = catchErr(await serviceHelpers.detailData('exams', examId));
-        const arr = exam.data.exam.listQuestions;
-        arr.push(data1.data.id);
-        catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+        if (examId) {
+            const exam = catchErr(await serviceHelpers.detailData('exams', examId));
+            const arr = exam.data.exam.listQuestions;
+            arr.push(data1.data.id);
+            catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+            dispatch(loadingFalse());
+            return router.push(`/exams/${examId}`, `/exams/${examId}`);
+        }
         dispatch(loadingFalse());
-        router.push(`/exams/${examId}`, `/exams/${examId}`);
+        return router.push(`/exams?lessonId=${lessonId}`, `/exams?lessonId=${lessonId}`);
     }
 
     function catchErr(rs) {
@@ -316,7 +320,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
         if (data.statusCode === 400) {
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
         }
-        if (data.statusCode === 404) {
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
             return <div></div>;
         }
