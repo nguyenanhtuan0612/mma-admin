@@ -225,13 +225,15 @@ export default function ExamsTable() {
                         Tạo mới
                     </button>
                 </Dropdown>
-                {/* <button
-                    className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                <button
+                    className=" mx-2 float-right mb-2 bg-white hover:bg-yellow-500 text-yellow-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={handleExportExcel}
+                    onClick={() => {
+                        router.push(`/lessons/${exam.lessonId}`, `/lessons/${exam.lessonId}`);
+                    }}
                 >
-                    <span className="fas fa-table mr-2"></span> Xuất File Excel
-                </button> */}
+                    <span className="fas fa-table mr-2"></span> Thông tin bài học
+                </button>
             </div>
 
             <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'}>

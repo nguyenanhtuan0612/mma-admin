@@ -257,8 +257,27 @@ export default function DetailLesson() {
             router.push('/auth/login');
             return <div></div>;
         }
-        dispatch(loadingFalse());
-        return onSuccess();
+        setState({ ...state, active: data.data.active });
+        return dispatch(loadingFalse());
+    }
+
+    async function deActive() {
+        dispatch(loadingTrue());
+        const { data } = await serviceHelpers.updateData('lessons', id, { ...state, active: false });
+        if (!data) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống');
+        }
+        if (data.statusCode === 400) {
+            dispatch(loadingFalse());
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        }
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        setState({ ...state, active: data.data.active });
+        return dispatch(loadingFalse());
     }
 
     return (
@@ -383,12 +402,24 @@ export default function DetailLesson() {
                         <button
                             className="mx-2 mb-2 bg-green-400 hover:bg-green-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
+                            hidden={state.active ? true : false}
                             onClick={e => {
                                 e.preventDefault();
                                 checkAndActice(id);
                             }}
                         >
-                            Kiểm tra điều kiện kích hoạt khóa học
+                            Kiểm tra điều kiện kích hoạt bài học
+                        </button>
+                        <button
+                            className="mx-2 mb-2 bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                            type="button"
+                            hidden={state.active ? false : true}
+                            onClick={e => {
+                                e.preventDefault();
+                                deActive(id);
+                            }}
+                        >
+                            Vô hiệu bài học
                         </button>
                         <button
                             className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"

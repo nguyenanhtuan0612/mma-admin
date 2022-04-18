@@ -15,6 +15,7 @@ const Route2LabelMap = {
     multipleChoice: 'Trắc nghiệm',
     drag: 'Kéo thả',
     matching: 'Nối',
+    rating: 'Đánh giá',
 };
 
 export function BreadCrumbs() {

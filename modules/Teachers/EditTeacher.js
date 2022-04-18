@@ -169,7 +169,7 @@ export default function EditTeacher() {
             <div className="border-2">
                 <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <img src={avatarImg(createObjectURL)} className="object-contain h-16 w-16 bg-white rounded-full border mr-4" alt="..."></img>{' '}
+                        <img src={avatarImg(createObjectURL)} className="object-cover h-16 w-16 bg-white rounded-full border mr-4" alt="..."></img>{' '}
                         <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(data.name)}</b>
                     </div>
                 </div>
@@ -180,7 +180,7 @@ export default function EditTeacher() {
                                 <img
                                     alt="..."
                                     src={avatarImg(createObjectURL)}
-                                    className=" object-contain shadow-xl rounded-full border 2xl:w-40 2xl:h-40 w-40 h-40"
+                                    className=" object-cover shadow-xl rounded-full border 2xl:w-40 2xl:h-40 w-40 h-40"
                                 />
                             </div>
                             <div className="w-full flex justify-center mt-4">

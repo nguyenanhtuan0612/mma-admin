@@ -52,7 +52,7 @@ export default function RowItemTeacher({ data, updateActive }) {
                     >
                         <img
                             src={avatarImg(avatar)}
-                            className="object-contain 2xl:h-12 2xl:w-12 2xl:flex xl:hidden xl:w-8 xl:h-8 bg-white rounded-full border"
+                            className="object-cover 2xl:h-12 2xl:w-12 2xl:flex xl:hidden xl:w-8 xl:h-8 bg-white rounded-full border"
                             alt="..."
                         ></img>{' '}
                         <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(name)}</span>

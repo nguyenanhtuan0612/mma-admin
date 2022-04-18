@@ -1,5 +1,5 @@
 import React, { createRef, useContext, useEffect, useState } from 'react';
-import { Dropdown, Menu, Pagination } from 'antd';
+import { Dropdown, Menu, Pagination, Upload } from 'antd';
 import HeaderCell from '../../components/Tables/HeaderCell';
 import { serviceHelpers, openNotification, notiType, displayHelpers } from 'helpers';
 import router, { useRouter } from 'next/router';
@@ -17,6 +17,7 @@ export default function ExamsTable() {
     const inputSearchRef = createRef();
     const [page, setPage] = useState(1);
     const [change, setChange] = useState(false);
+    const [count, setCount] = useState(0);
 
     const router = useRouter();
     const { lessonId } = router.query;
@@ -41,6 +42,7 @@ export default function ExamsTable() {
             hard: data.data.hard,
         });
         setListQuestions(data.data.listQuestions.rows);
+        setCount(data.data.listQuestions.count);
         dispatch(loadingFalse());
     }, [change]);
 
@@ -107,13 +109,13 @@ export default function ExamsTable() {
             return <div></div>;
         }
         openNotification(notiType.success, 'Cập nhật thành công !');
-        setListQuestions(data.data.rows);
-        setCount(data.data.count);
+        setListQuestions(data.data.listQuestions.rows);
+        setCount(data.data.listQuestions.count);
     }
 
     async function handlePaginationChange(current) {
         dispatch(loadingTrue());
-        const data = await getData(active, search, (current - 1) * 10);
+        const data = await getData((current - 1) * 10);
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -124,22 +126,20 @@ export default function ExamsTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setExams(data.data.exam);
-        setListQuestions(data.data.listQuestion);
+        setListQuestions(data.data.listQuestions.rows);
+        setCount(data.data.listQuestions.count);
+        setPage(current);
         dispatch(loadingFalse());
     }
 
-    async function getData() {
-        const { data } = await serviceHelpers.detailData('lessons/numQuestion', lessonId);
+    async function getData(start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+        const { data } = await serviceHelpers.getListData(`lessons/numQuestion/${lessonId}`, [], sort, start);
         return data;
     }
 
     async function deleteQuestion(qsId) {
         dispatch(loadingTrue());
-        const valueToRemove = qsId;
-        const arr = exam.listQuestions.filter(item => item !== valueToRemove);
-
-        const data = await serviceHelpers.updateData('exams', id, { listQuestions: arr });
+        const data = await serviceHelpers.updateData('questions/random', qsId, {});
         if (!data) {
             return openNotification(notiType.error, 'Lỗi hệ thống');
         }
@@ -150,13 +150,15 @@ export default function ExamsTable() {
             router.push('/auth/login');
             return <div></div>;
         }
-        setChange(!change);
+        const rows = await getData((page - 1) * 10);
+        setListQuestions(rows.data.listQuestions.rows);
+        setPage(page);
         dispatch(loadingFalse());
     }
 
-    return (
-        <>
-            <div>
+    const menuQuestion = (
+        <Menu>
+            <Menu.Item>
                 <button
                     onClick={() =>
                         router.push(
@@ -164,17 +166,71 @@ export default function ExamsTable() {
                             `/questions/multipleChoice?&lessonId=${lessonId}&isRandom=true`,
                         )
                     }
-                    className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
                 >
-                    Tạo mới câu hỏi trắc nghiệm
+                    Thủ công
                 </button>
-                {/* <button
-                    className="2xl:w-2/12 xl:w-3/12 w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+            </Menu.Item>
+            <Menu.Item>
+                <button className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}>
+                    <Upload showUploadList={false} customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError)}>
+                        Nhập từ file excel
+                    </Upload>
+                </button>
+                {/* <Upload>
+                    <button
+                        onClick={() => {}}
+                        className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                    >
+                        Nhập từ file excel
+                    </button>
+                </Upload> */}
+                ,
+            </Menu.Item>
+        </Menu>
+    );
+
+    async function uploadFile(file, onSuccess, onError) {
+        dispatch(loadingTrue());
+        const body = new FormData();
+        body.append('file', file);
+        const rs = await serviceHelpers.updateData('exams/upload', lessonId, body);
+        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data = rs.data;
+
+        if (data.statusCode === 400) {
+            openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+            return onError(data.message);
+        }
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        const rows = await getData((page - 1) * 10);
+        dispatch(loadingFalse());
+        setListQuestions(rows.data.listQuestions.rows);
+        setPage(page);
+        openNotification(notiType.success, `Thêm thành công ${data.data.count} câu hỏi !`);
+        return onSuccess();
+    }
+
+    return (
+        <>
+            <div>
+                <Dropdown overlay={menuQuestion} placement="bottomRight" arrow>
+                    <button className="w-2/12 mx-2 float-right mb-2 bg-white hover:bg-sky-500 text-sky-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150">
+                        Tạo mới
+                    </button>
+                </Dropdown>
+                <button
+                    className=" mx-2 float-right mb-2 bg-white hover:bg-yellow-500 text-yellow-500 hover:text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    onClick={handleExportExcel}
+                    onClick={() => {
+                        router.push(`/lessons/${lessonId}`, `/lessons/${lessonId}`);
+                    }}
                 >
-                    <span className="fas fa-table mr-2"></span> Xuất File Excel
-                </button> */}
+                    <span className="fas fa-table mr-2"></span> Thông tin bài học
+                </button>
             </div>
 
             <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'}>
@@ -217,13 +273,7 @@ export default function ExamsTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 justify-center bg-blueGray-100">
                     <div className="flex flex-wrap items-center justify-center">
                         <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                            <Pagination
-                                total={listQuestions.count}
-                                pageSize={10}
-                                showSizeChanger={false}
-                                current={page}
-                                onChange={handlePaginationChange}
-                            />
+                            <Pagination total={count} pageSize={10} showSizeChanger={false} current={page} onChange={handlePaginationChange} />
                         </div>
                     </div>
                 </div>

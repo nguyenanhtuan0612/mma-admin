@@ -379,7 +379,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
                                                 <Upload
                                                     fileList={state.image ? state.imageInfo : []}
                                                     customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
-                                                    onRemove={() => deleteFile()}
+                                                    onRemove={() => deleteFile('image')}
                                                 >
                                                     <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
                                                         Chọn file
@@ -422,7 +422,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
                                                 <Upload
                                                     fileList={state.solve ? state.solveInfo : []}
                                                     customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'solve')}
-                                                    onRemove={() => deleteFile()}
+                                                    onRemove={() => deleteFile('solve')}
                                                 >
                                                     <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>
                                                         Chọn file
