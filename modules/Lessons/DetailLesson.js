@@ -117,7 +117,6 @@ export default function DetailLesson() {
             return;
         }
         openNotification(notiType.success, 'Lưu thành công !');
-        router.push(`/courses/${state.courseId}/lessons`);
     }
 
     async function UpdateLesson(body) {
@@ -395,7 +394,7 @@ export default function DetailLesson() {
                         <button
                             className="mx-2 mb-2 bg-yellow-500 hover:bg-yellow-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={() => router.back()}
+                            onClick={() => router.push(`/courses/${state.courseId}/lessons`, `/courses/${state.courseId}/lessons`)}
                         >
                             Trở về
                         </button>

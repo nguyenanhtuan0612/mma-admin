@@ -151,6 +151,11 @@ export default function ExamsTable() {
             return <div></div>;
         }
         const rows = await getData((page - 1) * 10);
+        setNumQs({
+            easy: rows.data.easy,
+            medium: rows.data.medium,
+            hard: rows.data.hard,
+        });
         setListQuestions(rows.data.listQuestions.rows);
         setPage(page);
         dispatch(loadingFalse());
@@ -207,9 +212,15 @@ export default function ExamsTable() {
             return <div></div>;
         }
         const rows = await getData((page - 1) * 10);
-        dispatch(loadingFalse());
+
         setListQuestions(rows.data.listQuestions.rows);
+        setNumQs({
+            easy: rows.data.easy,
+            medium: rows.data.medium,
+            hard: rows.data.hard,
+        });
         setPage(page);
+        dispatch(loadingFalse());
         openNotification(notiType.success, `Thêm thành công ${data.data.count} câu hỏi !`);
         return onSuccess();
     }
