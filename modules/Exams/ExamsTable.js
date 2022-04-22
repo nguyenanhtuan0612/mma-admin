@@ -23,7 +23,7 @@ export default function ExamsTable() {
 
     const menuQuestion = (
         <Menu>
-            {/* <Menu.Item>
+            <Menu.Item>
                 <button
                     onClick={() =>
                         router.push(
@@ -35,7 +35,7 @@ export default function ExamsTable() {
                 >
                     Sắp xếp
                 </button>
-            </Menu.Item> */}
+            </Menu.Item>
             <Menu.Item>
                 <button
                     onClick={() =>

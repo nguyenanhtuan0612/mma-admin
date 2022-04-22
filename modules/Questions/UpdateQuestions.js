@@ -6,6 +6,7 @@ import { notiType, openNotification, serviceHelpers } from 'helpers';
 import UpdateMatching from './UpdateMatching';
 import UpdateDrag from './UpdateDrag';
 import UpdateMultipleChoice from './UpdateMultipleChoice';
+import UpdateOrder from './UpdateOrder';
 
 export default function UpdateQuestions() {
     const [load, dispatch] = useContext(AuthContext);
@@ -44,6 +45,9 @@ export default function UpdateQuestions() {
             }
             case 'multiChoice': {
                 return <UpdateMultipleChoice data={question} lessonId={question.lessonId} />;
+            }
+            case 'order': {
+                return <UpdateOrder data={question} lessonId={question.lessonId} />;
             }
             default: {
                 return 'Không tìm thấy câu hỏi !!';

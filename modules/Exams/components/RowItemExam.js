@@ -38,6 +38,9 @@ export default function RowItemExams({ data, deleteQuestion, examId }) {
             case 'multiChoice': {
                 return 'Trắc nghiệm';
             }
+            case 'order': {
+                return 'Sắp xếp';
+            }
             default: {
                 return '...';
             }
