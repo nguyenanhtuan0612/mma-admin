@@ -16,6 +16,7 @@ const Route2LabelMap = {
     drag: 'Kéo thả',
     matching: 'Nối',
     rating: 'Đánh giá',
+    promotions: 'Quản lý khuyến mại',
 };
 
 export function BreadCrumbs() {
