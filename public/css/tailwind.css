@@ -365,7 +365,7 @@ ul {
  */
 
 html {
-  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   /* 1 */
   line-height: 1.5;
   /* 2 */
@@ -1592,6 +1592,10 @@ video {
   width: 50%;
 }
 
+.w-1\/12 {
+  width: 8.333333%;
+}
+
 .w-2\/12 {
   width: 16.666667%;
 }
@@ -1622,6 +1626,10 @@ video {
 
 .w-9\/12 {
   width: 75%;
+}
+
+.w-10\/12 {
+  width: 83.333333%;
 }
 
 .w-full {
@@ -3284,7 +3292,7 @@ video {
 }
 
 .font-sans {
-  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .text-xs {

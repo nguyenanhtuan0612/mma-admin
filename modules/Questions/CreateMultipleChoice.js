@@ -3,8 +3,10 @@ import { Button, Upload } from 'antd';
 import { notiType, openNotification, serviceHelpers } from 'helpers';
 import { AuthContext } from 'layouts/Admin';
 import { useRouter } from 'next/router';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
+import ReactHtmlParser from 'react-html-parser';
+import Latex from 'react-latex';
 import { loadingFalse, loadingTrue } from 'store/actions';
 const { mediaURL } = serviceHelpers;
 
@@ -27,9 +29,14 @@ export default function CreateMultipleChoice() {
         solve: null,
         solveInfo: [],
         typeAnswer: 'text',
+        name: null,
     });
     const [zones, setZones] = useState([]);
     const [change, setChange] = useState(false);
+
+    const editorRef = useRef();
+    const [editorLoaded, setEditorLoaded] = useState(false);
+    const { CKEditor, ClassicEditor } = editorRef.current || {};
 
     function Zone({ state, data, index, deleteZone, onChangeZone }) {
         const [dt, setDt] = useState(data);
@@ -140,6 +147,11 @@ export default function CreateMultipleChoice() {
 
     useEffect(async () => {
         dispatch(loadingTrue());
+        editorRef.current = {
+            CKEditor: require('@ckeditor/ckeditor5-react').CKEditor,
+            ClassicEditor: require('@ckeditor/ckeditor5-build-classic'),
+        };
+        setEditorLoaded(true);
         const lessonName = await getDetailLesson();
         setLesson(lessonName.name);
         dispatch(loadingFalse());
@@ -307,6 +319,36 @@ export default function CreateMultipleChoice() {
         return data;
     }
 
+    function renderLatex(content) {
+        if (content) {
+            // content = content.replace(/\<p>/g, '<div>');
+            // content = content.replace(/\<\/p\>/g, '<div>');
+            const html = ReactHtmlParser(content);
+            console.log(content);
+            const renderHtml = [];
+            for (let iterator of html) {
+                const child = iterator.props.children[0];
+                const split = child.split('$');
+                const htmlArr = [];
+                console.log(iterator.props.children);
+                for (let [index, iter] of split.entries()) {
+                    if (index % 2 == 0) {
+                        htmlArr.push(`${iter}`);
+                    } else {
+                        htmlArr.push(<Latex>{`$${iter}$`}</Latex>);
+                    }
+                }
+                renderHtml.push(React.createElement('p', null, htmlArr));
+                console.log('a', iterator.props.children);
+                console.log(2);
+            }
+            console.log(1);
+            const data = React.createElement(React.Fragment, null, renderHtml);
+            console.log('end', data);
+            return data;
+        }
+    }
+
     return (
         <>
             <div className="border-2">
@@ -317,6 +359,59 @@ export default function CreateMultipleChoice() {
                 </div>
                 <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
                     <div className="w-full pt-4 flex">
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full items-center flex px-4">
+                                <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Tên câu hỏi: <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    onChange={e => {
+                                        onChangeState('name', e);
+                                    }}
+                                    value={state.name}
+                                    className="w-9/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full flex">
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Câu hỏi: <span className="text-red-500">*</span>
+                                </label>
+                                <div className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
+                                    {editorLoaded ? (
+                                        <CKEditor
+                                            editor={ClassicEditor}
+                                            data={state.question}
+                                            config={{
+                                                toolbar: ['undo', 'redo'],
+                                            }}
+                                            onChange={(event, editor) => {
+                                                const data = editor.getData();
+                                                setState({ ...state, question: data });
+                                            }}
+                                        />
+                                    ) : (
+                                        <div>Editor loading</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Xem trước: <span className="text-red-500">*</span>
+                                </label>
+                                <div className="text-lg">
+                                    {renderLatex(state.question)}
+                                    <Latex>{`$\\sqrt{2}$`}</Latex>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full flex">
                         <div className="w-6/12 px-4 mb-6">
                             <div className="w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                                 <div className="flex flex-wrap w-full">
@@ -350,47 +445,6 @@ export default function CreateMultipleChoice() {
                                                 <option value="medium">Trung Bình</option>
                                                 <option value="hard">Khó</option>
                                             </select>
-                                        </div>
-                                    </div>
-                                    <div className="w-full mb-2  px-4">
-                                        <div className="relative w-full mb-3 flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
-                                            <div className="w-9/12 px-3 h-auto ">
-                                                <Upload
-                                                    fileList={state.image ? state.imageInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
-                                                    onRemove={() => deleteFile('image')}
-                                                >
-                                                    <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
-                                                        Chọn file
-                                                    </Button>
-                                                </Upload>
-                                                <div
-                                                    style={{ width: '100%', height: 'auto', position: 'relative' }}
-                                                    hidden={state.image ? false : true}
-                                                >
-                                                    <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="w-full mb-2  px-4">
-                                        <div className="relative w-full mb-3 flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
-                                            <div className="w-9/12 px-3 h-auto ">
-                                                <Upload
-                                                    fileList={state.audio ? state.audioInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
-                                                    onRemove={() => deleteFile('audio')}
-                                                >
-                                                    <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
-                                                        Chọn file
-                                                    </Button>
-                                                </Upload>
-                                                <div className="w-full mt-2" hidden={state.audio ? false : true}>
-                                                    <ReactAudioPlayer src={state.audio} controls />
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                     <div className="w-full mb-2  px-4">
@@ -465,50 +519,91 @@ export default function CreateMultipleChoice() {
                             </div>
                         </div>
                         <div className="w-6/12 px-4 mt-4 mb-6">
-                            <div className="2xl:w-full">
-                                <div className="w-full">
-                                    <div className="w-full flex">
-                                        <div className="w-6/12 items-center flex">
-                                            <label className="w-6/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">
-                                                Định dạng câu trả lời: <span className="text-red-500">*</span>
-                                            </label>
-                                            <select
-                                                onChange={e => {
-                                                    onChangeState('typeAnswer', e);
-                                                }}
-                                                value={state.typeAnswer}
-                                                className="w-6/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            >
-                                                <option value="text">Text</option>
-                                                <option value="image">Ảnh</option>
-                                            </select>
+                            <div className="w-full mb-2  px-4">
+                                <div className="relative w-full mb-3 flex">
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
+                                    <div className="px-3 h-auto ">
+                                        <Upload
+                                            fileList={state.image ? state.imageInfo : []}
+                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
+                                            onRemove={() => deleteFile('image')}
+                                        >
+                                            <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
+                                                Chọn file
+                                            </Button>
+                                        </Upload>
+                                        <div style={{ width: '100%', height: 'auto', position: 'relative' }} hidden={state.image ? false : true}>
+                                            <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-2 w-full">
-                                    <button
-                                        className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        type="button"
-                                        onClick={addZone}
-                                    >
-                                        Thêm đáp án
-                                    </button>
-                                    <div>
-                                        {zones && zones.length > 0
-                                            ? zones.map((data, index) => {
-                                                  return (
-                                                      <Zone
-                                                          onChangeZone={onChangeZone}
-                                                          state={state}
-                                                          data={data}
-                                                          key={index}
-                                                          index={index}
-                                                          deleteZone={deleteZone}
-                                                      />
-                                                  );
-                                              })
-                                            : null}
+                            </div>
+                            <div className="w-full mb-2  px-4">
+                                <div className="relative w-full mb-3 flex">
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
+                                    <div className=" px-3 h-auto ">
+                                        <Upload
+                                            fileList={state.audio ? state.audioInfo : []}
+                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
+                                            onRemove={() => deleteFile('audio')}
+                                        >
+                                            <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
+                                                Chọn file
+                                            </Button>
+                                        </Upload>
+                                        <div className="w-full mt-2" hidden={state.audio ? false : true}>
+                                            <ReactAudioPlayer src={state.audio} controls />
+                                        </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-6/12 px-4 mt-4 mb-6">
+                        <div className="2xl:w-full">
+                            <div className="w-full">
+                                <div className="w-full flex">
+                                    <div className="w-6/12 items-center flex">
+                                        <label className="w-6/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">
+                                            Định dạng câu trả lời: <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            onChange={e => {
+                                                onChangeState('typeAnswer', e);
+                                            }}
+                                            value={state.typeAnswer}
+                                            className="w-6/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        >
+                                            <option value="text">Text</option>
+                                            <option value="image">Ảnh</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-2 w-full">
+                                <button
+                                    className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                                    type="button"
+                                    onClick={addZone}
+                                >
+                                    Thêm đáp án
+                                </button>
+                                <div>
+                                    {zones && zones.length > 0
+                                        ? zones.map((data, index) => {
+                                              return (
+                                                  <Zone
+                                                      onChangeZone={onChangeZone}
+                                                      state={state}
+                                                      data={data}
+                                                      key={index}
+                                                      index={index}
+                                                      deleteZone={deleteZone}
+                                                  />
+                                              );
+                                          })
+                                        : null}
                                 </div>
                             </div>
                         </div>

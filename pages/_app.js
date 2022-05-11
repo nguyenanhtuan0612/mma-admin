@@ -6,9 +6,10 @@ import Router from 'next/router';
 
 import PageChange from 'components/PageChange/PageChange.js';
 
+import 'public/katex/katex.min.css';
+import 'public/css/tailwind.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'antd/dist/antd.css';
-import 'public/css/tailwind.css';
 import 'public/css/customs.css';
 
 Router.events.on('routeChangeStart', url => {
@@ -30,25 +31,16 @@ Router.events.on('routeChangeError', () => {
 
 export default class MyApp extends App {
     componentDidMount() {
-        const comment = document.createComment(`
+        const comment = document.createComment(`Made by:
+         Nguyen Anh Tuan - Backend Developer, Deployment
+         Email: tuananhvd1998@gmail.com
+         Github: https://github.com/nguyenanhtuan0612
 
-=========================================================
-* Notus NextJS - v1.1.0 based on Tailwind Starter Kit by Creative Tim
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/notus-nextjs
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/notus-nextjs/blob/main/LICENSE.md)
-
-* Tailwind Starter Kit Page: https://www.creative-tim.com/learning-lab/tailwind-starter-kit/presentation
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-`);
+         Pham Trong Bao - Frontend Developer,
+         Email: baovdqn2@gmail.com
+         Github: https://github.com/baovdqn
+         
+        `);
         document.insertBefore(comment, document.documentElement);
     }
     static async getInitialProps({ Component, router, ctx }) {
