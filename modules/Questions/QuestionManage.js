@@ -182,15 +182,6 @@ export default function ExamsTable() {
                         Nhập từ file excel
                     </Upload>
                 </button>
-                {/* <Upload>
-                    <button
-                        onClick={() => {}}
-                        className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
-                    >
-                        Nhập từ file excel
-                    </button>
-                </Upload> */}
-                ,
             </Menu.Item>
         </Menu>
     );

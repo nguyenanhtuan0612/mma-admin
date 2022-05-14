@@ -96,20 +96,12 @@ export default function CreateMultipleChoice() {
                     <div className="w-8/12 flex p-2">
                         <div className="w-full px-4 justify-center items-center">
                             <div className="relative w-full items-center flex">
-                                <label className="w-5/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Nội dung đáp án:</label>
-                                <input
-                                    onChange={e => {
-                                        e.preventDefault();
-                                        setDt({
-                                            ...dt,
-                                            content: e.target.value,
-                                        });
-                                        onChangeZone(index, 'content', e.target.value);
-                                    }}
-                                    value={dt.content}
-                                    hidden={state.typeAnswer == 'text' ? false : true}
-                                    className="w-7/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
-                                />
+                                <label
+                                    className="w-5/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2"
+                                    hidden={state.typeAnswer == 'text' ? true : false}
+                                >
+                                    Nội dung đáp án:
+                                </label>
                                 <div className="w-7/12 ml-4" hidden={state.typeAnswer == 'image' ? false : true}>
                                     <Upload
                                         listType={dt.content !== '' ? 'picture' : 'picture-card'}
@@ -127,6 +119,35 @@ export default function CreateMultipleChoice() {
                                             uploadButton
                                         )}
                                     </Upload>
+                                </div>
+                                <div className="w-full ml-4" hidden={state.typeAnswer == 'text' ? false : true}>
+                                    <div className="w-full px-4 mb-6">
+                                        <div className="relative w-full mb-3 items-center px-4">
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Nội dung câu trả lời: <span className="text-red-500">*</span>
+                                            </label>
+                                            <textarea
+                                                onChange={e => {
+                                                    e.preventDefault();
+                                                    const data = e.target.value;
+                                                    setDt({ ...dt, content: data });
+                                                    onChangeZone(index, 'content', data);
+                                                }}
+                                                value={dt.content}
+                                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="w-full px-4 mb-6">
+                                        <div className="relative w-full mb-3 items-center fex px-4">
+                                            <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Xem trước: <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="text-base border h-auto w-full p-4">
+                                                {state.typeAnswer == 'text' ? renderLatex(dt.content) : null}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -185,6 +206,7 @@ export default function CreateMultipleChoice() {
                 return setState({ ...state, [field]: value });
             }
             default: {
+                console.log(field, e.target.value);
                 const value = e.target.value == '' ? null : e.target.value;
                 return setState({ ...state, [field]: value });
             }
@@ -250,6 +272,7 @@ export default function CreateMultipleChoice() {
             }
             setChange(!change);
         }
+        console.log(newZones);
         setZones(newZones);
     }
 
@@ -321,30 +344,21 @@ export default function CreateMultipleChoice() {
 
     function renderLatex(content) {
         if (content) {
-            // content = content.replace(/\<p>/g, '<div>');
-            // content = content.replace(/\<\/p\>/g, '<div>');
-            const html = ReactHtmlParser(content);
-            console.log(content);
             const renderHtml = [];
-            for (let iterator of html) {
-                const child = iterator.props.children[0];
-                const split = child.split('$');
-                const htmlArr = [];
-                console.log(iterator.props.children);
-                for (let [index, iter] of split.entries()) {
-                    if (index % 2 == 0) {
-                        htmlArr.push(`${iter}`);
-                    } else {
-                        htmlArr.push(<Latex>{`$${iter}$`}</Latex>);
-                    }
+            const split = content.split('$');
+            const htmlArr = [];
+            for (let [index, iter] of split.entries()) {
+                if (index % 2 == 0) {
+                    htmlArr.push(<span>{iter}</span>);
+                } else {
+                    htmlArr.push(
+                        //<span className="text-xl">
+                        <Latex>{`$${iter}$`}</Latex>,
+                        //</span>,
+                    );
                 }
-                renderHtml.push(React.createElement('p', null, htmlArr));
-                console.log('a', iterator.props.children);
-                console.log(2);
             }
-            console.log(1);
-            const data = React.createElement(React.Fragment, null, renderHtml);
-            console.log('end', data);
+            const data = React.createElement(React.Fragment, null, htmlArr);
             return data;
         }
     }
@@ -380,23 +394,13 @@ export default function CreateMultipleChoice() {
                                 <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Câu hỏi: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150">
-                                    {editorLoaded ? (
-                                        <CKEditor
-                                            editor={ClassicEditor}
-                                            data={state.question}
-                                            config={{
-                                                toolbar: ['undo', 'redo'],
-                                            }}
-                                            onChange={(event, editor) => {
-                                                const data = editor.getData();
-                                                setState({ ...state, question: data });
-                                            }}
-                                        />
-                                    ) : (
-                                        <div>Editor loading</div>
-                                    )}
-                                </div>
+                                <textarea
+                                    onChange={e => {
+                                        setState({ ...state, question: e.target.value == '' ? null : e.target.value });
+                                    }}
+                                    value={state.question}
+                                    className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                ></textarea>
                             </div>
                         </div>
                         <div className="w-6/12 px-4 mb-6">
@@ -404,31 +408,38 @@ export default function CreateMultipleChoice() {
                                 <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Xem trước: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="text-lg">
-                                    {renderLatex(state.question)}
-                                    <Latex>{`$\\sqrt{2}$`}</Latex>
-                                </div>
+                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.question)}</div>
                             </div>
                         </div>
                     </div>
                     <div className="w-full flex">
                         <div className="w-6/12 px-4 mb-6">
-                            <div className="w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Lời giải: <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    onChange={e => {
+                                        setState({ ...state, solve: e.target.value == '' ? null : e.target.value });
+                                    }}
+                                    value={state.solve}
+                                    className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Xem trước: <span className="text-red-500">*</span>
+                                </label>
+                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.solve)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full flex">
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="w-full py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                                 <div className="flex flex-wrap w-full">
-                                    <div className="w-full px-4 mb-2">
-                                        <div className="relative w-full mb-3 items-center flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Câu hỏi: <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                onChange={e => {
-                                                    onChangeState('question', e);
-                                                }}
-                                                value={state.question}
-                                                className="w-9/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
-                                            />
-                                        </div>
-                                    </div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
@@ -447,30 +458,7 @@ export default function CreateMultipleChoice() {
                                             </select>
                                         </div>
                                     </div>
-                                    <div className="w-full mb-2  px-4">
-                                        <div className="relative w-full mb-3 flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Ảnh lời giải:
-                                            </label>
-                                            <div className="w-9/12 px-3 h-auto ">
-                                                <Upload
-                                                    fileList={state.solve ? state.solveInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'solve')}
-                                                    onRemove={() => deleteFile('solve')}
-                                                >
-                                                    <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>
-                                                        Chọn file
-                                                    </Button>
-                                                </Upload>
-                                                <div
-                                                    style={{ width: '100%', height: 'auto', position: 'relative' }}
-                                                    hidden={state.solve ? false : true}
-                                                >
-                                                    <img src={state.solve} className="object-contain w-full border-2" alt="..."></img>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div className="w-full mb-2  px-4"></div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
