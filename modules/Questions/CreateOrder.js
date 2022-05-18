@@ -5,6 +5,7 @@ import { AuthContext } from 'layouts/Admin';
 import { useRouter } from 'next/router';
 import React, { useState, useContext, useEffect } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
+import Latex from 'react-latex';
 import { loadingFalse, loadingTrue } from 'store/actions';
 const { mediaURL } = serviceHelpers;
 
@@ -74,20 +75,41 @@ export default function CreateOrder() {
                     <div className="w-8/12 flex p-2">
                         <div className="w-full px-4 justify-center items-center">
                             <div className="relative w-full items-center flex">
-                                <label className="w-5/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Nội dung đáp án:</label>
-                                <input
-                                    onChange={e => {
-                                        e.preventDefault();
-                                        setDt({
-                                            ...dt,
-                                            content: e.target.value,
-                                        });
-                                        onChangeZone(index, 'content', e.target.value);
-                                    }}
-                                    value={dt.content}
-                                    hidden={state.typeAnswer == 'text' ? false : true}
-                                    className="w-7/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
-                                />
+                                <label
+                                    hidden={state.typeAnswer === 'text' ? true : false}
+                                    className="w-5/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2"
+                                >
+                                    Nội dung đáp án:
+                                </label>
+                                <div className="w-full ml-4" hidden={state.typeAnswer == 'text' ? false : true}>
+                                    <div className="w-full px-4 mb-6">
+                                        <div className="relative w-full mb-3 items-center px-4">
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Nội dung câu trả lời: <span className="text-red-500">*</span>
+                                            </label>
+                                            <textarea
+                                                onChange={e => {
+                                                    e.preventDefault();
+                                                    const data = e.target.value;
+                                                    setDt({ ...dt, content: data });
+                                                    onChangeZone(index, 'content', data);
+                                                }}
+                                                value={dt.content}
+                                                className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="w-full px-4 mb-6">
+                                        <div className="relative w-full mb-3 items-center fex px-4">
+                                            <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Xem trước: <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="text-base border h-auto w-full p-4">
+                                                {state.typeAnswer == 'text' ? renderLatex(dt.content) : null}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="w-7/12 ml-4" hidden={state.typeAnswer == 'image' ? false : true}>
                                     <Upload
                                         listType={dt.content !== '' ? 'picture' : 'picture-card'}
@@ -275,6 +297,30 @@ export default function CreateOrder() {
         return data;
     }
 
+    function renderLatex(content) {
+        if (content) {
+            if (typeof content != 'string') {
+                content = content.toString();
+            }
+            const renderHtml = [];
+            const split = content.split('$');
+            const htmlArr = [];
+            for (let [index, iter] of split.entries()) {
+                if (index % 2 == 0) {
+                    htmlArr.push(<span>{iter}</span>);
+                } else {
+                    htmlArr.push(
+                        //<span className="text-xl">
+                        <Latex>{`$${iter}$`}</Latex>,
+                        //</span>,
+                    );
+                }
+            }
+            const data = React.createElement(React.Fragment, null, htmlArr);
+            return data;
+        }
+    }
+
     return (
         <>
             <div className="border-2">
@@ -286,22 +332,72 @@ export default function CreateOrder() {
                 <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
                     <div className="w-full pt-4 flex">
                         <div className="w-6/12 px-4 mb-6">
-                            <div className="w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
+                            <div className="relative w-full items-center flex px-4">
+                                <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Tên câu hỏi: <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    onChange={e => {
+                                        onChangeState('name', e);
+                                    }}
+                                    value={state.name}
+                                    className="w-9/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full flex">
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Câu hỏi: <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    onChange={e => {
+                                        setState({ ...state, question: e.target.value == '' ? null : e.target.value });
+                                    }}
+                                    value={state.question}
+                                    className="p-2 w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Xem trước: <span className="text-red-500">*</span>
+                                </label>
+                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.question)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full flex">
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Lời giải: <span className="text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    onChange={e => {
+                                        setState({ ...state, solve: e.target.value == '' ? null : e.target.value });
+                                    }}
+                                    value={state.solve}
+                                    className="p-2 w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="relative w-full mb-3 items-center flex px-4">
+                                <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                    Xem trước: <span className="text-red-500">*</span>
+                                </label>
+                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.solve)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full flex">
+                        <div className="w-6/12 px-4 mb-6">
+                            <div className="w-full py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                                 <div className="flex flex-wrap w-full">
-                                    <div className="w-full px-4 mb-2">
-                                        <div className="relative w-full mb-3 items-center flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Câu hỏi: <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                onChange={e => {
-                                                    onChangeState('question', e);
-                                                }}
-                                                value={state.question}
-                                                className="w-9/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
-                                            />
-                                        </div>
-                                    </div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
@@ -320,71 +416,7 @@ export default function CreateOrder() {
                                             </select>
                                         </div>
                                     </div>
-                                    <div className="w-full mb-2  px-4">
-                                        <div className="relative w-full mb-3 flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
-                                            <div className="w-9/12 px-3 h-auto ">
-                                                <Upload
-                                                    fileList={state.image ? state.imageInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
-                                                    onRemove={() => deleteFile('image')}
-                                                >
-                                                    <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
-                                                        Chọn file
-                                                    </Button>
-                                                </Upload>
-                                                <div
-                                                    style={{ width: '100%', height: 'auto', position: 'relative' }}
-                                                    hidden={state.image ? false : true}
-                                                >
-                                                    <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="w-full mb-2  px-4">
-                                        <div className="relative w-full mb-3 flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
-                                            <div className="w-9/12 px-3 h-auto ">
-                                                <Upload
-                                                    fileList={state.audio ? state.audioInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
-                                                    onRemove={() => deleteFile('audio')}
-                                                >
-                                                    <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
-                                                        Chọn file
-                                                    </Button>
-                                                </Upload>
-                                                <div className="w-full mt-2" hidden={state.audio ? false : true}>
-                                                    <ReactAudioPlayer src={state.audio} controls />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="w-full mb-2  px-4">
-                                        <div className="relative w-full mb-3 flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Ảnh lời giải:
-                                            </label>
-                                            <div className="w-9/12 px-3 h-auto ">
-                                                <Upload
-                                                    fileList={state.solve ? state.solveInfo : []}
-                                                    customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'solve')}
-                                                    onRemove={() => deleteFile('solve')}
-                                                >
-                                                    <Button hidden={state.solve ? true : false} icon={<UploadOutlined />}>
-                                                        Chọn file
-                                                    </Button>
-                                                </Upload>
-                                                <div
-                                                    style={{ width: '100%', height: 'auto', position: 'relative' }}
-                                                    hidden={state.solve ? false : true}
-                                                >
-                                                    <img src={state.solve} className="object-contain w-full border-2" alt="..."></img>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div className="w-full mb-2  px-4"></div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
@@ -395,23 +427,6 @@ export default function CreateOrder() {
                                                     onChangeState('active', e, 'boolean');
                                                 }}
                                                 value={state.active}
-                                                className="w-9/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            >
-                                                <option value="true">Có</option>
-                                                <option value="false">Không</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="w-full px-4 mb-2">
-                                        <div className="relative w-full mb-3 items-center flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Tạo đề ngẫu nhiên: <span className="text-red-500">*</span>
-                                            </label>
-                                            <select
-                                                onChange={e => {
-                                                    onChangeState('isRandom', e, 'boolean');
-                                                }}
-                                                value={state.isRandom}
                                                 className="w-9/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                             >
                                                 <option value="true">Có</option>
@@ -433,50 +448,93 @@ export default function CreateOrder() {
                             </div>
                         </div>
                         <div className="w-6/12 px-4 mt-4 mb-6">
-                            <div className="2xl:w-full">
-                                <div className="w-full">
-                                    <div className="w-full flex">
-                                        <div className="w-6/12 items-center flex">
-                                            <label className="w-6/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">
-                                                Định dạng câu trả lời: <span className="text-red-500">*</span>
-                                            </label>
-                                            <select
-                                                onChange={e => {
-                                                    onChangeState('typeAnswer', e);
-                                                }}
-                                                value={state.typeAnswer}
-                                                className="w-6/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
-                                            >
-                                                <option value="text">Text</option>
-                                                <option value="image">Ảnh</option>
-                                            </select>
+                            <div className="w-full mb-2  px-4">
+                                <div className="relative w-full mb-3 flex">
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
+                                    <div className="px-3 h-auto ">
+                                        <Upload
+                                            fileList={state.image ? state.imageInfo : []}
+                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
+                                            onRemove={() => deleteFile('image')}
+                                        >
+                                            <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
+                                                Chọn file
+                                            </Button>
+                                        </Upload>
+                                        <div style={{ width: '100%', height: 'auto', position: 'relative' }} hidden={state.image ? false : true}>
+                                            <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-2 w-full">
-                                    <button
-                                        className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-                                        type="button"
-                                        onClick={addZone}
-                                    >
-                                        Thêm đáp án
-                                    </button>
-                                    <div>
-                                        {zones && zones.length > 0
-                                            ? zones.map((data, index) => {
-                                                  return (
-                                                      <Zone
-                                                          onChangeZone={onChangeZone}
-                                                          state={state}
-                                                          data={data}
-                                                          key={index}
-                                                          index={index}
-                                                          deleteZone={deleteZone}
-                                                      />
-                                                  );
-                                              })
-                                            : null}
+                            </div>
+                            <div className="w-full mb-2  px-4">
+                                <div className="relative w-full mb-3 flex">
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
+                                    <div className=" px-3 h-auto ">
+                                        <Upload
+                                            fileList={state.audio ? state.audioInfo : []}
+                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
+                                            onRemove={() => deleteFile('audio')}
+                                        >
+                                            <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
+                                                Chọn file
+                                            </Button>
+                                        </Upload>
+                                        <div className="w-full mt-2" hidden={state.audio ? false : true}>
+                                            <ReactAudioPlayer src={state.audio} controls />
+                                        </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full px-4 mt-4 mb-6">
+                        <div className="2xl:w-full">
+                            <label className="mx-2 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                Đáp án: <span className="text-red-500">*</span>
+                            </label>
+                            <div className="w-full">
+                                <div className="w-full flex">
+                                    <div className="w-6/12 items-center flex">
+                                        <label className="w-6/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2 text-right">
+                                            Định dạng câu trả lời: <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            onChange={e => {
+                                                onChangeState('typeAnswer', e);
+                                            }}
+                                            value={state.typeAnswer}
+                                            className="w-6/12 px-3 py-2 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                        >
+                                            <option value="text">Text</option>
+                                            <option value="image">Ảnh</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-2 w-full">
+                                <button
+                                    className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+                                    type="button"
+                                    onClick={addZone}
+                                >
+                                    Thêm hàng
+                                </button>
+                                <div>
+                                    {zones && zones.length > 0
+                                        ? zones.map((data, index) => {
+                                              return (
+                                                  <Zone
+                                                      onChangeZone={onChangeZone}
+                                                      state={state}
+                                                      data={data}
+                                                      key={index}
+                                                      index={index}
+                                                      deleteZone={deleteZone}
+                                                  />
+                                              );
+                                          })
+                                        : null}
                                 </div>
                             </div>
                         </div>

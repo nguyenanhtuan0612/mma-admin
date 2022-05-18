@@ -17,6 +17,7 @@ const Route2LabelMap = {
     matching: 'Nối',
     rating: 'Đánh giá',
     promotions: 'Quản lý khuyến mại',
+    order: 'Sắp xếp',
 };
 
 export function BreadCrumbs() {
