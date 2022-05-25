@@ -34,10 +34,6 @@ export default function CreateMultipleChoice() {
     const [zones, setZones] = useState([]);
     const [change, setChange] = useState(false);
 
-    const editorRef = useRef();
-    const [editorLoaded, setEditorLoaded] = useState(false);
-    const { CKEditor, ClassicEditor } = editorRef.current || {};
-
     function Zone({ state, data, index, deleteZone, onChangeZone }) {
         const [dt, setDt] = useState(data);
         useEffect(() => {

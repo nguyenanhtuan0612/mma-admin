@@ -2,13 +2,7 @@ const plugin = require('tailwindcss/plugin');
 const colors = require('tailwindcss/colors');
 
 module.exports = {
-    purge: {
-        enabled: true,
-        content: ['./**/*.html', './*.html', './**/*.js', './*.js'],
-        options: {
-            safelist: ['xl:text-sm', 'xl:px-2', '2xl:text-sm', 'mb-20', '2xl:h-36', '2xl:w-36', 'xl:px-0', '2xl:w-6/12', '2xl:w-3/12', '2xl:w-8/12'],
-        },
-    },
+    content: ['./modules/**/*.{html,js,tsx}', './pages/**/*.{html,js,tsx}', './layouts/**/*.{html,js,tsx}', './components/**/*.{html,js,tsx}'],
     theme: {
         colors: {
             ...colors,
@@ -19,9 +13,6 @@ module.exports = {
             },
             fontSize: {
                 55: '55rem',
-            },
-            opacity: {
-                80: '.8',
             },
             zIndex: {
                 2: 2,
@@ -73,5 +64,5 @@ module.exports = {
             },
         },
     },
-    variants: ['responsive', 'group-hover', 'focus-within', 'first', 'last', 'odd', 'even', 'hover', 'focus', 'active', 'visited', 'disabled'],
+    //variants: ['responsive', 'group-hover', 'focus-within', 'first', 'last', 'odd', 'even', 'hover', 'focus', 'active', 'visited', 'disabled'],
 };
