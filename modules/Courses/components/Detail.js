@@ -6,7 +6,15 @@ import { Select } from 'antd';
 const { Option } = Select;
 const { checkNull, avatarImg, checkSelect, formatCurrency } = displayHelpers;
 
-export default function DetailCourse({ onDelete, state, setState, onUpdate, createObjectURL, imageUpload, uploadToClient }) {
+export default function DetailCourse({
+    onDelete,
+    state,
+    setState,
+    onUpdate,
+    createObjectURL,
+    imageUpload,
+    uploadToClient,
+}) {
     const router = useRouter();
     const [teacherList, SetTeacherList] = useState([]);
 
@@ -27,7 +35,11 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
         );
     }, []);
 
-    async function getData(search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+    async function getData(
+        search = '',
+        start = 0,
+        sort = '[{"property":"createdAt","direction":"ASC"}]',
+    ) {
         const filter = [
             {
                 operator: `eq`,
@@ -137,7 +149,11 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
 
     return (
         <>
-            <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
+            <div
+                className={
+                    'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'
+                }
+            >
                 <div className="w-full px-4 2xl:flex mt-4 mb-6 h-full">
                     <div className="2xl:w-3/12 w-full px-4 h-full mt-4">
                         <div className="w-full flex justify-center">
@@ -155,7 +171,13 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
                                 Thay đổi ảnh đại diện
                             </label>
                         </div>
-                        <input name="upload" id="upload" className="upload" type="file" onChange={uploadToClient} />
+                        <input
+                            name="upload"
+                            id="upload"
+                            className="upload"
+                            type="file"
+                            onChange={uploadToClient}
+                        />
                     </div>
                     <div className="2xl:w-6/12 w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                         <div className="flex flex-wrap ">
@@ -289,7 +311,9 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
                             </div>
                             <div className="w-full px-4 mb-2">
                                 <div className="relative w-full mb-3 items-center flex">
-                                    <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Trạng thái:</label>
+                                    <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Trạng thái:
+                                    </label>
                                     <select
                                         value={checkSelect(state.active)}
                                         onChange={handleChangeActive}
@@ -313,7 +337,11 @@ export default function DetailCourse({ onDelete, state, setState, onUpdate, crea
                                             placeholder="Please select"
                                             value={state.teacherIds}
                                             onChange={handleTeacherIdsChange}
-                                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                            filterOption={(input, option) =>
+                                                option.props.children
+                                                    .toLowerCase()
+                                                    .indexOf(input.toLowerCase()) >= 0
+                                            }
                                         >
                                             {teacherList}
                                         </Select>

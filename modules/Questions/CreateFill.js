@@ -10,7 +10,7 @@ import Latex from 'react-latex';
 const { mediaURL } = serviceHelpers;
 import ReactHtmlParser from 'react-html-parser';
 
-export default function CreateDrag() {
+export default function CreateFill() {
     const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
     const lessonId = parseInt(router.query.lessonId);
@@ -62,6 +62,7 @@ export default function CreateDrag() {
             router.push('/auth/login');
             return <div></div>;
         }
+        console.log(data.data.data);
         return data.data.data.name;
     }
 
@@ -231,6 +232,7 @@ export default function CreateDrag() {
 
     async function onCreate() {
         dispatch(loadingTrue());
+        const zonesProp = [];
         const zoneContent = [];
         for (const dt of zones) {
             if (dt.content == '' || dt.content == null) {
@@ -255,10 +257,11 @@ export default function CreateDrag() {
         const body = {
             ...state,
             typeAnswer: 'text',
+            content: zonesProp,
             answers: zoneContent,
             lessonId,
         };
-        const rs1 = await serviceHelpers.createData('questions/drag', body);
+        const rs1 = await serviceHelpers.createData('questions/fill', body);
         const data1 = catchErr(rs1);
         const exam = catchErr(await serviceHelpers.detailData('exams', examId));
         const arr = exam.data.exam.listQuestions;
@@ -367,7 +370,7 @@ export default function CreateDrag() {
                 >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
                         <b className="text-xl font-semibold leading-normal text-blueGray-700">
-                            Tạo câu hỏi kéo thả
+                            Tạo câu hỏi điền từ
                         </b>
                     </div>
                 </div>

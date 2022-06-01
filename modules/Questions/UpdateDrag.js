@@ -60,14 +60,10 @@ export default function UpdateDrag({ data, lessonId }) {
         ];
         const arr = [];
         if (data.answers[0] && data.answers[0]) {
-            for (const [index, iterator] of data.content.entries()) {
+            for (const [index, iterator] of data.answers.entries()) {
                 arr.push({
                     ...iterator,
                     content: data.answers[index].content,
-                    top: parseInt(iterator.top),
-                    left: parseInt(iterator.left),
-                    width: parseInt(iterator.width),
-                    height: parseInt(iterator.height),
                 });
             }
         }
@@ -99,7 +95,9 @@ export default function UpdateDrag({ data, lessonId }) {
             <div className="w-full mt-4">
                 <div className="w-full flex border-2 p-2">
                     <div className="w-2/12 items-center justify-center flex">
-                        <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ô thả: {index + 1}</label>
+                        <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                            Ô thả: {index + 1}
+                        </label>
                     </div>
                     <div className="w-8/12 flex p-2">
                         <div className="w-full px-4 justify-center items-center">
@@ -108,7 +106,8 @@ export default function UpdateDrag({ data, lessonId }) {
                                     <div className="w-full px-4 mb-6">
                                         <div className="relative w-full mb-3 items-center px-4">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Nội dung câu trả lời : <span className="text-red-500">*</span>
+                                                Nội dung câu trả lời :{' '}
+                                                <span className="text-red-500">*</span>
                                             </label>
                                             <textarea
                                                 onChange={e => {
@@ -127,7 +126,9 @@ export default function UpdateDrag({ data, lessonId }) {
                                             <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                                 Xem trước: <span className="text-red-500">*</span>
                                             </label>
-                                            <div className="text-base border h-auto w-full p-4">{renderLatexArea(dt.content)}</div>
+                                            <div className="text-base border h-auto w-full p-4">
+                                                {renderLatexArea(dt.content)}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -163,7 +164,8 @@ export default function UpdateDrag({ data, lessonId }) {
         const rs = await serviceHelpers.detailData('lessons', lessonId);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs;
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -266,27 +268,32 @@ export default function UpdateDrag({ data, lessonId }) {
         const zonesProp = [];
         const zoneContent = [];
         for (const dt of zones) {
-            const prop = {
-                top: `${dt.top}%`,
-                left: `${dt.left}%`,
-                height: `${dt.height}%`,
-                width: `${dt.width}%`,
-                type: 'emptyBox',
-                effectAllowed: 'move',
-            };
-            zonesProp.push(prop);
             if (dt.content == '' || dt.content == null) {
                 dispatch(loadingFalse());
-                return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
+                return openNotification(
+                    notiType.error,
+                    'Lỗi hệ thống',
+                    'Vùng chọn chưa đủ nội dung',
+                );
             }
             zoneContent.push(dt.content);
         }
         if (numAns != zoneContent.length) {
             dispatch(loadingFalse());
-            return openNotification(notiType.error, 'Lỗi hệ thống', 'Số vùng thả và số đáp án không giống nhau');
+            return openNotification(
+                notiType.error,
+                'Lỗi hệ thống',
+                'Số vùng thả và số đáp án không giống nhau',
+            );
         }
 
-        const body = { ...state, typeAnswer: 'text', content: zonesProp, answers: zoneContent, lessonId };
+        const body = {
+            ...state,
+            typeAnswer: 'text',
+            content: zonesProp,
+            answers: zoneContent,
+            lessonId,
+        };
         console.log(body);
         const rs1 = await serviceHelpers.updateData('questions/drag', data.id, body);
         const data1 = catchErr(rs1);
@@ -337,6 +344,7 @@ export default function UpdateDrag({ data, lessonId }) {
                                     arr.push(
                                         <input
                                             name={iterator}
+                                            disabled
                                             className="py-1 w-20 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         ></input>,
                                     );
@@ -387,12 +395,22 @@ export default function UpdateDrag({ data, lessonId }) {
     return (
         <>
             <div className="border-2">
-                <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
+                <div
+                    className={
+                        'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'
+                    }
+                >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Tạo câu hỏi kéo thả</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">
+                            Chỉnh sửa câu hỏi kéo thả
+                        </b>
                     </div>
                 </div>
-                <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
+                <div
+                    className={
+                        'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'
+                    }
+                >
                     <div className="w-full pt-4 flex">
                         <div className="w-6/12 px-4 mb-6">
                             <div className="relative w-full items-center flex px-4">
@@ -439,7 +457,9 @@ export default function UpdateDrag({ data, lessonId }) {
                                 <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Xem trước: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.question)}</div>
+                                <div className="text-base border h-auto w-full p-4">
+                                    {renderLatex(state.question)}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -451,7 +471,10 @@ export default function UpdateDrag({ data, lessonId }) {
                                 </label>
                                 <textarea
                                     onChange={e => {
-                                        setState({ ...state, solve: e.target.value == '' ? null : e.target.value });
+                                        setState({
+                                            ...state,
+                                            solve: e.target.value == '' ? null : e.target.value,
+                                        });
                                     }}
                                     value={state.solve}
                                     className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
@@ -463,7 +486,9 @@ export default function UpdateDrag({ data, lessonId }) {
                                 <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Xem trước: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="text-base border h-auto w-full p-4">{renderLatexArea(state.solve)}</div>
+                                <div className="text-base border h-auto w-full p-4">
+                                    {renderLatexArea(state.solve)}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -510,7 +535,8 @@ export default function UpdateDrag({ data, lessonId }) {
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Tạo đề ngẫu nhiên: <span className="text-red-500">*</span>
+                                                Tạo đề ngẫu nhiên:{' '}
+                                                <span className="text-red-500">*</span>
                                             </label>
                                             <select
                                                 onChange={e => {
@@ -526,7 +552,9 @@ export default function UpdateDrag({ data, lessonId }) {
                                     </div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Bài học:</label>
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Bài học:
+                                            </label>
                                             <input
                                                 disabled={true}
                                                 value={lesson}
@@ -540,37 +568,65 @@ export default function UpdateDrag({ data, lessonId }) {
                         <div className="w-6/12 px-4 mt-4 mb-6">
                             <div className="w-full mb-2  px-4">
                                 <div className="relative w-full mb-3 flex">
-                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Ảnh:
+                                    </label>
                                     <div className="px-3 h-auto ">
                                         <Upload
                                             fileList={state.image ? state.imageInfo : []}
-                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
+                                            customRequest={({ file, onSuccess, onError }) =>
+                                                uploadFile(file, onSuccess, onError, 'image')
+                                            }
                                             onRemove={() => deleteFile('image')}
                                         >
-                                            <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
+                                            <Button
+                                                hidden={state.image ? true : false}
+                                                icon={<UploadOutlined />}
+                                            >
                                                 Chọn file
                                             </Button>
                                         </Upload>
-                                        <div style={{ width: '100%', height: 'auto', position: 'relative' }} hidden={state.image ? false : true}>
-                                            <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                height: 'auto',
+                                                position: 'relative',
+                                            }}
+                                            hidden={state.image ? false : true}
+                                        >
+                                            <img
+                                                src={state.image}
+                                                className="object-contain w-full border-2"
+                                                alt="..."
+                                            ></img>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-full mb-2  px-4">
                                 <div className="relative w-full mb-3 flex">
-                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Audio:
+                                    </label>
                                     <div className=" px-3 h-auto ">
                                         <Upload
                                             fileList={state.audio ? state.audioInfo : []}
-                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
+                                            customRequest={({ file, onSuccess, onError }) =>
+                                                uploadFile(file, onSuccess, onError, 'audio')
+                                            }
                                             onRemove={() => deleteFile('audio')}
                                         >
-                                            <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
+                                            <Button
+                                                hidden={state.audio ? true : false}
+                                                icon={<UploadOutlined />}
+                                            >
                                                 Chọn file
                                             </Button>
                                         </Upload>
-                                        <div className="w-full mt-2" hidden={state.audio ? false : true}>
+                                        <div
+                                            className="w-full mt-2"
+                                            hidden={state.audio ? false : true}
+                                        >
                                             <ReactAudioPlayer src={state.audio} controls />
                                         </div>
                                     </div>

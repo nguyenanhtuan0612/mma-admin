@@ -42,7 +42,11 @@ export default function CreateCourse() {
         );
     }, []);
 
-    async function getData(search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+    async function getData(
+        search = '',
+        start = 0,
+        sort = '[{"property":"createdAt","direction":"ASC"}]',
+    ) {
         const filter = [
             {
                 operator: `eq`,
@@ -64,7 +68,8 @@ export default function CreateCourse() {
 
     async function onCreate() {
         let dataUser = state;
-        if (dataUser.teacherIds.length == 0) return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
+        if (dataUser.teacherIds.length == 0)
+            return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
@@ -82,7 +87,8 @@ export default function CreateCourse() {
         const { data } = await serviceHelpers.createData('courses', body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -95,7 +101,8 @@ export default function CreateCourse() {
         const { data } = await serviceHelpers.uploadFile('courses', image);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -195,12 +202,22 @@ export default function CreateCourse() {
     return (
         <>
             <div className="border-2">
-                <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
+                <div
+                    className={
+                        'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'
+                    }
+                >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(state.name)}</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">
+                            {checkNull(state.name)}
+                        </b>
                     </div>
                 </div>
-                <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
+                <div
+                    className={
+                        'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'
+                    }
+                >
                     <div className="w-full px-4 2xl:flex mt-4 mb-6 h-full">
                         <div className="2xl:w-3/12 w-4/12 px-4 h-full mt-4">
                             <div className="w-full flex justify-center">
@@ -218,7 +235,13 @@ export default function CreateCourse() {
                                     Thay đổi ảnh đại diện
                                 </label>
                             </div>
-                            <input name="upload" id="upload" className="upload" type="file" onChange={uploadToClient} />
+                            <input
+                                name="upload"
+                                id="upload"
+                                className="upload"
+                                type="file"
+                                onChange={uploadToClient}
+                            />
                         </div>
                         <div className="2xl:w-6/12 w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
                             <div className="flex flex-wrap ">
@@ -281,7 +304,8 @@ export default function CreateCourse() {
                                 <div className="w-full px-4 mb-2">
                                     <div className="relative w-full mb-3 items-center flex">
                                         <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                            Đối tượng học sinh: <span className="text-red-500">*</span>
+                                            Đối tượng học sinh:{' '}
+                                            <span className="text-red-500">*</span>
                                         </label>
                                         <textarea
                                             value={checkNull(state.targetStudent, '')}

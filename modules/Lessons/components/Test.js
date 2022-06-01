@@ -11,7 +11,10 @@ export default function Test({ pState, setState, courseName }) {
     async function createListQuestions(e, field) {
         e.preventDefault();
         const examName = `${pState.name} - Khóa: ${courseName}`;
-        const rs = await serviceHelpers.createData('exams', { name: examName, lessonId: pState.id });
+        const rs = await serviceHelpers.createData('exams', {
+            name: examName,
+            lessonId: pState.id,
+        });
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs.data;
 
@@ -22,7 +25,10 @@ export default function Test({ pState, setState, courseName }) {
             router.push('/auth/login');
             return <div></div>;
         }
-        const rs1 = await serviceHelpers.updateData('lessons', pState.id, { ...pState, [field]: data.data.id });
+        const rs1 = await serviceHelpers.updateData('lessons', pState.id, {
+            ...pState,
+            [field]: data.data.id,
+        });
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data1 = rs1.data;
 
@@ -56,7 +62,9 @@ export default function Test({ pState, setState, courseName }) {
 
     return (
         <div className="w-full mb-2">
-            <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Bộ câu hỏi kiểm tra đầu vào:</span>
+            <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                Bộ câu hỏi kiểm tra đầu vào:
+            </span>
             <div className="w-full px-6 flex mt-2 mb-8">
                 <button
                     onClick={e => createListQuestions(e, 'examId', 'test')}

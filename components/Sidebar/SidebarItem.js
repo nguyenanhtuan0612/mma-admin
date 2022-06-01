@@ -24,10 +24,18 @@ export default function SidebarItem({ path, title, icon, index }) {
                     href="#pablo"
                     className={
                         'text-xs uppercase py-3 font-bold block ' +
-                        (active === index ? 'text-sky-500 hover:text-sky-600' : 'text-blueGray-700 hover:text-blueGray-500')
+                        (active === index
+                            ? 'text-sky-500 hover:text-sky-600'
+                            : 'text-blueGray-700 hover:text-blueGray-500')
                     }
                 >
-                    <i className={icon + ' mr-2 text-sm ' + (active === index ? 'opacity-75' : 'text-blueGray-700')}></i>
+                    <i
+                        className={
+                            icon +
+                            ' mr-2 text-sm ' +
+                            (active === index ? 'opacity-75' : 'text-blueGray-700')
+                        }
+                    ></i>
                     {title}
                 </a>
             </Link>

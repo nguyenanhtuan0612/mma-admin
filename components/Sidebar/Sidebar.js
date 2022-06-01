@@ -83,12 +83,20 @@ export default function Sidebar() {
                         {/* Divider */}
                         <hr className="my-4 md:min-w-full" />
                         {/* Heading */}
-                        <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">Quản lý</h6>
+                        <h6 className="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+                            Quản lý
+                        </h6>
                         {/* Navigation */}
 
                         <ul className="md:flex-col md:min-w-full flex flex-col list-none">
                             {data.sidebarItem.map((item, index) => (
-                                <SidebarItem path={item.path} title={item.title} icon={item.icon} index={item.index} key={index} />
+                                <SidebarItem
+                                    path={item.path}
+                                    title={item.title}
+                                    icon={item.icon}
+                                    index={item.index}
+                                    key={index}
+                                />
                             ))}
                         </ul>
 

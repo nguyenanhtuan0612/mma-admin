@@ -27,7 +27,8 @@ export default function Form1({ pState, setState, courseName }) {
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs;
 
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -117,7 +118,10 @@ export default function Form1({ pState, setState, courseName }) {
     async function createListQuestions(e, field, node) {
         e.preventDefault();
         const examName = `List câu hỏi nút ${node} của bài học: ${pState.name} - Khóa: ${courseName}`;
-        const rs = await serviceHelpers.createData('exams', { name: examName, lessonId: pState.id });
+        const rs = await serviceHelpers.createData('exams', {
+            name: examName,
+            lessonId: pState.id,
+        });
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs.data;
 
@@ -129,7 +133,10 @@ export default function Form1({ pState, setState, courseName }) {
             return <div></div>;
         }
         console.log(data.data.id);
-        const rs1 = await serviceHelpers.updateData('lessons', pState.id, { ...pState, [field]: data.data.id });
+        const rs1 = await serviceHelpers.updateData('lessons', pState.id, {
+            ...pState,
+            [field]: data.data.id,
+        });
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data1 = rs1.data;
 
@@ -141,7 +148,10 @@ export default function Form1({ pState, setState, courseName }) {
             return <div></div>;
         }
 
-        router.push(`/exams/${data.data.id}?&ref=${router.asPath}`, `/exams/${data.data.id}?&ref=${router.asPath}`);
+        router.push(
+            `/exams/${data.data.id}?&ref=${router.asPath}`,
+            `/exams/${data.data.id}?&ref=${router.asPath}`,
+        );
     }
 
     async function deleteListQuestions(e, field) {
@@ -165,9 +175,13 @@ export default function Form1({ pState, setState, courseName }) {
         <div className="relative min-w-0 w-full mb-6 bg-white justify-center">
             <div className="flex w-full">
                 <div className="ml-2 w-6/12 mb-8 px-3">
-                    <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 1</span>
+                    <span className="text-xl font-semibold leading-normal text-blueGray-700">
+                        Nút 1
+                    </span>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 1.1:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 1.1:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode11', '1.1')}
@@ -196,7 +210,9 @@ export default function Form1({ pState, setState, courseName }) {
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video tổng quan nút 1.2:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Video tổng quan nút 1.2:
+                        </span>
                         <div className="w-full mt-2 mb-8 h-auto">
                             <input
                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -208,12 +224,19 @@ export default function Form1({ pState, setState, courseName }) {
                                 }}
                             />
                             <div className="w-full mt-2" hidden={pState.videoNode12 ? false : true}>
-                                <ReactPlayer url={pState.videoNode12} width="100%" height="auto" controls />
+                                <ReactPlayer
+                                    url={pState.videoNode12}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 1.3:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 1.3:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode13', '1.3')}
@@ -243,9 +266,13 @@ export default function Form1({ pState, setState, courseName }) {
                     </div>
                 </div>
                 <div className="ml-2 w-6/12 mb-8 px-3">
-                    <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 2</span>
+                    <span className="text-xl font-semibold leading-normal text-blueGray-700">
+                        Nút 2
+                    </span>
                     <div className="w-full mb-2 opacity-0">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Câu hỏi nhanh nút 1.1:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Câu hỏi nhanh nút 1.1:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-2">
                             <button
                                 className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -268,19 +295,31 @@ export default function Form1({ pState, setState, courseName }) {
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video hướng dẫn nút 2.1:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Video hướng dẫn nút 2.1:
+                        </span>
                         <div className="w-full mt-2 mb-8 h-auto">
                             <Upload
                                 fileList={pState.videoNode21 ? pState.videoNode21Info : []}
-                                customRequest={({ file, onSuccess, onError }) => uploadVideo(file, onSuccess, onError, 'videoNode21')}
+                                customRequest={({ file, onSuccess, onError }) =>
+                                    uploadVideo(file, onSuccess, onError, 'videoNode21')
+                                }
                                 onRemove={() => deleteVideo('videoNode21')}
                             >
-                                <Button hidden={pState.videoNode21 ? true : false} icon={<UploadOutlined />}>
+                                <Button
+                                    hidden={pState.videoNode21 ? true : false}
+                                    icon={<UploadOutlined />}
+                                >
                                     Chọn file
                                 </Button>
                             </Upload>
                             <div className="w-full mt-2" hidden={pState.videoNode21 ? false : true}>
-                                <ReactPlayer url={pState.videoNode21} width="100%" height="auto" controls />
+                                <ReactPlayer
+                                    url={pState.videoNode21}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
@@ -288,9 +327,13 @@ export default function Form1({ pState, setState, courseName }) {
             </div>
             <div className="flex w-full">
                 <div className="ml-2 w-6/12 mb-8 px-3">
-                    <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 3</span>
+                    <span className="text-xl font-semibold leading-normal text-blueGray-700">
+                        Nút 3
+                    </span>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 3.1:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Video kết nối kiến thức nút 3.1:
+                        </span>
                         <div className="w-full mt-2 mb-8 h-auto">
                             <input
                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -302,12 +345,19 @@ export default function Form1({ pState, setState, courseName }) {
                                 }}
                             />
                             <div className="w-full mt-2" hidden={pState.videoNode31 ? false : true}>
-                                <ReactPlayer url={pState.videoNode31} width="100%" height="auto" controls />
+                                <ReactPlayer
+                                    url={pState.videoNode31}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 3.2:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 3.2:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode32', '3.2')}
@@ -341,7 +391,9 @@ export default function Form1({ pState, setState, courseName }) {
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 3.3:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Video kết nối kiến thức nút 3.3:
+                        </span>
                         <div className="w-full mt-2 mb-8 h-auto">
                             <input
                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -353,12 +405,19 @@ export default function Form1({ pState, setState, courseName }) {
                                 }}
                             />
                             <div className="w-full mt-2" hidden={pState.videoNode33 ? false : true}>
-                                <ReactPlayer url={pState.videoNode33} width="100%" height="auto" controls />
+                                <ReactPlayer
+                                    url={pState.videoNode33}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 3.4:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 3.4:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode34', '3.4')}
@@ -393,9 +452,13 @@ export default function Form1({ pState, setState, courseName }) {
                     </div>
                 </div>
                 <div className="ml-2 w-6/12 mb-8 px-3">
-                    <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 4</span>
+                    <span className="text-xl font-semibold leading-normal text-blueGray-700">
+                        Nút 4
+                    </span>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 4.1:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Video kết nối kiến thức nút 4.1:
+                        </span>
                         <div className="w-full mt-2 mb-8 h-auto">
                             <input
                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -407,12 +470,19 @@ export default function Form1({ pState, setState, courseName }) {
                                 }}
                             />
                             <div className="w-full mt-2" hidden={pState.videoNode41 ? false : true}>
-                                <ReactPlayer url={pState.videoNode41} width="100%" height="auto" controls />
+                                <ReactPlayer
+                                    url={pState.videoNode41}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 4.2:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 4.2:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode42', '4.2')}
@@ -446,7 +516,9 @@ export default function Form1({ pState, setState, courseName }) {
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video kết nối kiến thức nút 4.3:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Video kết nối kiến thức nút 4.3:
+                        </span>
                         <div className="w-full mt-2 mb-8 h-auto">
                             <input
                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -458,12 +530,19 @@ export default function Form1({ pState, setState, courseName }) {
                                 }}
                             />
                             <div className="w-full mt-2" hidden={pState.videoNode43 ? false : true}>
-                                <ReactPlayer url={pState.videoNode43} width="100%" height="auto" controls />
+                                <ReactPlayer
+                                    url={pState.videoNode43}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="w-full mb-2 ">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 4.4:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 4.4:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode44', '4.4')}
@@ -500,13 +579,18 @@ export default function Form1({ pState, setState, courseName }) {
             </div>
             <div className="flex w-full">
                 <div className="ml-2 w-6/12 mb-8 px-3">
-                    <span className="text-xl  font-semibold leading-normal text-blueGray-700">Nút 5</span>
+                    <span className="text-xl  font-semibold leading-normal text-blueGray-700">
+                        Nút 5
+                    </span>
                     <div className="w-full mt-2">
                         <button
                             className="bg-red-400 hover:bg-red-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
                             onClick={e => {
-                                router.push(`/exams?lessonId=${pState.id}`, `/exams?lessonId=${pState.id}`);
+                                router.push(
+                                    `/exams?lessonId=${pState.id}`,
+                                    `/exams?lessonId=${pState.id}`,
+                                );
                             }}
                         >
                             Quản lý kho câu hỏi
@@ -514,23 +598,39 @@ export default function Form1({ pState, setState, courseName }) {
                     </div>
                     <div className="w-full">
                         <div className="relative w-full mb-3 items-center flex">
-                            <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">Câu hỏi dễ:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.easy}/15</span>
+                            <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">
+                                Câu hỏi dễ:
+                            </label>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">
+                                {numQs.easy}/15
+                            </span>
                         </div>
                         <div className="relative w-full mb-3 items-center flex">
-                            <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">Câu hỏi trung bình:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.medium}/10</span>
+                            <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold  mr-2">
+                                Câu hỏi trung bình:
+                            </label>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">
+                                {numQs.medium}/10
+                            </span>
                         </div>
                         <div className="relative w-full mb-3 items-center flex">
-                            <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">Câu hỏi khó:</label>
-                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">{numQs.hard}/5</span>
+                            <label className="w-4/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">
+                                Câu hỏi khó:
+                            </label>
+                            <span className="w-8/12 px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs font-bold">
+                                {numQs.hard}/5
+                            </span>
                         </div>
                     </div>
                 </div>
                 <div className="ml-2 w-6/12 mb-8 px-3">
-                    <span className="text-xl font-semibold leading-normal text-blueGray-700">Nút 6</span>
+                    <span className="text-xl font-semibold leading-normal text-blueGray-700">
+                        Nút 6
+                    </span>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 6.1:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 6.1:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode61', '6.1')}
@@ -564,7 +664,9 @@ export default function Form1({ pState, setState, courseName }) {
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 6.2:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 6.2:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode62', '6.2')}
@@ -598,7 +700,9 @@ export default function Form1({ pState, setState, courseName }) {
                         </div>
                     </div>
                     <div className="w-full mb-2">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">Video giá trị cuộc sống 6.3:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            Video giá trị cuộc sống 6.3:
+                        </span>
                         <div className="w-full mt-2 mb-8 h-auto">
                             <input
                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -610,12 +714,19 @@ export default function Form1({ pState, setState, courseName }) {
                                 }}
                             />
                             <div className="w-full mt-2" hidden={pState.videoNode63 ? false : true}>
-                                <ReactPlayer url={pState.videoNode63} width="100%" height="auto" controls />
+                                <ReactPlayer
+                                    url={pState.videoNode63}
+                                    width="100%"
+                                    height="auto"
+                                    controls
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="w-full mb-2 ">
-                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">List câu hỏi 6.4:</span>
+                        <span className="text-blueGray-600 2xl:text-sm text-xs font-bold">
+                            List câu hỏi 6.4:
+                        </span>
                         <div className="w-full px-6 flex mt-2 mb-8">
                             <button
                                 onClick={e => createListQuestions(e, 'examNode64', '6.4')}

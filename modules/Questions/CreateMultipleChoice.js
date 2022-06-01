@@ -75,7 +75,9 @@ export default function CreateMultipleChoice() {
             <div className="w-full mt-4">
                 <div className="w-full flex border-2 p-2">
                     <div className="w-2/12 items-center justify-center flex">
-                        <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Đúng:</label>
+                        <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                            Đúng:
+                        </label>
                         <input
                             checked={dt.correct}
                             name="correct"
@@ -98,16 +100,23 @@ export default function CreateMultipleChoice() {
                                 >
                                     Nội dung đáp án:
                                 </label>
-                                <div className="w-7/12 ml-4" hidden={state.typeAnswer == 'image' ? false : true}>
+                                <div
+                                    className="w-7/12 ml-4"
+                                    hidden={state.typeAnswer == 'image' ? false : true}
+                                >
                                     <Upload
                                         listType={dt.content !== '' ? 'picture' : 'picture-card'}
-                                        customRequest={({ file, onSuccess, onError }) => uploadImage(file, onSuccess, onError)}
+                                        customRequest={({ file, onSuccess, onError }) =>
+                                            uploadImage(file, onSuccess, onError)
+                                        }
                                         showUploadList={false}
                                     >
                                         {dt.content !== '' ? (
                                             <img
                                                 className="border"
-                                                src={state.typeAnswer == 'image' ? dt.content : null}
+                                                src={
+                                                    state.typeAnswer == 'image' ? dt.content : null
+                                                }
                                                 alt="avatar"
                                                 style={{ width: '100%' }}
                                             />
@@ -116,11 +125,15 @@ export default function CreateMultipleChoice() {
                                         )}
                                     </Upload>
                                 </div>
-                                <div className="w-full ml-4" hidden={state.typeAnswer == 'text' ? false : true}>
+                                <div
+                                    className="w-full ml-4"
+                                    hidden={state.typeAnswer == 'text' ? false : true}
+                                >
                                     <div className="w-full px-4 mb-6">
                                         <div className="relative w-full mb-3 items-center px-4">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Nội dung câu trả lời: <span className="text-red-500">*</span>
+                                                Nội dung câu trả lời:{' '}
+                                                <span className="text-red-500">*</span>
                                             </label>
                                             <textarea
                                                 onChange={e => {
@@ -140,7 +153,9 @@ export default function CreateMultipleChoice() {
                                                 Xem trước: <span className="text-red-500">*</span>
                                             </label>
                                             <div className="text-base border h-auto w-full p-4">
-                                                {state.typeAnswer == 'text' ? renderLatex(dt.content) : null}
+                                                {state.typeAnswer == 'text'
+                                                    ? renderLatex(dt.content)
+                                                    : null}
                                             </div>
                                         </div>
                                     </div>
@@ -182,7 +197,8 @@ export default function CreateMultipleChoice() {
         const rs = await serviceHelpers.detailData('lessons', lessonId);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs;
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -362,12 +378,22 @@ export default function CreateMultipleChoice() {
     return (
         <>
             <div className="border-2">
-                <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
+                <div
+                    className={
+                        'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'
+                    }
+                >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Tạo câu hỏi trắc nghiệm</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">
+                            Tạo câu hỏi trắc nghiệm
+                        </b>
                     </div>
                 </div>
-                <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
+                <div
+                    className={
+                        'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'
+                    }
+                >
                     <div className="w-full pt-4 flex">
                         <div className="w-6/12 px-4 mb-6">
                             <div className="relative w-full items-center flex px-4">
@@ -392,7 +418,10 @@ export default function CreateMultipleChoice() {
                                 </label>
                                 <textarea
                                     onChange={e => {
-                                        setState({ ...state, question: e.target.value == '' ? null : e.target.value });
+                                        setState({
+                                            ...state,
+                                            question: e.target.value == '' ? null : e.target.value,
+                                        });
                                     }}
                                     value={state.question}
                                     className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
@@ -404,7 +433,9 @@ export default function CreateMultipleChoice() {
                                 <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Xem trước: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.question)}</div>
+                                <div className="text-base border h-auto w-full p-4">
+                                    {renderLatex(state.question)}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -416,7 +447,10 @@ export default function CreateMultipleChoice() {
                                 </label>
                                 <textarea
                                     onChange={e => {
-                                        setState({ ...state, solve: e.target.value == '' ? null : e.target.value });
+                                        setState({
+                                            ...state,
+                                            solve: e.target.value == '' ? null : e.target.value,
+                                        });
                                     }}
                                     value={state.solve}
                                     className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
@@ -428,7 +462,9 @@ export default function CreateMultipleChoice() {
                                 <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Xem trước: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.solve)}</div>
+                                <div className="text-base border h-auto w-full p-4">
+                                    {renderLatex(state.solve)}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -475,7 +511,8 @@ export default function CreateMultipleChoice() {
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Tạo đề ngẫu nhiên: <span className="text-red-500">*</span>
+                                                Tạo đề ngẫu nhiên:{' '}
+                                                <span className="text-red-500">*</span>
                                             </label>
                                             <select
                                                 onChange={e => {
@@ -491,7 +528,9 @@ export default function CreateMultipleChoice() {
                                     </div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Bài học:</label>
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Bài học:
+                                            </label>
                                             <input
                                                 disabled={true}
                                                 value={lesson}
@@ -505,37 +544,65 @@ export default function CreateMultipleChoice() {
                         <div className="w-6/12 px-4 mt-4 mb-6">
                             <div className="w-full mb-2  px-4">
                                 <div className="relative w-full mb-3 flex">
-                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Ảnh:
+                                    </label>
                                     <div className="px-3 h-auto ">
                                         <Upload
                                             fileList={state.image ? state.imageInfo : []}
-                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
+                                            customRequest={({ file, onSuccess, onError }) =>
+                                                uploadFile(file, onSuccess, onError, 'image')
+                                            }
                                             onRemove={() => deleteFile('image')}
                                         >
-                                            <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
+                                            <Button
+                                                hidden={state.image ? true : false}
+                                                icon={<UploadOutlined />}
+                                            >
                                                 Chọn file
                                             </Button>
                                         </Upload>
-                                        <div style={{ width: '100%', height: 'auto', position: 'relative' }} hidden={state.image ? false : true}>
-                                            <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                height: 'auto',
+                                                position: 'relative',
+                                            }}
+                                            hidden={state.image ? false : true}
+                                        >
+                                            <img
+                                                src={state.image}
+                                                className="object-contain w-full border-2"
+                                                alt="..."
+                                            ></img>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-full mb-2  px-4">
                                 <div className="relative w-full mb-3 flex">
-                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Audio:
+                                    </label>
                                     <div className=" px-3 h-auto ">
                                         <Upload
                                             fileList={state.audio ? state.audioInfo : []}
-                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
+                                            customRequest={({ file, onSuccess, onError }) =>
+                                                uploadFile(file, onSuccess, onError, 'audio')
+                                            }
                                             onRemove={() => deleteFile('audio')}
                                         >
-                                            <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
+                                            <Button
+                                                hidden={state.audio ? true : false}
+                                                icon={<UploadOutlined />}
+                                            >
                                                 Chọn file
                                             </Button>
                                         </Upload>
-                                        <div className="w-full mt-2" hidden={state.audio ? false : true}>
+                                        <div
+                                            className="w-full mt-2"
+                                            hidden={state.audio ? false : true}
+                                        >
                                             <ReactAudioPlayer src={state.audio} controls />
                                         </div>
                                     </div>
@@ -550,7 +617,8 @@ export default function CreateMultipleChoice() {
                                 <div className="w-full flex">
                                     <div className="w-6/12 items-center flex">
                                         <label className="w-6/12 text-blueGray-600 2xl:text-sm text-xs font-bold mr-2">
-                                            Định dạng câu trả lời: <span className="text-red-500">*</span>
+                                            Định dạng câu trả lời:{' '}
+                                            <span className="text-red-500">*</span>
                                         </label>
                                         <select
                                             onChange={e => {

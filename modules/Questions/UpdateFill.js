@@ -10,38 +10,68 @@ import Latex from 'react-latex';
 const { mediaURL } = serviceHelpers;
 import ReactHtmlParser from 'react-html-parser';
 
-export default function CreateDrag() {
+export default function UpdateFill({ data, lessonId }) {
     const [load, dispatch] = useContext(AuthContext);
     const router = useRouter();
-    const lessonId = parseInt(router.query.lessonId);
     const examId = parseInt(router.query.examId);
     const [lesson, setLesson] = useState(null);
     const [state, setState] = useState({
         question: null,
         level: 'easy',
         isRandom: false,
-        audio: null,
-        audioInfo: [],
+        questionAudio: null,
+        questionAudioInfo: [],
         image: null,
         imageInfo: [],
         active: true,
         solve: null,
         solveInfo: [],
+        audio: null,
+        audioInfo: [],
         name: null,
     });
+    const [change, setChange] = useState(false);
     const [zones, setZones] = useState([]);
-
     const editorRef = useRef();
     const [editorLoaded, setEditorLoaded] = useState(false);
     const { CKEditor, ClassicEditor } = editorRef.current || {};
     const numAns = 0;
-
     useEffect(async () => {
         dispatch(loadingTrue());
         const lessonName = await getDetailLesson();
         setLesson(lessonName);
+        data.audioInfo = [
+            {
+                url: data.audio,
+                name: data.audioName,
+            },
+        ];
+        data.solveInfo = [
+            {
+                url: data.solve,
+                name: data.solveName,
+            },
+        ];
+        data.imageInfo = [
+            {
+                url: data.image,
+                name: data.imageName,
+            },
+        ];
+        const arr = [];
+        if (data.answers[0] && data.answers[0]) {
+            for (const [index, iterator] of data.answers.entries()) {
+                arr.push({
+                    ...iterator,
+                    content: data.answers[index].content,
+                });
+            }
+        }
+
+        setState(data);
+        setZones(arr);
         dispatch(loadingFalse());
-    }, [editorLoaded]);
+    }, [data, editorLoaded]);
 
     useEffect(() => {
         editorRef.current = {
@@ -51,43 +81,9 @@ export default function CreateDrag() {
         setEditorLoaded(true);
     }, []);
 
-    async function getDetailLesson() {
-        const rs = await serviceHelpers.detailData('lessons', lessonId);
-        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
-        const data = rs;
-        if (data.statusCode === 400)
-            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-
-        if (data.statusCode <= 404 && data.statusCode >= 401) {
-            router.push('/auth/login');
-            return <div></div>;
-        }
-        return data.data.data.name;
-    }
-
-    function addZone() {
-        const newZones = [
-            ...zones,
-            {
-                content: '',
-                correct: false,
-            },
-        ];
-        setZones(newZones);
-    }
-
-    function deleteZone(index) {
-        const a1 = zones.slice(0, index);
-        const a2 = zones.slice(index + 1, zones.length);
-        const newZones = a1.concat(a2);
-        setZones(newZones);
-    }
-
-    function onChangeZone(index, field, value) {
-        const newZones = zones;
-        newZones[index][field] = value;
-        setZones(newZones);
-    }
+    useEffect(async () => {
+        setZones(zones);
+    }, [change]);
 
     function Zone({ state, data, index, deleteZone, onChangeZone }) {
         const [dt, setDt] = useState(data);
@@ -151,6 +147,44 @@ export default function CreateDrag() {
                 </div>
             </div>
         );
+    }
+
+    function addZone() {
+        const newZones = [
+            ...zones,
+            {
+                content: '',
+                correct: false,
+            },
+        ];
+        setZones(newZones);
+    }
+
+    async function getDetailLesson() {
+        const rs = await serviceHelpers.detailData('lessons', lessonId);
+        if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
+        const data = rs;
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+
+        if (data.statusCode <= 404 && data.statusCode >= 401) {
+            router.push('/auth/login');
+            return <div></div>;
+        }
+        return data.data.data.name;
+    }
+
+    function deleteZone(index) {
+        const a1 = zones.slice(0, index);
+        const a2 = zones.slice(index + 1, zones.length);
+        const newZones = a1.concat(a2);
+        setZones(newZones);
+    }
+
+    function onChangeZone(index, field, value) {
+        const newZones = zones;
+        newZones[index][field] = value;
+        setZones(newZones);
     }
 
     function onChangeState(field, e, type = 'string') {
@@ -229,8 +263,9 @@ export default function CreateDrag() {
         });
     }
 
-    async function onCreate() {
+    async function onUpdate() {
         dispatch(loadingTrue());
+        const zonesProp = [];
         const zoneContent = [];
         for (const dt of zones) {
             if (dt.content == '' || dt.content == null) {
@@ -255,19 +290,19 @@ export default function CreateDrag() {
         const body = {
             ...state,
             typeAnswer: 'text',
+            content: zonesProp,
             answers: zoneContent,
             lessonId,
         };
-        const rs1 = await serviceHelpers.createData('questions/drag', body);
+        console.log(body);
+        const rs1 = await serviceHelpers.updateData('questions/fill', data.id, body);
         const data1 = catchErr(rs1);
         const exam = catchErr(await serviceHelpers.detailData('exams', examId));
         const arr = exam.data.exam.listQuestions;
-        if (data1?.data) {
-            arr.push(data1.data.id);
-            catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
-            dispatch(loadingFalse());
-            router.push(`/exams/${examId}`, `/exams/${examId}`);
-        }
+        arr.push(data1.data.id);
+        catchErr(await serviceHelpers.updateData('exams', examId, { listQuestions: arr }));
+        dispatch(loadingFalse());
+        router.push(`/exams/${examId}`, `/exams/${examId}`);
     }
 
     function catchErr(rs) {
@@ -275,9 +310,8 @@ export default function CreateDrag() {
         const data = rs.data;
 
         if (data.statusCode === 400) {
-            dispatch(loadingFalse());
             openNotification(notiType.error, 'Lỗi hệ thống', data.message);
-            return null;
+            return onError(data.message);
         }
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -310,6 +344,7 @@ export default function CreateDrag() {
                                     arr.push(
                                         <input
                                             name={iterator}
+                                            disabled
                                             className="py-1 w-20 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                         ></input>,
                                     );
@@ -367,7 +402,7 @@ export default function CreateDrag() {
                 >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
                         <b className="text-xl font-semibold leading-normal text-blueGray-700">
-                            Tạo câu hỏi kéo thả
+                            Chỉnh sửa câu hỏi điền
                         </b>
                     </div>
                 </div>
@@ -640,9 +675,9 @@ export default function CreateDrag() {
                         <button
                             className="mx-2 mb-2 bg-sky-400 hover:bg-sky-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={() => onCreate()}
+                            onClick={() => onUpdate()}
                         >
-                            Tạo mới
+                            Lưu
                         </button>
                     </div>
                 </div>

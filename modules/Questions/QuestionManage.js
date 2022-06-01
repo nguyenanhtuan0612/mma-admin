@@ -133,7 +133,12 @@ export default function ExamsTable() {
     }
 
     async function getData(start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
-        const { data } = await serviceHelpers.getListData(`lessons/numQuestion/${lessonId}`, [], sort, start);
+        const { data } = await serviceHelpers.getListData(
+            `lessons/numQuestion/${lessonId}`,
+            [],
+            sort,
+            start,
+        );
         return data;
     }
 
@@ -171,14 +176,25 @@ export default function ExamsTable() {
                             `/questions/multipleChoice?&lessonId=${lessonId}&isRandom=true`,
                         )
                     }
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                    className={
+                        'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'
+                    }
                 >
                     Thủ công
                 </button>
             </Menu.Item>
             <Menu.Item>
-                <button className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}>
-                    <Upload showUploadList={false} customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError)}>
+                <button
+                    className={
+                        'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'
+                    }
+                >
+                    <Upload
+                        showUploadList={false}
+                        customRequest={({ file, onSuccess, onError }) =>
+                            uploadFile(file, onSuccess, onError)
+                        }
+                    >
                         Nhập từ file excel
                     </Upload>
                 </button>
@@ -235,13 +251,23 @@ export default function ExamsTable() {
                 </button>
             </div>
 
-            <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'}>
+            <div
+                className={
+                    'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'
+                }
+            >
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <span className="font-semibold text-sm text-blueGray-700 mb-3 mr-4">Dễ: {numQs.easy}/15</span>
-                            <span className="font-semibold text-sm text-blueGray-700 mb-3 mr-4">Trung Bình: {numQs.medium}/10</span>
-                            <span className="font-semibold text-sm text-blueGray-700 mb-3 mr-4">Khó: {numQs.hard}/5</span>
+                            <span className="font-semibold text-sm text-blueGray-700 mb-3 mr-4">
+                                Dễ: {numQs.easy}/15
+                            </span>
+                            <span className="font-semibold text-sm text-blueGray-700 mb-3 mr-4">
+                                Trung Bình: {numQs.medium}/10
+                            </span>
+                            <span className="font-semibold text-sm text-blueGray-700 mb-3 mr-4">
+                                Khó: {numQs.hard}/5
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -261,7 +287,13 @@ export default function ExamsTable() {
                         <tbody>
                             {listQuestions && listQuestions.length > 0 ? (
                                 listQuestions.map((data, index) => {
-                                    return <RowItemQuestions data={data} key={index} deleteQuestion={deleteQuestion} />;
+                                    return (
+                                        <RowItemQuestions
+                                            data={data}
+                                            key={index}
+                                            deleteQuestion={deleteQuestion}
+                                        />
+                                    );
                                 })
                             ) : (
                                 <tr>
@@ -275,7 +307,13 @@ export default function ExamsTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 justify-center bg-blueGray-100">
                     <div className="flex flex-wrap items-center justify-center">
                         <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                            <Pagination total={count} pageSize={10} showSizeChanger={false} current={page} onChange={handlePaginationChange} />
+                            <Pagination
+                                total={count}
+                                pageSize={10}
+                                showSizeChanger={false}
+                                current={page}
+                                onChange={handlePaginationChange}
+                            />
                         </div>
                     </div>
                 </div>

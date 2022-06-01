@@ -61,7 +61,8 @@ export default function CourseDetail() {
         const role = auth.role;
         confirm({
             title: 'Bạn muốn xóa khoá học này?',
-            content: 'Lưu ý nếu bạn xóa thì mọi thông tin, khóa học, bài học liên quan đều sẽ bị mất.',
+            content:
+                'Lưu ý nếu bạn xóa thì mọi thông tin, khóa học, bài học liên quan đều sẽ bị mất.',
             okText: 'Xóa',
             okType: 'danger',
             cancelText: 'Hủy',
@@ -79,7 +80,8 @@ export default function CourseDetail() {
 
     async function onUpdate() {
         let dataUser = { ...state, teacherIds: [...state.teacherIds, ...state.teacherDeactive] };
-        if (dataUser.teacherIds.length == 0) return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
+        if (dataUser.teacherIds.length == 0)
+            return openNotification(notiType.error, 'Lỗi', 'Khoá học chưa có giáo viên');
         if (imageUpload) {
             const img = await uploadAvatar(imageUpload);
             if (!img) return;
@@ -96,7 +98,8 @@ export default function CourseDetail() {
         const { data } = await serviceHelpers.updateData('courses', id, body);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -109,7 +112,8 @@ export default function CourseDetail() {
         const { data } = await serviceHelpers.uploadFile('courses', image);
         if (!data) return openNotification(notiType.error, 'Lỗi hệ thống');
 
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -161,13 +165,27 @@ export default function CourseDetail() {
     return (
         <>
             <div className="border-2">
-                <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
+                <div
+                    className={
+                        'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'
+                    }
+                >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <img src={avatarImg(createObjectURL)} className="object-contain h-16 w-16 bg-white rounded-full border mr-4" alt="..."></img>{' '}
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(state.name)}</b>
+                        <img
+                            src={avatarImg(createObjectURL)}
+                            className="object-contain h-16 w-16 bg-white rounded-full border mr-4"
+                            alt="..."
+                        ></img>{' '}
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">
+                            {checkNull(state.name)}
+                        </b>
                     </div>
                 </div>
-                <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
+                <div
+                    className={
+                        'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'
+                    }
+                >
                     <div className="flex flex-wrap">
                         <Detail
                             state={state}

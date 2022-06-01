@@ -57,7 +57,9 @@ export default function RowItemUser({ data, updateActive }) {
     const { id, email, phone, active, avatarImage, role, fullName, createdAt } = data;
     return (
         <tr>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {id}
+            </td>
             <th>
                 <Link href={`/users/${id}`} as={`/users/${id}`}>
                     <a
@@ -69,16 +71,30 @@ export default function RowItemUser({ data, updateActive }) {
                             className="object-contain 2xl:h-12 2xl:w-12 2xl:flex xl:hidden xl:w-8 xl:h-8 bg-white rounded-full border"
                             alt="..."
                         ></img>{' '}
-                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(fullName)}</span>
+                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">
+                            {checkNull(fullName)}
+                        </span>
                     </a>
                 </Link>
             </th>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{checkNull(phone)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{checkNull(email)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{getDate(createdAt)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isRole(role)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isActive(active)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{activeUser(active)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">
+                {checkNull(phone)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {checkNull(email)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {getDate(createdAt)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {isRole(role)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {isActive(active)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {activeUser(active)}
+            </td>
         </tr>
     );
 }

@@ -82,11 +82,15 @@ export default function UpdateMatching({ lessonId, data }) {
                                 >
                                     Nội dung trái:
                                 </label>
-                                <div className="w-full ml-4" hidden={state.typeAnswerLeft == 'text' ? false : true}>
+                                <div
+                                    className="w-full ml-4"
+                                    hidden={state.typeAnswerLeft == 'text' ? false : true}
+                                >
                                     <div className="w-full px-4 mb-6">
                                         <div className="relative w-full mb-3 items-center px-4">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Nội dung câu trả lời: <span className="text-red-500">*</span>
+                                                Nội dung câu trả lời:{' '}
+                                                <span className="text-red-500">*</span>
                                             </label>
                                             <textarea
                                                 onChange={e => {
@@ -98,7 +102,12 @@ export default function UpdateMatching({ lessonId, data }) {
                                                             content: e.target.value,
                                                         },
                                                     });
-                                                    onChangeZone(index, 'left', 'content', e.target.value);
+                                                    onChangeZone(
+                                                        index,
+                                                        'left',
+                                                        'content',
+                                                        e.target.value,
+                                                    );
                                                 }}
                                                 value={dt.left.content}
                                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -111,18 +120,33 @@ export default function UpdateMatching({ lessonId, data }) {
                                                 Xem trước: <span className="text-red-500">*</span>
                                             </label>
                                             <div className="text-base border h-auto w-full p-4">
-                                                {state.typeAnswerLeft == 'text' ? renderLatex(dt.left.content) : null}
+                                                {state.typeAnswerLeft == 'text'
+                                                    ? renderLatex(dt.left.content)
+                                                    : null}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="w-8/12 ml-4" hidden={state.typeAnswerLeft == 'image' ? false : true}>
+                                <div
+                                    className="w-8/12 ml-4"
+                                    hidden={state.typeAnswerLeft == 'image' ? false : true}
+                                >
                                     <Upload
                                         listType="picture-card"
-                                        customRequest={({ file, onSuccess, onError }) => uploadImage(file, onSuccess, onError, 'left')}
+                                        customRequest={({ file, onSuccess, onError }) =>
+                                            uploadImage(file, onSuccess, onError, 'left')
+                                        }
                                         showUploadList={false}
                                     >
-                                        {dt.left.imageUrl ? <img src={dt.left.imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                        {dt.left.imageUrl ? (
+                                            <img
+                                                src={dt.left.imageUrl}
+                                                alt="avatar"
+                                                style={{ width: '100%' }}
+                                            />
+                                        ) : (
+                                            uploadButton
+                                        )}
                                     </Upload>
                                 </div>
                             </div>
@@ -137,11 +161,15 @@ export default function UpdateMatching({ lessonId, data }) {
                                 >
                                     Nội dung phải:
                                 </label>
-                                <div className="w-full ml-4" hidden={state.typeAnswerRight == 'text' ? false : true}>
+                                <div
+                                    className="w-full ml-4"
+                                    hidden={state.typeAnswerRight == 'text' ? false : true}
+                                >
                                     <div className="w-full px-4 mb-6">
                                         <div className="relative w-full mb-3 items-center px-4">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Nội dung câu trả lời: <span className="text-red-500">*</span>
+                                                Nội dung câu trả lời:{' '}
+                                                <span className="text-red-500">*</span>
                                             </label>
                                             <textarea
                                                 onChange={e => {
@@ -154,7 +182,12 @@ export default function UpdateMatching({ lessonId, data }) {
                                                         },
                                                     });
 
-                                                    onChangeZone(index, 'right', 'content', e.target.value);
+                                                    onChangeZone(
+                                                        index,
+                                                        'right',
+                                                        'content',
+                                                        e.target.value,
+                                                    );
                                                 }}
                                                 value={dt.right.content}
                                                 className="w-full px-3 py-2 text-blueGray-700 bg-white 2xl:text-sm text-xs border font-bold"
@@ -167,18 +200,33 @@ export default function UpdateMatching({ lessonId, data }) {
                                                 Xem trước: <span className="text-red-500">*</span>
                                             </label>
                                             <div className="text-base border h-auto w-full p-4">
-                                                {state.typeAnswerRight == 'text' ? renderLatex(dt.right.content) : null}
+                                                {state.typeAnswerRight == 'text'
+                                                    ? renderLatex(dt.right.content)
+                                                    : null}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="w-8/12 ml-4" hidden={state.typeAnswerRight == 'image' ? false : true}>
+                                <div
+                                    className="w-8/12 ml-4"
+                                    hidden={state.typeAnswerRight == 'image' ? false : true}
+                                >
                                     <Upload
                                         listType="picture-card"
-                                        customRequest={({ file, onSuccess, onError }) => uploadImage(file, onSuccess, onError, 'right')}
+                                        customRequest={({ file, onSuccess, onError }) =>
+                                            uploadImage(file, onSuccess, onError, 'right')
+                                        }
                                         showUploadList={false}
                                     >
-                                        {dt.right.imageUrl ? <img src={dt.right.imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                        {dt.right.imageUrl ? (
+                                            <img
+                                                src={dt.right.imageUrl}
+                                                alt="avatar"
+                                                style={{ width: '100%' }}
+                                            />
+                                        ) : (
+                                            uploadButton
+                                        )}
                                     </Upload>
                                 </div>
                             </div>
@@ -226,7 +274,8 @@ export default function UpdateMatching({ lessonId, data }) {
         const rs = await serviceHelpers.detailData('lessons', lessonId);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs;
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -327,25 +376,46 @@ export default function UpdateMatching({ lessonId, data }) {
         for (const dt of zones) {
             if (state.typeAnswerLeft == 'text' && dt.left.content == '') {
                 dispatch(loadingFalse());
-                return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
+                return openNotification(
+                    notiType.error,
+                    'Lỗi hệ thống',
+                    'Vùng chọn chưa đủ nội dung',
+                );
             }
             if (state.typeAnswerRight == 'text' && dt.right.content == '') {
                 dispatch(loadingFalse());
-                return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
+                return openNotification(
+                    notiType.error,
+                    'Lỗi hệ thống',
+                    'Vùng chọn chưa đủ nội dung',
+                );
             }
             if (state.typeAnswerRight == 'image' && dt.right.imageUrl == null) {
                 dispatch(loadingFalse());
-                return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
+                return openNotification(
+                    notiType.error,
+                    'Lỗi hệ thống',
+                    'Vùng chọn chưa đủ nội dung',
+                );
             }
             if (state.typeAnswerLeft == 'image' && dt.left.imageUrl == null) {
                 dispatch(loadingFalse());
-                return openNotification(notiType.error, 'Lỗi hệ thống', 'Vùng chọn chưa đủ nội dung');
+                return openNotification(
+                    notiType.error,
+                    'Lỗi hệ thống',
+                    'Vùng chọn chưa đủ nội dung',
+                );
             }
         }
 
         const body = {
             ...state,
-            answers: { content: zones, correct: true, typeAnswerLeft: state.typeAnswerLeft, typeAnswerRight: state.typeAnswerRight },
+            answers: {
+                content: zones,
+                correct: true,
+                typeAnswerLeft: state.typeAnswerLeft,
+                typeAnswerRight: state.typeAnswerRight,
+            },
             lessonId,
         };
         const rs1 = await serviceHelpers.updateData('questions/matching', data.id, body);
@@ -399,12 +469,22 @@ export default function UpdateMatching({ lessonId, data }) {
     return (
         <>
             <div className="border-2">
-                <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
+                <div
+                    className={
+                        'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'
+                    }
+                >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">Sửa câu hỏi nối</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">
+                            Sửa câu hỏi nối
+                        </b>
                     </div>
                 </div>
-                <div className={'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'}>
+                <div
+                    className={
+                        'relative min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center'
+                    }
+                >
                     <div className="w-full pt-4 flex">
                         <div className="w-6/12 px-4 mb-6">
                             <div className="relative w-full items-center flex px-4">
@@ -429,7 +509,10 @@ export default function UpdateMatching({ lessonId, data }) {
                                 </label>
                                 <textarea
                                     onChange={e => {
-                                        setState({ ...state, question: e.target.value == '' ? null : e.target.value });
+                                        setState({
+                                            ...state,
+                                            question: e.target.value == '' ? null : e.target.value,
+                                        });
                                     }}
                                     value={state.question}
                                     className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
@@ -441,7 +524,9 @@ export default function UpdateMatching({ lessonId, data }) {
                                 <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Xem trước: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.question)}</div>
+                                <div className="text-base border h-auto w-full p-4">
+                                    {renderLatex(state.question)}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -453,7 +538,10 @@ export default function UpdateMatching({ lessonId, data }) {
                                 </label>
                                 <textarea
                                     onChange={e => {
-                                        setState({ ...state, solve: e.target.value == '' ? null : e.target.value });
+                                        setState({
+                                            ...state,
+                                            solve: e.target.value == '' ? null : e.target.value,
+                                        });
                                     }}
                                     value={state.solve}
                                     className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
@@ -465,7 +553,9 @@ export default function UpdateMatching({ lessonId, data }) {
                                 <label className="w-2/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
                                     Xem trước: <span className="text-red-500">*</span>
                                 </label>
-                                <div className="text-base border h-auto w-full p-4">{renderLatex(state.solve)}</div>
+                                <div className="text-base border h-auto w-full p-4">
+                                    {renderLatex(state.solve)}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -511,7 +601,9 @@ export default function UpdateMatching({ lessonId, data }) {
                                     </div>
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
-                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Bài học:</label>
+                                            <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                                Bài học:
+                                            </label>
                                             <input
                                                 disabled={true}
                                                 value={lesson}
@@ -525,37 +617,65 @@ export default function UpdateMatching({ lessonId, data }) {
                         <div className="w-6/12 px-4 mt-4 mb-6">
                             <div className="w-full mb-2  px-4">
                                 <div className="relative w-full mb-3 flex">
-                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Ảnh:</label>
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Ảnh:
+                                    </label>
                                     <div className="px-3 h-auto ">
                                         <Upload
                                             fileList={state.image ? state.imageInfo : []}
-                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'image')}
+                                            customRequest={({ file, onSuccess, onError }) =>
+                                                uploadFile(file, onSuccess, onError, 'image')
+                                            }
                                             onRemove={() => deleteFile('image')}
                                         >
-                                            <Button hidden={state.image ? true : false} icon={<UploadOutlined />}>
+                                            <Button
+                                                hidden={state.image ? true : false}
+                                                icon={<UploadOutlined />}
+                                            >
                                                 Chọn file
                                             </Button>
                                         </Upload>
-                                        <div style={{ width: '100%', height: 'auto', position: 'relative' }} hidden={state.image ? false : true}>
-                                            <img src={state.image} className="object-contain w-full border-2" alt="..."></img>
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                height: 'auto',
+                                                position: 'relative',
+                                            }}
+                                            hidden={state.image ? false : true}
+                                        >
+                                            <img
+                                                src={state.image}
+                                                className="object-contain w-full border-2"
+                                                alt="..."
+                                            ></img>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="w-full mb-2  px-4">
                                 <div className="relative w-full mb-3 flex">
-                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">Audio:</label>
+                                    <label className="text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
+                                        Audio:
+                                    </label>
                                     <div className=" px-3 h-auto ">
                                         <Upload
                                             fileList={state.audio ? state.audioInfo : []}
-                                            customRequest={({ file, onSuccess, onError }) => uploadFile(file, onSuccess, onError, 'audio')}
+                                            customRequest={({ file, onSuccess, onError }) =>
+                                                uploadFile(file, onSuccess, onError, 'audio')
+                                            }
                                             onRemove={() => deleteFile('audio')}
                                         >
-                                            <Button hidden={state.audio ? true : false} icon={<UploadOutlined />}>
+                                            <Button
+                                                hidden={state.audio ? true : false}
+                                                icon={<UploadOutlined />}
+                                            >
                                                 Chọn file
                                             </Button>
                                         </Upload>
-                                        <div className="w-full mt-2" hidden={state.audio ? false : true}>
+                                        <div
+                                            className="w-full mt-2"
+                                            hidden={state.audio ? false : true}
+                                        >
                                             <ReactAudioPlayer src={state.audio} controls />
                                         </div>
                                     </div>

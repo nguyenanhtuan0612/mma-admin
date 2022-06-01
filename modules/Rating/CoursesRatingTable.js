@@ -95,7 +95,8 @@ export default function CoursesRatingTable() {
                 'Trạng thái': course.active,
             };
         });
-        const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const fileType =
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
         const ws = XLSX.utils.json_to_sheet(excelData);
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
@@ -168,7 +169,12 @@ export default function CoursesRatingTable() {
         setCount(data.data.count);
     }
 
-    async function getData(active = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+    async function getData(
+        active = '',
+        search = '',
+        start = 0,
+        sort = '[{"property":"createdAt","direction":"ASC"}]',
+    ) {
         const filter = [];
         if (active != '') {
             filter.push({
@@ -189,7 +195,12 @@ export default function CoursesRatingTable() {
         return data;
     }
 
-    async function exportData(active = '', search = '', start = 0, sort = '[{"property":"createdAt","direction":"ASC"}]') {
+    async function exportData(
+        active = '',
+        search = '',
+        start = 0,
+        sort = '[{"property":"createdAt","direction":"ASC"}]',
+    ) {
         const filter = [];
         if (active != '') {
             filter.push({
@@ -229,11 +240,17 @@ export default function CoursesRatingTable() {
                 </button>
             </div>
 
-            <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'}>
+            <div
+                className={
+                    'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'
+                }
+            >
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">QUẢN LÝ KHOÁ HỌC</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">
+                                QUẢN LÝ KHOÁ HỌC
+                            </h3>
                         </div>
                         <div className="2xl:w-7/12 xl:w-full 2xl:px-1 px-2">
                             <div className="relative w-full mb-3 flex items-center 2xl:justify-end">
@@ -289,7 +306,13 @@ export default function CoursesRatingTable() {
                         </thead>
                         <tbody>
                             {listCourse && listCourse.length > 0 ? (
-                                listCourse.map((user, index) => <RowItemCourse data={user} key={index} updateActive={updateActive} />)
+                                listCourse.map((user, index) => (
+                                    <RowItemCourse
+                                        data={user}
+                                        key={index}
+                                        updateActive={updateActive}
+                                    />
+                                ))
                             ) : (
                                 <tr>
                                     <td colSpan="8">Không có dữ liệu</td>
@@ -302,7 +325,13 @@ export default function CoursesRatingTable() {
                 <div className="rounded-t mb-0 px-4 py-3 border-0 justify-center bg-blueGray-100">
                     <div className="flex flex-wrap items-center justify-center">
                         <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                            <Pagination total={count} pageSize={10} showSizeChanger={false} current={page} onChange={handlePaginationChange} />
+                            <Pagination
+                                total={count}
+                                pageSize={10}
+                                showSizeChanger={false}
+                                current={page}
+                                onChange={handlePaginationChange}
+                            />
                         </div>
                     </div>
                 </div>

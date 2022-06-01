@@ -7,6 +7,7 @@ import UpdateMatching from './UpdateMatching';
 import UpdateDrag from './UpdateDrag';
 import UpdateMultipleChoice from './UpdateMultipleChoice';
 import UpdateOrder from './UpdateOrder';
+import UpdateFill from './UpdateFill';
 
 export default function UpdateQuestions() {
     const [load, dispatch] = useContext(AuthContext);
@@ -26,7 +27,8 @@ export default function UpdateQuestions() {
         const rs = await serviceHelpers.detailData('questions', id);
         if (!rs) return openNotification(notiType.error, 'Lỗi hệ thống');
         const data = rs;
-        if (data.statusCode === 400) return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
+        if (data.statusCode === 400)
+            return openNotification(notiType.error, 'Lỗi hệ thống', data.message);
 
         if (data.statusCode <= 404 && data.statusCode >= 401) {
             router.push('/auth/login');
@@ -48,6 +50,9 @@ export default function UpdateQuestions() {
             }
             case 'order': {
                 return <UpdateOrder data={question} lessonId={question.lessonId} />;
+            }
+            case 'fill': {
+                return <UpdateFill data={question} lessonId={question.lessonId} />;
             }
             default: {
                 return 'Không tìm thấy câu hỏi !!';

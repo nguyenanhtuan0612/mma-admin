@@ -31,7 +31,9 @@ export default function ExamsTable() {
                             `/questions/order?examId=${id}&lessonId=${exam.lessonId}`,
                         )
                     }
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                    className={
+                        'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'
+                    }
                 >
                     Sắp xếp
                 </button>
@@ -44,19 +46,28 @@ export default function ExamsTable() {
                             `/questions/multipleChoice?examId=${id}&lessonId=${exam.lessonId}`,
                         )
                     }
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                    className={
+                        'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'
+                    }
                 >
                     Trắc nghiệm
                 </button>
             </Menu.Item>
-            {/* <Menu.Item>
+            <Menu.Item>
                 <button
-                    onClick={() => router.push('/questions/fill')}
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                    onClick={() =>
+                        router.push(
+                            `/questions/fill?examId=${id}&lessonId=${exam.lessonId}`,
+                            `/questions/fill?examId=${id}&lessonId=${exam.lessonId}`,
+                        )
+                    }
+                    className={
+                        'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'
+                    }
                 >
                     Điền từ
                 </button>
-            </Menu.Item> */}
+            </Menu.Item>
             <Menu.Item>
                 <button
                     onClick={() =>
@@ -65,7 +76,9 @@ export default function ExamsTable() {
                             `/questions/matching?examId=${id}&lessonId=${exam.lessonId}`,
                         )
                     }
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                    className={
+                        'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'
+                    }
                 >
                     Nối
                 </button>
@@ -78,7 +91,9 @@ export default function ExamsTable() {
                             `/questions/drag?examId=${id}&lessonId=${exam.lessonId}`,
                         )
                     }
-                    className={'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'}
+                    className={
+                        'text-sm py-2 px-4 block w-full whitespace-nowrap font-bold bg-transparent text-blueGray-700 hover:text-sky-700'
+                    }
                 >
                     Kéo thả
                 </button>
@@ -236,11 +251,17 @@ export default function ExamsTable() {
                 </button>
             </div>
 
-            <div className={'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'}>
+            <div
+                className={
+                    'relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded border-2 bg-white'
+                }
+            >
                 <div className="rounded-t mb-0 px-4 py-3 border-0 bg-blueGray-100">
                     <div className="flex flex-wrap mt-2">
                         <div className="2xl:w-5/12 xl:w-full  px-4 flex items-center">
-                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">{exam.name}</h3>
+                            <h3 className="font-semibold text-base text-blueGray-700 mb-3 ">
+                                {exam.name}
+                            </h3>
                         </div>
                     </div>
                 </div>
@@ -260,7 +281,14 @@ export default function ExamsTable() {
                         <tbody>
                             {listQuestions && listQuestions.length > 0 ? (
                                 listQuestions.map((data, index) => {
-                                    return <RowItemExams data={data} key={index} deleteQuestion={deleteQuestion} examId={exam.id} />;
+                                    return (
+                                        <RowItemExams
+                                            data={data}
+                                            key={index}
+                                            deleteQuestion={deleteQuestion}
+                                            examId={exam.id}
+                                        />
+                                    );
                                 })
                             ) : (
                                 <tr>

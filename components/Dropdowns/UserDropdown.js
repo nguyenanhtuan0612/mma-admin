@@ -55,17 +55,26 @@ export default function UserDropdown() {
             >
                 <div className="items-center flex">
                     <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-                        <img alt="..." className="w-full rounded-full align-middle border-none shadow-lg" src={avatarImg(avatar)} />
+                        <img
+                            alt="..."
+                            className="w-full rounded-full align-middle border-none shadow-lg"
+                            src={avatarImg(avatar)}
+                        />
                     </span>
                 </div>
             </a>
             <div
                 ref={popoverDropdownRef}
-                className={(isShow ? 'block ' : 'hidden ') + 'bg-white text-base z-50 py-2 list-none text-left rounded shadow-lg min-w-48'}
+                className={
+                    (isShow ? 'block ' : 'hidden ') +
+                    'bg-white text-base z-50 py-2 list-none text-left rounded shadow-lg min-w-48'
+                }
             >
                 <a
                     href="#pablo"
-                    className={'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'}
+                    className={
+                        'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'
+                    }
                     onClick={e => e.preventDefault()}
                 >
                     Tài khoản
@@ -73,7 +82,9 @@ export default function UserDropdown() {
                 <div className="h-0 my-2 border border-solid border-blueGray-100" />
                 <a
                     href="#pablo"
-                    className={'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'}
+                    className={
+                        'text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700'
+                    }
                     onClick={logout}
                 >
                     Đăng xuất

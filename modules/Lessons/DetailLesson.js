@@ -262,7 +262,10 @@ export default function DetailLesson() {
 
     async function deActive() {
         dispatch(loadingTrue());
-        const { data } = await serviceHelpers.updateData('lessons', id, { ...state, active: false });
+        const { data } = await serviceHelpers.updateData('lessons', id, {
+            ...state,
+            active: false,
+        });
         if (!data) {
             dispatch(loadingFalse());
             return openNotification(notiType.error, 'Lỗi hệ thống');
@@ -282,12 +285,22 @@ export default function DetailLesson() {
     return (
         <>
             <div className="border-2">
-                <div className={'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'}>
+                <div
+                    className={
+                        'relative flex flex-col min-w-0 break-words w-full shadow-lg rounded-t bg-blueGray-100'
+                    }
+                >
                     <div className=" px-6 align-middle text-sm whitespace-nowrap p-4 text-center flex items-center justify-center">
-                        <b className="text-xl font-semibold leading-normal text-blueGray-700">{checkNull(state.name)}</b>
+                        <b className="text-xl font-semibold leading-normal text-blueGray-700">
+                            {checkNull(state.name)}
+                        </b>
                     </div>
                 </div>
-                <div className={'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'}>
+                <div
+                    className={
+                        'relative flex-col min-w-0 break-words w-full mb-6 shadow-lg bg-white px-6 justify-center flex'
+                    }
+                >
                     <div className="flex w-full">
                         <div className="w-6/12 px-4 mt-4 mb-6">
                             <div className="w-full px-4 py-4 items-center 2xl:text-base text-xs text-blueGray-700 ">
@@ -336,7 +349,8 @@ export default function DetailLesson() {
                                     <div className="w-full px-4 mb-2">
                                         <div className="relative w-full mb-3 items-center flex">
                                             <label className="w-3/12 text-blueGray-600 2xl:text-sm text-xs font-bold text-right mr-2">
-                                                Kiểu bài học: <span className="text-red-500">*</span>
+                                                Kiểu bài học:{' '}
+                                                <span className="text-red-500">*</span>
                                             </label>
                                             <select
                                                 value={checkSelect(state.type)}
@@ -379,12 +393,21 @@ export default function DetailLesson() {
                                     Ảnh bài học: <span className="text-red-500">*</span>
                                 </label>
                                 <div className="w-full flex items-center mt-2">
-                                    <Upload customRequest={uploadLessonThumb} fileList={listThumb} maxCount={1} onRemove={deleteThumb}>
+                                    <Upload
+                                        customRequest={uploadLessonThumb}
+                                        fileList={listThumb}
+                                        maxCount={1}
+                                        onRemove={deleteThumb}
+                                    >
                                         <Button icon={<UploadOutlined />}>Chọn file</Button>
                                     </Upload>
                                 </div>
                                 <div className="w-full" hidden={state.thumb ? false : true}>
-                                    <img src={avatarImg(state.thumb)} className="h-40 border" alt="..."></img>
+                                    <img
+                                        src={avatarImg(state.thumb)}
+                                        className="h-40 border"
+                                        alt="..."
+                                    ></img>
                                 </div>
                             </div>
                         </div>
@@ -394,7 +417,12 @@ export default function DetailLesson() {
                         <button
                             className="mx-2 mb-2 bg-yellow-500 hover:bg-yellow-700 text-white active:bg-blueGray-600 font-bold uppercase text-xs px-4 py-2 rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150"
                             type="button"
-                            onClick={() => router.push(`/courses/${state.courseId}/lessons`, `/courses/${state.courseId}/lessons`)}
+                            onClick={() =>
+                                router.push(
+                                    `/courses/${state.courseId}/lessons`,
+                                    `/courses/${state.courseId}/lessons`,
+                                )
+                            }
                         >
                             Trở về
                         </button>

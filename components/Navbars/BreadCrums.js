@@ -54,7 +54,10 @@ export function BreadCrumbs() {
         <div className="w-full flex gap-1 text-white">
             {crumbs.map((c, i) => {
                 return (
-                    <div className="flex items-center gap-1 font-semibold text-white text-sm uppercase" key={i}>
+                    <div
+                        className="flex items-center gap-1 font-semibold text-white text-sm uppercase"
+                        key={i}
+                    >
                         {i > 0 ? <div className="mb-0.5">{'>'}</div> : null}
                         <div className=" px-2 py-1 rounded-xl">
                             <Link href={c.link} className="text-white">

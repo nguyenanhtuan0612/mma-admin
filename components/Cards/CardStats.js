@@ -17,8 +17,12 @@ export default function CardStats({
                 <div className="flex-auto p-4">
                     <div className="flex flex-wrap">
                         <div className="relative w-full pr-4 max-w-full flex-grow flex-1">
-                            <h5 className="text-blueGray-400 uppercase font-bold text-xs">{statSubtitle}</h5>
-                            <span className="font-semibold text-xl text-blueGray-700">{statTitle}</span>
+                            <h5 className="text-blueGray-400 uppercase font-bold text-xs">
+                                {statSubtitle}
+                            </h5>
+                            <span className="font-semibold text-xl text-blueGray-700">
+                                {statTitle}
+                            </span>
                         </div>
                         <div className="relative w-auto pl-4 flex-initial">
                             <div
@@ -33,8 +37,16 @@ export default function CardStats({
                     </div>
                     <p className="text-sm text-blueGray-400 mt-4">
                         <span className={statPercentColor + ' mr-2'}>
-                            <i className={statArrow === 'up' ? 'fas fa-arrow-up' : statArrow === 'down' ? 'fas fa-arrow-down' : ''}></i> {statPercent}
-                            %
+                            <i
+                                className={
+                                    statArrow === 'up'
+                                        ? 'fas fa-arrow-up'
+                                        : statArrow === 'down'
+                                        ? 'fas fa-arrow-down'
+                                        : ''
+                                }
+                            ></i>{' '}
+                            {statPercent}%
                         </span>
                         <span className="whitespace-nowrap">{statDescripiron}</span>
                     </p>

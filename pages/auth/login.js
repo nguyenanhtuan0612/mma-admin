@@ -69,7 +69,10 @@ export default function Login() {
                                 </div>
                                 <form onSubmit={handleSubmit}>
                                     <div className="relative w-full mb-3">
-                                        <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2" htmlFor="phone">
+                                        <label
+                                            className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                                            htmlFor="phone"
+                                        >
                                             Số điện thoại
                                         </label>
                                         <input
@@ -83,7 +86,9 @@ export default function Login() {
                                     </div>
 
                                     <div className="relative w-full mb-3">
-                                        <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">Mật khẩu</label>
+                                        <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                                            Mật khẩu
+                                        </label>
                                         <input
                                             type={showPass ? 'text' : 'password'}
                                             className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
@@ -101,7 +106,9 @@ export default function Login() {
                                                 onClick={handleShowPassClick}
                                                 className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
                                             />
-                                            <span className="ml-2 text-sm font-semibold text-blueGray-600">Hiện mật khẩu</span>
+                                            <span className="ml-2 text-sm font-semibold text-blueGray-600">
+                                                Hiện mật khẩu
+                                            </span>
                                         </label>
                                     </div>
 

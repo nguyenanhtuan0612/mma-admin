@@ -41,6 +41,9 @@ export default function RowItemExams({ data, deleteQuestion, examId }) {
             case 'order': {
                 return 'Sắp xếp';
             }
+            case 'fill': {
+                return 'Điền';
+            }
             default: {
                 return '...';
             }
@@ -68,21 +71,36 @@ export default function RowItemExams({ data, deleteQuestion, examId }) {
     const { id, type, level, active, question, name } = data;
     return (
         <tr>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{id}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {id}
+            </td>
             <th>
-                <Link href={`/questions/${id}?examId=${examId}`} as={`/questions/${id}?examId=${examId}`}>
+                <Link
+                    href={`/questions/${id}?examId=${examId}`}
+                    as={`/questions/${id}?examId=${examId}`}
+                >
                     <a
                         href={`/teachers/${id}`}
                         className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs whitespace-nowrap p-4 text-center flex items-center"
                     >
-                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">{checkNull(name)}</span>
+                        <span className="ml-3 font-bold text-blueGray-700 hover:text-sky-600">
+                            {checkNull(name)}
+                        </span>
                     </a>
                 </Link>
             </th>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isType(type)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">{isLevel(level)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{isActive(active)}</td>
-            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">{deleteQs(id)}</td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {isType(type)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm text-xs xl:text-xs text-center whitespace-nowrap p-4">
+                {isLevel(level)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {isActive(active)}
+            </td>
+            <td className="px-2 2xl:px-6 align-middle 2xl:text-sm xl:text-xs text-xs text-center whitespace-nowrap p-4">
+                {deleteQs(id)}
+            </td>
         </tr>
     );
 }
