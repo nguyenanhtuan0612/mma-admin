@@ -31,9 +31,6 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
     });
     const [zones, setZones] = useState([]);
     const [change, setChange] = useState(false);
-    const editorRef = useRef();
-    const [editorLoaded, setEditorLoaded] = useState(false);
-    const { CKEditor, ClassicEditor } = editorRef.current || {};
 
     function Zone({ state, data, index, deleteZone, onChangeZone }) {
         const [dt, setDt] = useState(data);
@@ -179,6 +176,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
     }
 
     useEffect(async () => {
+        dispatch(loadingTrue());
         const lessonName = await getDetailLesson();
         setLesson(lessonName.name);
         data.audioInfo = [
@@ -202,12 +200,6 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
         data.typeAnswer = data.answers[0] ? data.answers[0].typeAnswer : 'text';
         setState(data);
         setZones(data.answers);
-        dispatch(loadingTrue());
-        editorRef.current = {
-            CKEditor: require('@ckeditor/ckeditor5-react').CKEditor,
-            ClassicEditor: require('@ckeditor/ckeditor5-build-classic'),
-        };
-        setEditorLoaded(true);
         dispatch(loadingFalse());
     }, []);
 
@@ -448,7 +440,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
                                         });
                                     }}
                                     value={state.question}
-                                    className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                    className="p-2 w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                 ></textarea>
                             </div>
                         </div>
@@ -477,7 +469,7 @@ export default function UpdateMultipleChoice({ data, lessonId }) {
                                         });
                                     }}
                                     value={state.solve}
-                                    className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                    className="p-2 w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                 ></textarea>
                             </div>
                         </div>

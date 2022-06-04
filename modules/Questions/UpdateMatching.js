@@ -515,7 +515,7 @@ export default function UpdateMatching({ lessonId, data }) {
                                         });
                                     }}
                                     value={state.question}
-                                    className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                    className="p-2 w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                 ></textarea>
                             </div>
                         </div>
@@ -544,7 +544,7 @@ export default function UpdateMatching({ lessonId, data }) {
                                         });
                                     }}
                                     value={state.solve}
-                                    className="w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
+                                    className="p-2 w-9/12 placeholder-blueGray-400 text-blueGray-700 bg-white rounded 2xl:text-sm text-xs border font-bold shadow focus:border-1 ease-linear transition-all duration-150"
                                 ></textarea>
                             </div>
                         </div>
