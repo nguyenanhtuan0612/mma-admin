@@ -179,11 +179,6 @@ export default function CreateMultipleChoice() {
 
     useEffect(async () => {
         dispatch(loadingTrue());
-        editorRef.current = {
-            CKEditor: require('@ckeditor/ckeditor5-react').CKEditor,
-            ClassicEditor: require('@ckeditor/ckeditor5-build-classic'),
-        };
-        setEditorLoaded(true);
         const lessonName = await getDetailLesson();
         setLesson(lessonName.name);
         dispatch(loadingFalse());
